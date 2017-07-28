@@ -1,0 +1,26 @@
+{
+  "name": "coloquent",
+  "version": "0.1.0",
+  "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidDuwaer/coloquent.git"
+  },
+  "keywords": [
+    "coloquent",
+    "eloquent",
+    "json-api",
+    "model",
+    "mvc"
+  ],
+  "author": "David Duwaer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavidDuwaer/coloquent/issues"
+  },
+  "homepage": "https://github.com/DavidDuwaer/coloquent#readme"
+}
