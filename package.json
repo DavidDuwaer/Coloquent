@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "main": "index.js",
+  "dependencies": {
+    "axios": "^0.16.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
