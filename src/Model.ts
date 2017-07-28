@@ -1,6 +1,5 @@
 import {Builder} from "./Builder";
 import axios from 'axios';
-import {AxiosStatic} from "axios";
 import {AxiosInstance} from "axios";
 import {JsonApiDoc} from "./JsonApiDoc";
 
