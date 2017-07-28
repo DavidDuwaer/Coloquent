@@ -1,5 +1,4 @@
 import {WorpResponse} from "./WorpResponse";
-import {JsonApiResponseBody} from "./JsonApiResponseBody";
 import {Model} from "./Model";
 import {JsonApiDoc} from "./JsonApiDoc";
 
