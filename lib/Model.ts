@@ -2,6 +2,7 @@ import {Builder} from "./Builder";
 import axios from 'axios';
 import {AxiosInstance} from "axios";
 import {JsonApiDoc} from "./JsonApiDoc";
+import {Map} from "./util/Map";
 
 export abstract class Model
 {
@@ -21,9 +22,9 @@ export abstract class Model
 
     private id: string;
 
-    private relations: Map<string, any>;
+    private relations: Map<any>;
 
-    private attributes: Map<string, any>;
+    private attributes: Map<any>;
 
     constructor()
     {

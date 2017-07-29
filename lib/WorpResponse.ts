@@ -5,6 +5,7 @@ import {ToManyRelation} from "./ToManyRelation";
 import {JsonApiStub} from "./JsonApiStub";
 import {Relation} from "./Relation";
 import {ToOneRelation} from "./ToOneRelation";
+import {Map} from "./util/Map";
 
 export abstract class WorpResponse<T extends Model>
 {
@@ -12,9 +13,9 @@ export abstract class WorpResponse<T extends Model>
 
     protected T: string;
 
-    protected docIndex: Map<string, Map<string, JsonApiDoc>>;
+    protected docIndex: Map<Map<JsonApiDoc>>;
 
-    protected modelIndex: Map<string, Map<string, Model>>;
+    protected modelIndex: Map<Map<Model>>;
 
     protected included: Model[];
 
@@ -22,8 +23,8 @@ export abstract class WorpResponse<T extends Model>
     {
         this.prototype = prototype;
         this.T = typeof prototype;
-        this.docIndex = new Map();
-        this.modelIndex = new Map();
+        this.docIndex = new Map<Map<JsonApiDoc>>();
+        this.modelIndex = new Map<Map<Model>>();
         this.indexIncludedDocs(responseBody.included);
         this.indexRequestedDocs(responseBody.data);
         this.makeModelIndex(responseBody.data);
@@ -54,7 +55,7 @@ export abstract class WorpResponse<T extends Model>
         let type = doc.type;
         let id = doc.id;
         if (!this.docIndex.get(type)) {
-            this.docIndex.set(type, new Map<string, JsonApiDoc>());
+            this.docIndex.set(type, new Map<JsonApiDoc>());
         }
         this.docIndex.get(type).set(id, doc);
     }
@@ -64,7 +65,7 @@ export abstract class WorpResponse<T extends Model>
         let type = doc.type;
         let id = doc.id;
         if (!this.modelIndex.get(type)) {
-            this.modelIndex.set(type, new Map<string, Model>());
+            this.modelIndex.set(type, new Map<Model>());
         }
         let model: Model = new modelType();
         if (!this.modelIndex.get(type).get(id)) { // visit every doc only once
