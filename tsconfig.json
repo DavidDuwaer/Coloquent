@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es3",
         "declaration": true,
         "outDir": "./dist",
         "strict": false

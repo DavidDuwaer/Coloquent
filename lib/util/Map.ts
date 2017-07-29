@@ -2,6 +2,11 @@ export class Map<T>
 {
     protected data: {[key: string]: T};
 
+    constructor()
+    {
+        this.data = {};
+    }
+
     public get(key: string): T
     {
         return this.data[key];
