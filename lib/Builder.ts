@@ -10,7 +10,7 @@ export class Builder<T extends Model>
 {
     protected model: Model;
 
-    protected T;
+    protected TT: string;
 
     protected filters: FilterSpec[];
 
@@ -25,7 +25,7 @@ export class Builder<T extends Model>
     constructor(model: Model)
     {
         this.model = model;
-        this.T = typeof model;
+        this.TT = typeof model;
         this.filters = [];
         this.include = [];
         this.sort = [];
@@ -37,14 +37,14 @@ export class Builder<T extends Model>
     {
         let thiss = this;
         this.setPage(page);
-        return this.model.getAxiosInstance()
+        return <Promise<PluralWorpResponse<T>>> this.model.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
                     return new PluralWorpResponse(thiss.model, response.data);
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.message);
+                    throw new Error(response.code);
                 }
             );
     }
@@ -52,14 +52,14 @@ export class Builder<T extends Model>
     public find(id: number): Promise<SingularWorpResponse<T>>
     {
         let thiss = this;
-        return this.model.getAxiosInstance()
+        return <Promise<SingularWorpResponse<T>>> this.model.getAxiosInstance()
             .get(this.model.getJsonApiType()+'/'+id+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
                     return new SingularWorpResponse(thiss.model, response.data);
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.message);
+                    throw new Error(response.code);
                 }
             );
     }
@@ -112,7 +112,8 @@ export class Builder<T extends Model>
         let r: string[] = [];
         for (let f of this.filters) {
             if (f instanceof ClassFilterSpec) {
-                r.push('filter['+f.getClass()+']['+f.getAttribute()+']='+f.getValue());
+                let ff = <ClassFilterSpec> f;
+                r.push('filter['+ff.getClass()+']['+ff.getAttribute()+']='+ff.getValue());
             } else {
                 r.push('filter['+f.getAttribute()+']='+f.getValue());
             }

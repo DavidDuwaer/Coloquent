@@ -4,9 +4,6 @@
         "target": "es6",
         "declaration": true,
         "outDir": "./dist",
-        "strict": true
-    },
-    "exclude": [
-        "node_modules"
-    ]
+        "strict": false
+    }
 }

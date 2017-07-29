@@ -1,30 +1,7 @@
 {
   "name": "coloquent",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
-  "main": "index.js",
-  "dependencies": {
-    "axios": "^0.16.2"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.21.0",
-    "babel-loader": "^6.2.10",
-    "babel-preset-env": "^1.1.8",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-es2016": "^6.24.1",
-    "babel-preset-react": "^6.16.0",
-    "typescript": "^2.4.2",
-    "webpack": "^2.2.0"
-  },
-  "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
-    "build": "webpack"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DavidDuwaer/coloquent.git"
-  },
   "keywords": [
     "coloquent",
     "eloquent",
@@ -34,8 +11,25 @@
   ],
   "author": "David Duwaer",
   "license": "MIT",
+  "homepage": "https://github.com/DavidDuwaer/coloquent#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidDuwaer/coloquent.git"
+  },
   "bugs": {
     "url": "https://github.com/DavidDuwaer/coloquent/issues"
   },
-  "homepage": "https://github.com/DavidDuwaer/coloquent#readme"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "axios": "^0.16.2"
+  },
+  "devDependencies": {
+    "typescript": "^2.4.2"
+  }
 }
