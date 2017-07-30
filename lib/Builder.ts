@@ -2,15 +2,17 @@ import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
 import {ClassFilterSpec} from "./ClassFilterSpec";
 import {SortSpec} from "./SortSpec";
-import {AxiosResponse, AxiosError} from "axios";
+import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
 import {PluralWorpResponse} from "./PluralWorpResponse";
 import {SingularWorpResponse} from "./SingularWorpResponse";
+import {Promise} from 'es6-promise';
+import axios from 'axios';
 
-export class Builder<T extends Model>
+export class Builder
 {
     protected model: Model;
 
-    protected TT: string;
+    protected modelType: any;
 
     protected filters: FilterSpec[];
 
@@ -22,55 +24,61 @@ export class Builder<T extends Model>
 
     protected pageLimit: number;
 
-    constructor(model: Model)
+    private axiosInstance;
+
+    constructor(modelType: typeof Model)
     {
-        this.model = model;
-        this.TT = typeof model;
+        this.modelType = modelType;
+        this.model = new this.modelType();
         this.filters = [];
         this.include = [];
         this.sort = [];
-        this.pageOffset = 0;
-        this.pageLimit = model.getPageSize();
+        this.pageOffset = null;
+        this.pageLimit = modelType.getPageSize();
+        this.axiosInstance = axios.create({
+            baseURL: this.model.getJsonApiBaseUrl(),
+            withCredentials: true
+        });
     }
 
-    public get(page: number = 0): Promise<PluralWorpResponse<T>>
+    public get(page: number = 0): Promise<PluralWorpResponse>
     {
         let thiss = this;
         this.setPage(page);
-        return <Promise<PluralWorpResponse<T>>> this.model.getAxiosInstance()
+        return <Promise<PluralWorpResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new PluralWorpResponse(thiss.model, response.data);
+                    return new PluralWorpResponse(thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.code);
+                    throw new Error(response.message);
                 }
             );
     }
 
-    public find(id: number): Promise<SingularWorpResponse<T>>
+    public find(id: number): Promise<SingularWorpResponse>
     {
         let thiss = this;
-        return <Promise<SingularWorpResponse<T>>> this.model.getAxiosInstance()
+        return <Promise<SingularWorpResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+'/'+id+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularWorpResponse(thiss.model, response.data);
+                    return new SingularWorpResponse(thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.code);
+                    throw new Error(response.message);
                 }
             );
     }
 
-    public where(attribute: string, value: string): Builder<T>
+    public where(attribute: string, value: string): Builder
     {
         this.filters.push(new FilterSpec(attribute, value));
         return this;
     }
 
-    public with(value: any): Builder<T>
+    public with(value: any): Builder
     {
         if (typeof value === 'string') {
             this.include.push(value);
@@ -84,7 +92,7 @@ export class Builder<T extends Model>
         return this;
     }
 
-    public orderBy(attribute: string, direction: string): Builder<T>
+    public orderBy(attribute: string, direction: string): Builder
     {
         if (direction && ['asc', 'desc'].indexOf(direction) > -1) {
             throw new Error("The 'direction' parameter must be string of value 'asc' or 'desc'.")
@@ -141,8 +149,10 @@ export class Builder<T extends Model>
             }
             r.push('sort='+p);
         }
-        r.push('page[offset]='+this.pageOffset);
-        r.push('page[limit]='+this.pageLimit);
+        if (this.pageOffset !== null) {
+            r.push('page[offset]='+this.pageOffset);
+            r.push('page[limit]='+this.pageLimit);
+        }
         return r;
     }
 
@@ -158,5 +168,10 @@ export class Builder<T extends Model>
             r += queryParameter;
         }
         return r;
+    }
+
+    public getAxiosInstance(): AxiosInstance
+    {
+        return this.axiosInstance;
     }
 }

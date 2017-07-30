@@ -16,4 +16,9 @@ export class Map<T>
     {
         this.data[key] = value;
     }
+
+    public toArray(): {[key: string]: T}
+    {
+        return this.data;
+    }
 }

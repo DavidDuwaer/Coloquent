@@ -2,11 +2,11 @@ import {WorpResponse} from "./WorpResponse";
 import {Model} from "./Model";
 import {JsonApiDoc} from "./JsonApiDoc";
 
-export class PluralWorpResponse<T extends Model> extends WorpResponse<T>
+export class PluralWorpResponse extends WorpResponse
 {
-    protected data: T[];
+    protected data: Model[];
 
-    public getData(): T[]
+    public getData(): Model[]
     {
         return this.data;
     }
@@ -21,7 +21,7 @@ export class PluralWorpResponse<T extends Model> extends WorpResponse<T>
     protected makeModelIndex(requestedDocs: JsonApiDoc[]): void
     {
         for (let doc of requestedDocs) {
-            this.indexAsModel(doc, Object.getPrototypeOf(this.prototype).constructor);
+            this.indexAsModel(doc, this.modelType);
         }
     }
 
@@ -30,7 +30,7 @@ export class PluralWorpResponse<T extends Model> extends WorpResponse<T>
         this.data = [];
         for (let doc of requestedDocs) {
             this.data.push(
-                <T> this.modelIndex.get(doc.type).get(doc.id)
+                this.modelIndex.get(doc.type).get(doc.id)
             );
         }
     }

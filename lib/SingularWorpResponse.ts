@@ -2,18 +2,18 @@ import {WorpResponse} from "./WorpResponse";
 import {Model} from "./Model";
 import {JsonApiDoc} from "./JsonApiDoc";
 
-export class SingularWorpResponse<T extends Model> extends WorpResponse<T>
+export class SingularWorpResponse extends WorpResponse
 {
-    protected data: T;
+    protected data: Model;
 
-    public getData(): T
+    public getData(): Model
     {
         return this.data;
     }
 
     protected makeModelIndex(doc: JsonApiDoc): void
     {
-        this.indexAsModel(doc, Object.getPrototypeOf(this.prototype).constructor);
+        this.indexAsModel(doc, this.modelType);
     }
 
     protected indexRequestedDocs(doc: JsonApiDoc)
@@ -23,6 +23,6 @@ export class SingularWorpResponse<T extends Model> extends WorpResponse<T>
 
     protected makeDataArray(doc: JsonApiDoc): void
     {
-        this.data = <T> this.modelIndex.get(doc.type).get(doc.id);
+        this.data = this.modelIndex.get(doc.type).get(doc.id);
     }
 }

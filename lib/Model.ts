@@ -1,14 +1,12 @@
 import {Builder} from "./Builder";
-import axios from 'axios';
-import {AxiosInstance} from "axios";
 import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
+import {AxiosInstance, AxiosPromise} from "axios";
+import axios from 'axios';
 
 export abstract class Model
 {
     private type: string;
-
-    private axiosInstance;
 
     /**
      * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
@@ -18,7 +16,7 @@ export abstract class Model
     /**
      * @type {number} the page size
      */
-    protected pageSize: number = 50;
+    protected static pageSize: number = 50;
 
     private id: string;
 
@@ -29,35 +27,47 @@ export abstract class Model
     constructor()
     {
         this.type = typeof this;
-        this.axiosInstance = axios.create({
-            baseURL: this.getJsonApiBaseUrl(),
-            withCredentials: true
-        });
         this.relations = new Map();
         this.attributes = new Map();
     }
 
-    public with(attribute: any): Builder<this>
+    public static with(attribute: any): Builder
     {
-        return new Builder<this>(this)
+        return new Builder(this)
             .with(attribute);
     }
 
-    public where(attribute: string, value: string): Builder<this>
+    public static where(attribute: string, value: string): Builder
     {
-        return new Builder<this>(this)
+        return new Builder(this)
             .where(attribute, value);
+    }
+
+    public save(): Promise<void>
+    {
+        let thiss = this;
+        let axiosInstance: AxiosInstance = axios.create({
+            baseURL: this.getJsonApiBaseUrl(),
+            withCredentials: true
+        });
+        return axiosInstance
+            .patch(
+                this.getJsonApiType(),
+                {
+                    data: {
+                        id: thiss.id,
+                        type: thiss.getJsonApiType(),
+                        attributes: thiss.attributes.toArray()
+                    }
+                }
+            )
+            .then(function () {});
     }
 
     /**
      * @returns {string} e.g. 'http://www.foo.com/bar/'
      */
-    protected abstract getJsonApiBaseUrl(): string;
-
-    public getAxiosInstance(): AxiosInstance
-    {
-        return this.axiosInstance;
-    }
+    public abstract getJsonApiBaseUrl(): string;
 
     public getJsonApiType(): string
     {
@@ -72,7 +82,7 @@ export abstract class Model
         }
     }
 
-    public getPageSize(): number
+    public static getPageSize(): number
     {
         return this.pageSize;
     }

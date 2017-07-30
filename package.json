@@ -1,6 +1,6 @@
 {
   "name": "coloquent",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
     "coloquent",
@@ -27,6 +27,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@types/es6-promise": "0.0.32",
     "axios": "^0.16.2"
   },
   "devDependencies": {

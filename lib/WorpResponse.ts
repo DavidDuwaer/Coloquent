@@ -7,11 +7,9 @@ import {Relation} from "./Relation";
 import {ToOneRelation} from "./ToOneRelation";
 import {Map} from "./util/Map";
 
-export abstract class WorpResponse<T extends Model>
+export abstract class WorpResponse
 {
-    protected prototype: Model;
-
-    protected T: string;
+    protected modelType: any;
 
     protected docIndex: Map<Map<JsonApiDoc>>;
 
@@ -19,10 +17,9 @@ export abstract class WorpResponse<T extends Model>
 
     protected included: Model[];
 
-    constructor(prototype: Model, responseBody: JsonApiResponseBody)
+    constructor(modelType: typeof Model, responseBody: JsonApiResponseBody)
     {
-        this.prototype = prototype;
-        this.T = typeof prototype;
+        this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();
         this.indexIncludedDocs(responseBody.included);
