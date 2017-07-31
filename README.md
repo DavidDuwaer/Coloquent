@@ -1,5 +1,5 @@
 # Coloquent
-Javascript/Typescript library for creating, retrieving, updating and deleting model objects from a REST API implementing the [JSON API](http://jsonapi.org/) standard, with a fluent syntax inspired by Laravel Eloquent. For example:
+Javascript/Typescript library mapping objects and their interrelations to JSON API, with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects.
 
 ```javascript
 Teacher
@@ -45,9 +45,9 @@ All of the queries above return an ES6 `Promise` to which an instance of, depend
 var teacher = coloquentResponse.getData[0];
 var schoolAddress = teacher.getSchools()[0].getAddress();
 var student = teacher.getStudents()[0];
-```
+```
 
-The variables `teacher`, `schoolAddress` and `student` now all contain full-fledged model objects.
+The objects `teacher`, 
 
 # Setup
 
