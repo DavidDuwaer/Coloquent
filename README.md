@@ -47,7 +47,7 @@ var schoolAddress = teacher.getSchools()[0].getAddress();
 var student = teacher.getStudents()[0];
 ```
 
-The objects `teacher`, 
+The variables `teacher`, `schoolAddress` and `student` now all contain full-fledged model objects.
 
 # Setup
 
