@@ -29,6 +29,8 @@ To retrieve the second page
 Artist.get(2);
 ```
 
+The page size can be configured, this is covered the Setup section. There are more retrieval options, like eager loading, sorting and filtering, which is covered in the docs.
+
 To add a filter, add a `where` clause
 
 ```javascript
@@ -37,7 +39,13 @@ Artist
     .get();
 ```
 
-The page size can be configured, this is covered the Setup section. There are more retrieval options, like eager loading, sorting and filtering, which is covered in the docs.
+To eager load related models within the same HTTP request, add a `with` clause.
+
+```javascript
+Artist
+    .with('songs')
+    .get();
+```
 
 To retrieve a single model by ID:
 ```javascript
@@ -56,11 +64,13 @@ The variables `teacher`, `schoolAddress` and `student` now all contain full-fled
 
 #### Creating / updating
 
-To save an instance of `Artist`:
+To save an instance of `Artist` to the server:
 
 ```javascript
 artist.save();
 ```
+
+If `artist` has the property `id` set, Coloquent will attempt a `PATCH` request to update an existing object; otherwise it will perform a `POST` request, creating a new object server-side. 
 
 #### Deleting
 
