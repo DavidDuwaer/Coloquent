@@ -7,7 +7,7 @@ import {Relation} from "./Relation";
 import {ToOneRelation} from "./ToOneRelation";
 import {Map} from "./util/Map";
 
-export abstract class WorpResponse
+export abstract class Response
 {
     protected modelType: any;
 

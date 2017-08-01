@@ -1,8 +1,8 @@
-import {WorpResponse} from "./WorpResponse";
+import {Response} from "./Response";
 import {Model} from "./Model";
 import {JsonApiDoc} from "./JsonApiDoc";
 
-export class PluralWorpResponse extends WorpResponse
+export class PluralResponse extends Response
 {
     protected data: Model[];
 

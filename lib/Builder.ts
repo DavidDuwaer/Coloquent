@@ -3,8 +3,8 @@ import {FilterSpec} from "./FilterSpec";
 import {ClassFilterSpec} from "./ClassFilterSpec";
 import {SortSpec} from "./SortSpec";
 import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
-import {PluralWorpResponse} from "./PluralWorpResponse";
-import {SingularWorpResponse} from "./SingularWorpResponse";
+import {PluralResponse} from "./PluralResponse";
+import {SingularResponse} from "./SingularResponse";
 import {Promise} from 'es6-promise';
 import axios from 'axios';
 
@@ -41,15 +41,15 @@ export class Builder
         });
     }
 
-    public get(page: number = 0): Promise<PluralWorpResponse>
+    public get(page: number = 0): Promise<PluralResponse>
     {
         let thiss = this;
         this.setPage(page);
-        return <Promise<PluralWorpResponse>> this.getAxiosInstance()
+        return <Promise<PluralResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new PluralWorpResponse(thiss.modelType, response.data);
+                    return new PluralResponse(thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -57,15 +57,15 @@ export class Builder
             );
     }
 
-    public first(): Promise<SingularWorpResponse>
+    public first(): Promise<SingularResponse>
     {
         let thiss = this;
         this.pageLimit = 1;
-        return <Promise<SingularWorpResponse>> this.getAxiosInstance()
+        return <Promise<SingularResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularWorpResponse(thiss.modelType, response.data, true);
+                    return new SingularResponse(thiss.modelType, response.data, true);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -73,14 +73,14 @@ export class Builder
             );
     }
 
-    public find(id: number): Promise<SingularWorpResponse>
+    public find(id: number): Promise<SingularResponse>
     {
         let thiss = this;
-        return <Promise<SingularWorpResponse>> this.getAxiosInstance()
+        return <Promise<SingularResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+'/'+id+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularWorpResponse(thiss.modelType, response.data);
+                    return new SingularResponse(thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);

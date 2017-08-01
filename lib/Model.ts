@@ -3,8 +3,8 @@ import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
 import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
-import {PluralWorpResponse} from "./PluralWorpResponse";
-import {SingularWorpResponse} from "./SingularWorpResponse";
+import {PluralResponse} from "./PluralResponse";
+import {SingularResponse} from "./SingularResponse";
 
 export abstract class Model
 {
@@ -44,19 +44,19 @@ export abstract class Model
         });
     }
 
-    public static get(page: number = null): Promise<PluralWorpResponse>
+    public static get(page: number = null): Promise<PluralResponse>
     {
         return new Builder(this)
             .get(page);
     }
 
-    public static first(): Promise<SingularWorpResponse>
+    public static first(): Promise<SingularResponse>
     {
         return new Builder(this)
             .first();
     }
 
-    public static find(id: number): Promise<SingularWorpResponse>
+    public static find(id: number): Promise<SingularResponse>
     {
         return new Builder(this)
             .find(id);
