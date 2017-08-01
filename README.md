@@ -1,4 +1,4 @@
-![Coloquent](https://user-images.githubusercontent.com/8791690/28809863-5c362a1c-7686-11e7-96d4-823b9ab9c3c2.png)
+![Coloquent](https://user-images.githubusercontent.com/8791690/28809914-c0c8e938-7686-11e7-8d22-599328c73cb5.png)
 
 Javascript/Typescript library mapping objects and their interrelations to JSON API, with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
 
