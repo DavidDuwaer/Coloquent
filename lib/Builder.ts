@@ -7,6 +7,7 @@ import {PluralResponse} from "./PluralResponse";
 import {SingularResponse} from "./SingularResponse";
 import {Promise} from 'es6-promise';
 import axios from 'axios';
+import {Option} from "./Option";
 
 export class Builder
 {
@@ -15,6 +16,8 @@ export class Builder
     protected modelType: any;
 
     protected filters: FilterSpec[];
+
+    protected options: Option[];
 
     protected include: string[];
 
@@ -31,6 +34,7 @@ export class Builder
         this.modelType = modelType;
         this.model = new this.modelType();
         this.filters = [];
+        this.options = [];
         this.include = [];
         this.sort = [];
         this.pageOffset = null;
