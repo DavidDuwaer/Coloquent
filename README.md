@@ -15,6 +15,8 @@ Teacher
 
 # Usage
 
+#### Retrieving
+
 To retrieve a single page of models of a certain type:
 
 ```javascript
@@ -27,17 +29,19 @@ To retrieve the second page
 Artist.get(2);
 ```
 
+To add a filter, add a `where` clause
+
+```javascript
+Artist
+    .where('country', 'US')
+    .get();
+```
+
 The page size can be configured, this is covered the Setup section. There are more retrieval options, like eager loading, sorting and filtering, which is covered in the docs.
 
 To retrieve a single model by ID:
 ```javascript
 Artist.find(324);
-```
-
-To save an instance of `Artist`:
-
-```javascript
-artist.save();
 ```
 
 All of the queries above return an ES6 `Promise` to which an instance of, depending on whether a single or multiple models were requested, `SingularColoquentResponse` or `PluralColoquentResponse` is passed. From these classes both requested models and eagerly loaded models can be obtained, e.g.:
@@ -49,6 +53,22 @@ var student = teacher.getStudents()[0];
 ```
 
 The variables `teacher`, `schoolAddress` and `student` now all contain full-fledged model objects.
+
+#### Creating / updating
+
+To save an instance of `Artist`:
+
+```javascript
+artist.save();
+```
+
+#### Deleting
+
+To delete an instance of `Artist`:
+
+```javascript
+artist.delete();
+```
 
 # Setup
 
