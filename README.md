@@ -177,6 +177,12 @@ class Song extends AppModel
 
 Now we can query these models in the fashion shown in the Usage section of this readme.
 
+# Feedback
+
+If something is missing from this library that makes it not fit your use case today, or if you find a bug that spoils
+it for you, don't hesitate to create an Issue or a Pull Request.
+Coloquent is in active development and all feedback and contributions are sincerely appreciated.
+
 # Install
 
 
