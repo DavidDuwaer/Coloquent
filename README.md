@@ -7,7 +7,7 @@ Teacher
     .where('gender', 'm')                    // sets a filter
     .with('schools.address')                 // eager loads related models
     .with('students')                        // eager loads related models
-    .get()                                   // submits the query, returns an ES6 Promise
+    .get()                                   // submits the HTTP request, returns an ES6 Promise
     .then(function (coloquentResponse) {
         // do stuff with response
     });
