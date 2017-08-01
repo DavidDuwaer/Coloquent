@@ -1,6 +1,6 @@
 ![Coloquent](https://user-images.githubusercontent.com/8791690/28809914-c0c8e938-7686-11e7-8d22-599328c73cb5.png)
 
-Javascript/Typescript library mapping objects and their interrelations to JSON API, with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
+Javascript/Typescript library mapping objects and their interrelations to [JSON API](http://jsonapi.org), with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
 
 ```javascript
 Teacher
@@ -46,19 +46,19 @@ Artist
     .with('songs')
     .get();
 ```
-
 To sort the result set server-side (indispensible for pagination), add an `orderBy` clause:
-
 ```javascript
 Artist
     .orderBy('birthDate', 'desc')
     .get();
 ```
-
-The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`.
-
-
-To retrieve a single model by ID:
+The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`. If you are only interested in the youngest `Artist`, it is more efficient to use `first` instead of `get`:
+```javascript
+Artist
+    .orderBy('birthDate', 'desc')
+    .first();
+```
+This will retrieve only a single model from the server. To retrieve a single model by ID:
 ```javascript
 Artist.find(324);
 ```
@@ -90,6 +90,12 @@ To delete an instance of `Artist`:
 ```javascript
 artist.delete();
 ```
+
+# Requirements
+
+* Use in a project of which the runtime code is Javascript ES5 or higher.
+* The attribute `jsonApiBaseUrl` explained in the Setup section of this readme must point to an API implementing the [JSON API](http://jsonapi.org) standard, extended with one requirement:
+  * Pagination is offered with `offset` and `limit` query parameters, with `offset=0` being equivalent to specifying no offset.
 
 # Setup
 
