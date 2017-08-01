@@ -29,7 +29,7 @@ To retrieve the second page
 Artist.get(2);
 ```
 
-The page size can be configured, this is covered the Setup section. There are more retrieval options, like eager loading, sorting and filtering, which is covered in the docs.
+The page size can be configured, this is covered the Setup section.
 
 To add a filter, add a `where` clause
 
@@ -46,6 +46,17 @@ Artist
     .with('songs')
     .get();
 ```
+
+To sort the result set server-side (indispensible for pagination), add an `orderBy` clause:
+
+```javascript
+Artist
+    .orderBy('birthDate', 'desc')
+    .get();
+```
+
+The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`.
+
 
 To retrieve a single model by ID:
 ```javascript
