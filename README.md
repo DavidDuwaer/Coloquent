@@ -68,7 +68,9 @@ Artist
     .get();
 ```
 
-All of the queries above return an ES6 `Promise` to which an instance of, depending on whether a single or multiple models were requested, `SingularResponse` or `PluralResponse` is passed. From these classes both requested models and eagerly loaded models can be obtained, e.g.:
+All of the queries above return an ES6 `Promise` to which an instance of -depending on whether a single or multiple
+models were requested- `SingularResponse` or `PluralResponse` is passed. From these classes both requested models and
+eagerly loaded models can be obtained, e.g.:
 
 ```javascript
 var teacher = coloquentResponse.getData[0];
