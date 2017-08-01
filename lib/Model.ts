@@ -74,6 +74,12 @@ export abstract class Model
             .where(attribute, value);
     }
 
+    public static option(queryParameter: string, value: string): Builder
+    {
+        return new Builder(this)
+            .option(queryParameter, value);
+    }
+
     public save(): Promise<void>
     {
         return this.axiosInstance
