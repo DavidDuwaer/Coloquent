@@ -57,6 +57,22 @@ export class Builder
             );
     }
 
+    public first(): Promise<SingularWorpResponse>
+    {
+        let thiss = this;
+        this.pageLimit = 1;
+        return <Promise<SingularWorpResponse>> this.getAxiosInstance()
+            .get(this.model.getJsonApiType()+this.getParameterString())
+            .then(
+                function (response: AxiosResponse) {
+                    return new SingularWorpResponse(thiss.modelType, response.data, true);
+                },
+                function (response: AxiosError) {
+                    throw new Error(response.message);
+                }
+            );
+    }
+
     public find(id: number): Promise<SingularWorpResponse>
     {
         let thiss = this;

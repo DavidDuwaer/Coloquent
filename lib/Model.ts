@@ -3,6 +3,8 @@ import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
 import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
+import {PluralWorpResponse} from "./PluralWorpResponse";
+import {SingularWorpResponse} from "./SingularWorpResponse";
 
 export abstract class Model
 {
@@ -40,6 +42,24 @@ export abstract class Model
             baseURL: this.getJsonApiBaseUrl(),
             withCredentials: true
         });
+    }
+
+    public static get(page: number = null): Promise<PluralWorpResponse>
+    {
+        return new Builder(this)
+            .get(page);
+    }
+
+    public static first(): Promise<SingularWorpResponse>
+    {
+        return new Builder(this)
+            .first();
+    }
+
+    public static find(id: number): Promise<SingularWorpResponse>
+    {
+        return new Builder(this)
+            .find(id);
     }
 
     public static with(attribute: any): Builder
