@@ -108,7 +108,7 @@ class Artist extends Model
 }
 ```
 
-If there are settings that you want the same for all your models, it is useful to make an intermediary class that extends Eloquent's `Model`, and have your model classes extend that class. This is done in the following example.
+If there are settings that you want the same for all your models, it is useful to make an intermediary class that extends Coloquent's `Model`, and have your model classes extend that class. This is done in the following example.
 
 # Example setup
 We are configuring 3 models: `Artist`, `Album` and `Song`.
