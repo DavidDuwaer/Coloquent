@@ -1,4 +1,4 @@
-# Coloquent
+![Coloqunet](https://raw.githubusercontent.com/DavidDuwaer/Coloquent/master/logo.svg)
 Javascript/Typescript library mapping objects and their interrelations to JSON API, with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
 
 ```javascript
