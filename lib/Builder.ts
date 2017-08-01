@@ -126,6 +126,14 @@ export class Builder
         return this;
     }
 
+    public option(queryParameter: string, value: string): Builder
+    {
+        this.options.push(
+            new Option(queryParameter, value)
+        );
+        return this;
+    }
+
     /**
      * @param page the page number, starting with 1 (0 and 1 both lead to the first page)
      */
@@ -172,6 +180,9 @@ export class Builder
         if (this.pageOffset !== null) {
             r.push('page[offset]='+this.pageOffset);
             r.push('page[limit]='+this.pageLimit);
+        }
+        for (let option of this.options) {
+            r.push(option.getParameter()+'='+option.getValue());
         }
         return r;
     }
