@@ -32,15 +32,12 @@ Artist.get(2);
 The page size can be configured, this is covered the Setup section.
 
 To add a filter, add a `where` clause
-
 ```javascript
 Artist
     .where('country', 'US')
     .get();
 ```
-
 To eager load related models within the same HTTP request, add a `with` clause.
-
 ```javascript
 Artist
     .with('songs')
@@ -52,7 +49,8 @@ Artist
     .orderBy('birthDate', 'desc')
     .get();
 ```
-The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`. If you are only interested in the youngest `Artist`, it is more efficient to use `first` instead of `get`:
+The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`.
+If you are only interested in the youngest `Artist`, it is more efficient to use `first` instead of `get`:
 ```javascript
 Artist
     .orderBy('birthDate', 'desc')
@@ -61,6 +59,13 @@ Artist
 This will retrieve only a single model from the server. To retrieve a single model by ID:
 ```javascript
 Artist.find(324);
+```
+If, for some reason, you need to add a raw URL query parameter (e.g. `?foo=somevalue`) to the underlying endpoint, use
+the `option` clause:
+```javascript
+Artist
+    .option('foo', 'somevalue')
+    .get();
 ```
 
 All of the queries above return an ES6 `Promise` to which an instance of, depending on whether a single or multiple models were requested, `SingularResponse` or `PluralResponse` is passed. From these classes both requested models and eagerly loaded models can be obtained, e.g.:
