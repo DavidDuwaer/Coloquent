@@ -15,7 +15,7 @@ Teacher
 
 # Usage
 
-#### Retrieving
+### Retrieving
 
 To retrieve a single page of models of a certain type:
 
@@ -73,7 +73,7 @@ var student = teacher.getStudents()[0];
 
 The variables `teacher`, `schoolAddress` and `student` now all contain full-fledged model objects.
 
-#### Creating / updating
+### Creating / updating
 
 To save an instance of `Artist` to the server:
 
@@ -83,7 +83,7 @@ artist.save();
 
 If `artist` has the property `id` set, Coloquent will attempt a `PATCH` request to update an existing object; otherwise it will perform a `POST` request, creating a new object server-side. 
 
-#### Deleting
+### Deleting
 
 To delete an instance of `Artist`:
 
