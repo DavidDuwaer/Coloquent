@@ -24,11 +24,22 @@ export abstract class Model
 
     private attributes: Map<any>;
 
+    private axiosInstance: AxiosInstance;
+
     constructor()
     {
         this.type = typeof this;
         this.relations = new Map();
         this.attributes = new Map();
+        this.initAxiosInstance();
+    }
+
+    private initAxiosInstance(): void
+    {
+        this.axiosInstance = axios.create({
+            baseURL: this.getJsonApiBaseUrl(),
+            withCredentials: true
+        });
     }
 
     public static with(attribute: any): Builder
@@ -45,22 +56,27 @@ export abstract class Model
 
     public save(): Promise<void>
     {
-        let thiss = this;
-        let axiosInstance: AxiosInstance = axios.create({
-            baseURL: this.getJsonApiBaseUrl(),
-            withCredentials: true
-        });
-        return axiosInstance
+        return this.axiosInstance
             .patch(
                 this.getJsonApiType(),
                 {
                     data: {
-                        id: thiss.id,
-                        type: thiss.getJsonApiType(),
-                        attributes: thiss.attributes.toArray()
+                        id: this.id,
+                        type: this.getJsonApiType(),
+                        attributes: this.attributes.toArray()
                     }
                 }
             )
+            .then(function () {});
+    }
+
+    public delete(): Promise<void>
+    {
+        if (this.getId() === null) {
+            throw new Error('Cannot delete a model with no ID.');
+        }
+        return this.axiosInstance
+            .delete(this.getJsonApiType()+'/'+this.getId())
             .then(function () {});
     }
 
@@ -105,5 +121,15 @@ export abstract class Model
     protected setAttribute(attributeName: string, value: any): void
     {
         this.attributes[attributeName] = value;
+    }
+
+    public getId(): number|null
+    {
+        return this.getAttribute('id');
+    }
+
+    public setId(id: number): void
+    {
+        this.setAttribute('id', id);
     }
 }
