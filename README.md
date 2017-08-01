@@ -4,10 +4,10 @@ Javascript/Typescript library mapping objects and their interrelations to [JSON 
 
 ```javascript
 Teacher
-    .where('gender', 'm')                    // sets a filter
-    .with('schools.address')                 // eager loads related models
-    .with('students')                        // eager loads related models
-    .get()                                   // submits the HTTP request, returns an ES6 Promise
+    .where('gender', 'm')                   // sets a filter
+    .with('students')                       // eager loads related models
+    .with('schools.address')                // eager loads directly and indirectly related models
+    .get()                                  // submits the HTTP request, returns an ES6 Promise
     .then(function (coloquentResponse) {
         // do stuff with response
     });
