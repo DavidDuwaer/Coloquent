@@ -82,27 +82,37 @@ export abstract class Model
 
     public save(): Promise<void>
     {
-        return this.axiosInstance
-            .patch(
-                this.getJsonApiType(),
-                {
-                    data: {
-                        id: this.id,
-                        type: this.getJsonApiType(),
-                        attributes: this.attributes.toArray()
-                    }
-                }
-            )
-            .then(function () {});
+        let payload = {
+            data: {
+                type: this.getJsonApiType(),
+                attributes: this.attributes.toArray()
+            }
+        };
+        if (this.id !== null) {
+            return this.axiosInstance
+                .patch(
+                    this.getJsonApiType()+'/'+this.id,
+                    payload
+                )
+                .then(function () {});
+        } else {
+            payload['data']['id'] = this.id;
+            return this.axiosInstance
+                .post(
+                    this.getJsonApiType(),
+                    payload
+                )
+                .then(function () {});
+        }
     }
 
     public delete(): Promise<void>
     {
-        if (this.getId() === null) {
+        if (this.id === null) {
             throw new Error('Cannot delete a model with no ID.');
         }
         return this.axiosInstance
-            .delete(this.getJsonApiType()+'/'+this.getId())
+            .delete(this.getJsonApiType()+'/'+this.id)
             .then(function () {});
     }
 
@@ -147,15 +157,5 @@ export abstract class Model
     protected setAttribute(attributeName: string, value: any): void
     {
         this.attributes[attributeName] = value;
-    }
-
-    public getId(): number|null
-    {
-        return this.getAttribute('id');
-    }
-
-    public setId(id: number): void
-    {
-        this.setAttribute('id', id);
     }
 }
