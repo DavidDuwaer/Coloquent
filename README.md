@@ -113,7 +113,10 @@ import {Model} from 'coloquent';
 
 class Artist extends Model
 {
-    protected jsonApiBaseUrl = 'http://www.app.com/api/';
+    public getJsonApiBaseUrl(): string
+    {
+        return 'http://www.app.com/api/';
+    }
     
     protected jsonApiType = 'artists';
     
@@ -131,7 +134,10 @@ import {Model} from 'coloquent';
 
 class AppModel extends Model
 {
-    protected jsonApiBaseUrl = 'http://www.app.com/api/';
+    public getJsonApiBaseUrl(): string
+    {
+        return 'http://www.app.com/api/';
+    }
 }
 
 class Artist extends AppModel
