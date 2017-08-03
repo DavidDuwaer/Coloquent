@@ -69,7 +69,7 @@ export class Builder
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularResponse(thiss.modelType, response.data, true);
+                    return new SingularResponse(thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);

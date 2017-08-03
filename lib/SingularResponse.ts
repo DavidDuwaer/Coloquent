@@ -7,11 +7,11 @@ export class SingularResponse extends Response
 {
     protected data: Model;
 
-    private dataComesAsArray: boolean;
-
-    constructor(modelType: typeof Model, responseBody: JsonApiResponseBody, dataComesAsArray: boolean = false) {
+    constructor(
+        modelType: typeof Model,
+        responseBody: JsonApiResponseBody
+    ) {
         super(modelType, responseBody);
-        this.dataComesAsArray = dataComesAsArray;
     }
 
     public getData(): Model
@@ -22,10 +22,10 @@ export class SingularResponse extends Response
     protected makeModelIndex(data: JsonApiDoc|JsonApiDoc[]): void
     {
         let doc: JsonApiDoc = null;
-        if (this.dataComesAsArray) {
-            let doc = data[0];
+        if (Array.isArray(data)) {
+            doc = data[0];
         } else {
-            let doc = data;
+            doc = data;
         }
         this.indexAsModel(doc, this.modelType);
     }
@@ -33,10 +33,10 @@ export class SingularResponse extends Response
     protected indexRequestedDocs(data: JsonApiDoc|JsonApiDoc[])
     {
         let doc: JsonApiDoc = null;
-        if (this.dataComesAsArray) {
-            let doc = data[0];
+        if (Array.isArray(data)) {
+            doc = data[0];
         } else {
-            let doc = data;
+            doc = data;
         }
         this.indexDoc(doc);
     }
@@ -44,10 +44,10 @@ export class SingularResponse extends Response
     protected makeDataArray(data: JsonApiDoc|JsonApiDoc[]): void
     {
         let doc: JsonApiDoc = null;
-        if (this.dataComesAsArray) {
-            let doc = data[0];
+        if (Array.isArray(data)) {
+            doc = data[0];
         } else {
-            let doc = data;
+            doc = data;
         }
         this.data = this.modelIndex.get(doc.type).get(doc.id);
     }

@@ -17,8 +17,10 @@ export abstract class Response
 
     protected included: Model[];
 
-    constructor(modelType: typeof Model, responseBody: JsonApiResponseBody)
-    {
+    constructor(
+        modelType: typeof Model,
+        responseBody: JsonApiResponseBody
+    ) {
         this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();
