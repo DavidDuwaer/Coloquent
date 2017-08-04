@@ -28,11 +28,14 @@ export abstract class Model
 
     private axiosInstance: AxiosInstance;
 
+    protected readOnlyAttributes: string[];
+
     constructor()
     {
         this.type = typeof this;
         this.relations = new Map();
         this.attributes = new Map();
+        this.readOnlyAttributes = [];
         this.initAxiosInstance();
     }
 
@@ -82,10 +85,16 @@ export abstract class Model
 
     public save(): Promise<void>
     {
+        let attributes = {};
+        for (let key in this.attributes.toArray()) {
+            if (this.readOnlyAttributes.indexOf(key) == -1) {
+                attributes[key] = this.attributes.get(key);
+            }
+        }
         let payload = {
             data: {
                 type: this.getJsonApiType(),
-                attributes: this.attributes.toArray()
+                attributes: attributes
             }
         };
         if (this.id !== null) {
@@ -141,21 +150,21 @@ export abstract class Model
 
     protected getRelation(relationName: string): any
     {
-        return this.relations[relationName];
+        return this.relations.get(relationName);
     }
 
     public setRelation(relationName: string, value: any): void
     {
-        this.relations[relationName] = value;
+        this.relations.set(relationName, value);
     }
 
     protected getAttribute(attributeName: string): any
     {
-        return this.attributes[attributeName];
+        return this.attributes.get(attributeName);
     }
 
     protected setAttribute(attributeName: string, value: any): void
     {
-        this.attributes[attributeName] = value;
+        this.attributes.set(attributeName, value);
     }
 }
