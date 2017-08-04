@@ -1,12 +1,11 @@
 {
   "name": "coloquent",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
-    "coloquent",
-    "eloquent",
-    "json-api",
-    "model",
+    "coloquent", "eloquent",
+    "json-api", "json", "api", "json-api client", "api client", "json-api-client",
+    "model", "orm",
     "mvc"
   ],
   "author": "David Duwaer",
