@@ -46,7 +46,7 @@ export abstract class Response
 
     protected abstract makeModelIndex(requested: any): void;
 
-    private indexIncludedDocs(includedDocs: JsonApiDoc[]): void
+    private indexIncludedDocs(includedDocs: JsonApiDoc[] = []): void
     {
         for (let doc of includedDocs) {
             this.indexDoc(doc);
@@ -103,7 +103,7 @@ export abstract class Response
 
     protected abstract makeDataArray(requestedDocs: any): void;
 
-    protected makeIncludedArray(includedDocs: JsonApiDoc[])
+    protected makeIncludedArray(includedDocs: JsonApiDoc[] = [])
     {
         this.included = [];
         for (let doc of includedDocs) {

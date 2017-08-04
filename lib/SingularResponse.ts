@@ -27,7 +27,9 @@ export class SingularResponse extends Response
         } else {
             doc = data;
         }
-        this.indexAsModel(doc, this.modelType);
+        if (doc) {
+            this.indexAsModel(doc, this.modelType);
+        }
     }
 
     protected indexRequestedDocs(data: JsonApiDoc|JsonApiDoc[])
@@ -38,7 +40,9 @@ export class SingularResponse extends Response
         } else {
             doc = data;
         }
-        this.indexDoc(doc);
+        if (doc) {
+            this.indexDoc(doc);
+        }
     }
 
     protected makeDataArray(data: JsonApiDoc|JsonApiDoc[]): void
@@ -49,6 +53,8 @@ export class SingularResponse extends Response
         } else {
             doc = data;
         }
-        this.data = this.modelIndex.get(doc.type).get(doc.id);
+        if (doc) {
+            this.data = this.modelIndex.get(doc.type).get(doc.id);
+        }
     }
 }

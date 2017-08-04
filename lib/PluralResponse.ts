@@ -11,21 +11,21 @@ export class PluralResponse extends Response
         return this.data;
     }
 
-    protected indexRequestedDocs(requestedDocs: JsonApiDoc[])
+    protected indexRequestedDocs(requestedDocs: JsonApiDoc[] = [])
     {
         for (let doc of requestedDocs) {
             this.indexDoc(doc);
         }
     }
 
-    protected makeModelIndex(requestedDocs: JsonApiDoc[]): void
+    protected makeModelIndex(requestedDocs: JsonApiDoc[] = []): void
     {
         for (let doc of requestedDocs) {
             this.indexAsModel(doc, this.modelType);
         }
     }
 
-    protected makeDataArray(requestedDocs: JsonApiDoc[])
+    protected makeDataArray(requestedDocs: JsonApiDoc[] = [])
     {
         this.data = [];
         for (let doc of requestedDocs) {
