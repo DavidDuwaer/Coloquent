@@ -24,9 +24,15 @@ export abstract class Response
         this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();
+
+        // Index the JsonApiDocs
         this.indexIncludedDocs(responseBody.included);
         this.indexRequestedDocs(responseBody.data);
+
+        // Build Models from the JsonApiDocs, for which the previously built indexes come in handy
         this.makeModelIndex(responseBody.data);
+
+        // Prepare arrays for immediate access through this.getData() and this.getIncluded()
         this.makeDataArray(responseBody.data);
         this.makeIncludedArray(responseBody.included);
     }
