@@ -230,8 +230,8 @@ there exists. It is required that they bear the same name as the cosponding rela
 in the underlying JSON API.
 
 Finally, note that the `Artist` class overrides an array called `readOnlyAttributes`.
-This array is for attributes that should be excluded in the posted result saving an
-instance of `Artist` (using the `save()` method).
+This array is for attributes that should be excluded from the payload sent to the server
+when saving an instance of `Artist` (using the `save()` method).
 
 # Feedback
 
