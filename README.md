@@ -127,14 +127,14 @@ class Artist extends Model
 If there are settings that you want the same for all your models, it is useful to make an intermediary class that extends Coloquent's `Model`, and have your model classes extend that class. This is done in the following example.
 
 # Example setup
-We are configuring 3 models: `Artist`, `Album` and `Song`.
+We are configuring 3 models: `Artist`, `Album` and `Song`. In the following example, Typescript type assertions (e.g. `: Artists[]`) are included in the syntax, but if you don't use Typescript, remember that Coloquent also works in Javascript without these type assertions.
 
-```javascript
+```typescript
 import {Model} from 'coloquent';
 
 class AppModel extends Model
 {
-    public getJsonApiBaseUrl(): string
+    getJsonApiBaseUrl(): string
     {
         return 'http://www.app.com/api/';
     }
@@ -142,43 +142,74 @@ class AppModel extends Model
 
 class Artist extends AppModel
 {
-    protected jsonApiType = 'artists';
+    jsonApiType = 'artists';
+    
+    readOnlyAttributes = [
+        'age'
+    ];
 
-    public albums() {
+    albums()
+    {
         return new ToManyRelation(Album);
     }
 
-    getAlbums(): Album[] {
+    getAlbums(): Album[]
+    {
         return this.getRelation('albums');
+    }
+    
+    getBirthDate(): string
+    {
+        return this.getAttribute('birtDate');
+    }
+    
+    getAge(): number
+    {
+        return this.getAttribute('age');
+    }
+    
+    getCountry(): string
+    {
+        return this.getAttribute('country');
+    }
+    
+    setCountry(country: string)
+    {
+        this.setAttribute('country', country);
     }
 }
 
 class Album extends AppModel
 {
-    protected jsonApiType = 'albums';
+    jsonApiType = 'albums';
 
-    public artist() {
+    artist()
+    {
         return new ToOneRelation(Artist);
     }
 
-    public songs() {
+    songs()
+    {
         return new ToManyRelation(Song);
     }
 
-    getArtist(): Artist {
+    getArtist(): Artist
+    {
         return this.getRelation('artist');
     }
 
-    getSongs(): Song[] {
+    getSongs(): Song[]
+    {
         return this.getRelation('songs');
     }
 }
 
 class Song extends AppModel
 {
-    protected jsonApiType = 'songs';
+    jsonApiType = 'songs';
 
-    public album() {
+    album()
+    {
         return new ToOneRelation(Album);
     }
 
@@ -189,6 +220,18 @@ class Song extends AppModel
 ```
 
 Now we can query these models in the fashion shown in the Usage section of this readme.
+Note that the models contain getters, and that these getters get the values of
+relationships and attributes with `this.getRelation` and `this.getAttribute`,
+respectively. Attributes can conversely be set with a `this.setAttribute` method.
+
+Also note the methods that return an object of type `ToManyRelation` or `ToOneRelation`.
+These are relationship _declarations_: they tell Coloquent what kind of relationship
+there exists. It is required that they bear the same name as the cosponding relationship
+in the underlying JSON API.
+
+Finally, note that the `Artist` class overrides an array called `readOnlyAttributes`.
+This array is for attributes that should be excluded in the posted result saving an
+instance of `Artist` (using the `save()` method).
 
 # Feedback
 
