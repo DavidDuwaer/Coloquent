@@ -5,6 +5,7 @@ import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
 import {PluralResponse} from "./PluralResponse";
 import {SingularResponse} from "./SingularResponse";
+import * as dateformat from "dateformat";
 
 export abstract class Model
 {
@@ -29,6 +30,8 @@ export abstract class Model
     private axiosInstance: AxiosInstance;
 
     protected readOnlyAttributes: string[];
+
+    protected dates: object;
 
     constructor()
     {
@@ -160,11 +163,37 @@ export abstract class Model
 
     protected getAttribute(attributeName: string): any
     {
+        if (this.isDateAttribute(attributeName)) {
+            return this.getAttributeAsDate(attributeName);
+        }
+
         return this.attributes.get(attributeName);
+    }
+
+    protected getAttributeAsDate(attributeName: string): any
+    {
+        if (!Date.parse(this.attributes.get(attributeName))) {
+            throw new Error(`Attribute ${attributeName} cannot be cast to type Date`);
+        }
+
+        return new Date(this.attributes.get(attributeName));
+    }
+
+    private isDateAttribute(attributeName: string): boolean
+    {
+        return this.dates.hasOwnProperty(attributeName);
     }
 
     protected setAttribute(attributeName: string, value: any): void
     {
+        if (this.isDateAttribute(attributeName)) {
+            if (!Date.parse(value)) {
+                throw new Error(`${value} cannot be cast to type Date`);
+            }
+
+            value = dateformat(value, this.dates[attributeName]);
+        }
+
         this.attributes.set(attributeName, value);
     }
 }
