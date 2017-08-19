@@ -5,7 +5,7 @@ import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
 import {PluralResponse} from "./PluralResponse";
 import {SingularResponse} from "./SingularResponse";
-import * as dateformat from "dateformat";
+import DateFormatter from "php-date-formatter";
 
 export abstract class Model
 {
@@ -31,7 +31,9 @@ export abstract class Model
 
     protected readOnlyAttributes: string[];
 
-    protected dates: object;
+    protected dates: {[key: string]: string};
+
+    private static dateFormatter;
 
     constructor()
     {
@@ -190,10 +192,24 @@ export abstract class Model
             if (!Date.parse(value)) {
                 throw new Error(`${value} cannot be cast to type Date`);
             }
-
-            value = dateformat(value, this.dates[attributeName]);
+            value = Model.getDateFormatter().parseDate(value, this.dates[attributeName]);
         }
 
         this.attributes.set(attributeName, value);
+    }
+
+    /**
+     * We use a single instance of DateFormatter, which is stored as a static property on Model, to minimize the number
+     * of times we need to instantiate the DateFormatter class. By using this getter a DateFormatter is instantiated
+     * only when it is used at least once.
+     *
+     * @returns DateFormatter
+     */
+    private static getDateFormatter(): DateFormatter
+    {
+        if (!Model.dateFormatter) {
+            Model.dateFormatter = new DateFormatter();
+        }
+        return Model.dateFormatter;
     }
 }
