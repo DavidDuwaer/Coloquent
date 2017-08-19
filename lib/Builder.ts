@@ -8,6 +8,7 @@ import {SingularResponse} from "./SingularResponse";
 import {Promise} from 'es6-promise';
 import axios from 'axios';
 import {Option} from "./Option";
+import {PaginationStrategy} from "./PaginationStrategy";
 
 export class Builder
 {
@@ -27,6 +28,18 @@ export class Builder
 
     protected pageLimit: number;
 
+    protected pageNumber: number;
+
+    protected paginationStrategy: PaginationStrategy;
+
+    protected pageNumberParamName: string;
+
+    protected pageSizeParamName: string;
+
+    protected pageOffsetParamName: string;
+
+    protected pageLimitParamName: string;
+
     private axiosInstance;
 
     constructor(modelType: typeof Model)
@@ -38,7 +51,13 @@ export class Builder
         this.include = [];
         this.sort = [];
         this.pageOffset = null;
+        this.pageNumber = null;
         this.pageLimit = modelType.getPageSize();
+        this.paginationStrategy = modelType.getPaginationStrategy();
+        this.pageNumberParamName = modelType.getPaginationPageNumberParamName();
+        this.pageSizeParamName = modelType.getPaginationPageSizeParamName();
+        this.pageOffsetParamName = modelType.getPaginationOffsetParamName();
+        this.pageLimitParamName = modelType.getPaginationLimitParamName();
         this.axiosInstance = axios.create({
             baseURL: this.model.getJsonApiBaseUrl(),
             withCredentials: true
@@ -92,6 +111,11 @@ export class Builder
             );
     }
 
+    public getAxiosInstance(): AxiosInstance
+    {
+        return this.axiosInstance;
+    }
+
     public where(attribute: string, value: string): Builder
     {
         this.filters.push(new FilterSpec(attribute, value));
@@ -140,30 +164,65 @@ export class Builder
     private setPage(page: number = 0)
     {
         page = Math.max(page, 1);
-        this.pageOffset = (page - 1) * this.pageLimit;
+
+        switch (this.paginationStrategy) {
+            case PaginationStrategy.OffsetBased:
+                this.pageOffset = (page - 1) * this.pageLimit;
+                break;
+
+            case PaginationStrategy.PageBased:
+                this.pageNumber = page;
+                break;
+        }
     }
 
     private getQueryParameters(): string[]
     {
-        let r: string[] = [];
-        for (let f of this.filters) {
-            if (f instanceof ClassFilterSpec) {
-                let ff = <ClassFilterSpec> f;
-                r.push('filter['+ff.getClass()+']['+ff.getAttribute()+']='+ff.getValue());
-            } else {
-                r.push('filter['+f.getAttribute()+']='+f.getValue());
-            }
+        let parameters: string[] = [];
+
+        parameters = parameters.concat(this.getFilterParameters());
+        parameters = parameters.concat(this.getIncludeParameters());
+        parameters = parameters.concat(this.getSortParameters());
+        parameters = parameters.concat(this.getOptionsParameters());
+
+        if (this.pageOffset !== null || this.pageNumber !== null) {
+            parameters = parameters.concat(this.getPaginationParameters());
         }
-        if (this.include.length > 0) {
-            let p = '';
-            for (let incl of this.include) {
-                if (p !== '') {
-                    p += ',';
-                }
-                p += incl;
-            }
-            r.push('include='+p);
+
+        return parameters;
+    }
+
+    private getOptionsParameters(): string[] {
+        let parameters: string[] = [];
+
+        for (let option of this.options) {
+            parameters.push(option.getParameter() + '=' + option.getValue());
         }
+
+        return parameters;
+    }
+
+    private getPaginationParameters(): string[] {
+        let parameters: string[] = [];
+
+        switch (this.paginationStrategy) {
+            case PaginationStrategy.OffsetBased:
+                parameters.push(`page[${this.pageOffsetParamName}]=${this.pageOffset}`);
+                parameters.push(`page[${this.pageLimitParamName}]=${this.pageLimit}`);
+                break;
+
+            case PaginationStrategy.PageBased:
+                parameters.push(`page[${this.pageNumberParamName}]=${this.pageNumber}`);
+                parameters.push(`page[${this.pageSizeParamName}]=${this.pageLimit}`);
+                break;
+        }
+
+        return parameters;
+    }
+
+    private getSortParameters(): string[] {
+        let parameters: string[] = [];
+
         if (this.sort.length > 0) {
             let p = '';
             for (let sortSpec of this.sort) {
@@ -175,21 +234,48 @@ export class Builder
                 }
                 p += sortSpec.getAttribute();
             }
-            r.push('sort='+p);
+            parameters.push('sort=' + p);
         }
-        if (this.pageOffset !== null) {
-            r.push('page[offset]='+this.pageOffset);
-            r.push('page[limit]='+this.pageLimit);
+
+        return parameters;
+    }
+
+    private getIncludeParameters(): string[] {
+        let parameters: string[] = [];
+
+        if (this.include.length > 0) {
+            let p = '';
+            for (let incl of this.include) {
+                if (p !== '') {
+                    p += ',';
+                }
+                p += incl;
+            }
+            parameters.push('include=' + p);
         }
-        for (let option of this.options) {
-            r.push(option.getParameter()+'='+option.getValue());
+
+        return parameters;
+    }
+
+    private getFilterParameters(): string[] {
+        let parameters: string[] = [];
+
+        for (let f of this.filters) {
+            if (f instanceof ClassFilterSpec) {
+                let ff = <ClassFilterSpec> f;
+                parameters.push('filter[' + ff.getClass() + '][' + ff.getAttribute() + ']=' + ff.getValue());
+            } else {
+                parameters.push('filter[' + f.getAttribute() + ']=' + f.getValue());
+            }
         }
-        return r;
+
+        return parameters;
     }
 
     private getParameterString(): string
     {
         let r = '';
+
         for (let queryParameter of this.getQueryParameters()) {
             if (r === '') {
                 r += '?';
@@ -198,11 +284,7 @@ export class Builder
             }
             r += queryParameter;
         }
-        return r;
-    }
 
-    public getAxiosInstance(): AxiosInstance
-    {
-        return this.axiosInstance;
+        return r;
     }
 }

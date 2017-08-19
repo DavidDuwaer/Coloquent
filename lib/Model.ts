@@ -5,6 +5,7 @@ import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
 import {PluralResponse} from "./PluralResponse";
 import {SingularResponse} from "./SingularResponse";
+import {PaginationStrategy} from "./PaginationStrategy";
 import DateFormatter from "php-date-formatter";
 
 export abstract class Model
@@ -20,6 +21,31 @@ export abstract class Model
      * @type {number} the page size
      */
     protected static pageSize: number = 50;
+
+    /**
+     * @type {PaginationStrategy} the pagination strategy
+     */
+    protected static paginationStrategy: PaginationStrategy = PaginationStrategy.OffsetBased;
+
+    /**
+     * @type {string} the number query parameter name
+     */
+    protected static paginationPageNumberParamName: string = 'number';
+
+    /**
+     * @type {string} the size query parameter name
+     */
+    protected static paginationPageSizeParamName: string = 'size';
+
+    /**
+     * @type {string} the offset query parameter name
+     */
+    protected static paginationOffsetParamName: string = 'offset';
+
+    /**
+     * @type {string} the limit query parameter name
+     */
+    protected static paginationLimitParName: string = 'limit';
 
     private id: string;
 
@@ -151,6 +177,31 @@ export abstract class Model
     public static getPageSize(): number
     {
         return this.pageSize;
+    }
+
+    public static getPaginationStrategy(): PaginationStrategy
+    {
+        return this.paginationStrategy;
+    }
+
+    public static getPaginationPageNumberParamName(): string
+    {
+        return this.paginationPageNumberParamName;
+    }
+
+    public static getPaginationPageSizeParamName(): string
+    {
+        return this.paginationPageSizeParamName;
+    }
+
+    public static getPaginationOffsetParamName(): string
+    {
+        return this.paginationOffsetParamName;
+    }
+
+    public static getPaginationLimitParamName(): string
+    {
+        return this.paginationLimitParName;
     }
 
     protected getRelation(relationName: string): any

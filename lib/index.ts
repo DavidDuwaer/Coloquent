@@ -6,3 +6,6 @@ export { _ToManyRelation as ToManyRelation }
 
 import {ToOneRelation as _ToOneRelation} from "./ToOneRelation";
 export { _ToOneRelation as ToOneRelation }
+
+import {PaginationStrategy as _PaginationStrategy} from "./PaginationStrategy";
+export { _PaginationStrategy as PaginationStrategy }
