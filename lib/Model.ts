@@ -31,7 +31,7 @@ export abstract class Model
 
     protected readOnlyAttributes: string[];
 
-    protected dates: object;
+    protected dates: {[key: string]: string};
 
     constructor()
     {
