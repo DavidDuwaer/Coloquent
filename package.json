@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@types/es6-promise": "0.0.32",
-    "axios": "^0.16.2"
+    "axios": "^0.16.2",
+    "dateformat": "^2.0.0"
   },
   "devDependencies": {
     "typescript": "^2.4.2"
