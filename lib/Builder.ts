@@ -27,21 +27,6 @@ export class Builder
 
     protected sort: SortSpec[];
 
-    protected pageOffset: number;
-
-    protected pageLimit: number;
-
-    protected pageNumber: number;
-
-    protected paginationStrategy: PaginationStrategy;
-
-    protected pageNumberParamName: string;
-
-    protected pageSizeParamName: string;
-
-    protected pageOffsetParamName: string;
-
-    protected pageLimitParamName: string;
     protected paginationSpec: PaginationSpec;
 
     private axiosInstance;
@@ -54,14 +39,6 @@ export class Builder
         this.options = [];
         this.include = [];
         this.sort = [];
-        this.pageOffset = null;
-        this.pageNumber = null;
-        this.pageLimit = modelType.getPageSize();
-        this.paginationStrategy = modelType.getPaginationStrategy();
-        this.pageNumberParamName = modelType.getPaginationPageNumberParamName();
-        this.pageSizeParamName = modelType.getPaginationPageSizeParamName();
-        this.pageOffsetParamName = modelType.getPaginationOffsetParamName();
-        this.pageLimitParamName = modelType.getPaginationLimitParamName();
         this.initPaginationSpec();
         this.axiosInstance = axios.create({
             baseURL: this.model.getJsonApiBaseUrl(),
@@ -163,24 +140,6 @@ export class Builder
         return this;
     }
 
-    /**
-     * @param page the page number, starting with 1 (0 and 1 both lead to the first page)
-     */
-    private setPage(page: number = 0)
-    {
-        page = Math.max(page, 1);
-
-        switch (this.paginationStrategy) {
-            case PaginationStrategy.OffsetBased:
-                this.pageOffset = (page - 1) * this.pageLimit;
-                break;
-
-            case PaginationStrategy.PageBased:
-                this.pageNumber = page;
-                break;
-        }
-    }
-
     private initPaginationSpec(): void
     {
         switch (this.modelType.getPaginationStrategy()) {
@@ -221,25 +180,6 @@ export class Builder
 
         for (let option of this.options) {
             parameters.push(option.getParameter() + '=' + option.getValue());
-        }
-
-        return parameters;
-    }
-
-    private getPaginationParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        switch (this.paginationStrategy) {
-            case PaginationStrategy.OffsetBased:
-                parameters.push(`page[${this.pageOffsetParamName}]=${this.pageOffset}`);
-                parameters.push(`page[${this.pageLimitParamName}]=${this.pageLimit}`);
-                break;
-
-            case PaginationStrategy.PageBased:
-                parameters.push(`page[${this.pageNumberParamName}]=${this.pageNumber}`);
-                parameters.push(`page[${this.pageSizeParamName}]=${this.pageLimit}`);
-                break;
         }
 
         return parameters;
