@@ -72,7 +72,7 @@ export class Builder
     public get(page: number = 0): Promise<PluralResponse>
     {
         let thiss = this;
-        this.setPage(page);
+        this.paginationSpec.setPage(page);
         return <Promise<PluralResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
@@ -88,7 +88,7 @@ export class Builder
     public first(): Promise<SingularResponse>
     {
         let thiss = this;
-        this.pageLimit = 1;
+        this.paginationSpec.setPageLimit(1);
         return <Promise<SingularResponse>> this.getAxiosInstance()
             .get(this.model.getJsonApiType()+this.getParameterString())
             .then(
@@ -210,10 +210,7 @@ export class Builder
         parameters = parameters.concat(this.getIncludeParameters());
         parameters = parameters.concat(this.getSortParameters());
         parameters = parameters.concat(this.getOptionsParameters());
-
-        if (this.pageOffset !== null || this.pageNumber !== null) {
-            parameters = parameters.concat(this.getPaginationParameters());
-        }
+        parameters = parameters.concat(this.paginationSpec.getPaginationParameters());
 
         return parameters;
     }
