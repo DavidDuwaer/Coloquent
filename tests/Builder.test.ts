@@ -2,6 +2,7 @@ import {assert, expect} from 'chai';
 import * as moxios from 'moxios';
 import {Hero} from './dummy/Hero';
 import {Builder} from '../lib/Builder';
+import {PaginationStrategy} from "../lib/PaginationStrategy";
 
 describe('Builder', () => {
     let builder;
@@ -151,5 +152,53 @@ describe('Builder', () => {
 
             done();
         });
+    });
+
+    it('default pagination strategy is limit-offset', (done) => {
+        builder
+            .get(2);
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.include(request.url, 'page[limit]');
+            assert.include(request.url, 'page[offset]');
+
+            done();
+        })
+    });
+
+    it('pagination strategy limit-offset properly serializes pagination spec', (done) => {
+        let page: number = Math.round(Math.random() * 100) + 2;
+        let limit: number = Hero.getPageSize();
+        builder
+            .get(page);
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.include(request.url, 'page[limit]='+limit);
+            assert.include(request.url, 'page[offset]='+(page-1)*limit);
+
+            done();
+        })
+    });
+
+    it('pagination strategy pagesize-pagenumber properly serializes pagination spec', (done) => {
+        Hero.setPaginationStrategy(PaginationStrategy.PageBased);
+        builder = new Builder(Hero);
+        let page: number = Math.round(Math.random() * 100) + 2;
+        let limit: number = Hero.getPageSize();
+        builder
+            .get(page);
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.include(request.url, 'page[size]='+limit);
+            assert.include(request.url, 'page[number]='+page);
+
+            done();
+        })
     });
 });
