@@ -138,7 +138,7 @@ export class Builder
 
     public orderBy(attribute: string, direction: string): Builder
     {
-        if (direction && ['asc', 'desc'].indexOf(direction) > -1) {
+        if (direction && ['asc', 'desc'].indexOf(direction) === -1) {
             throw new Error("The 'direction' parameter must be string of value 'asc' or 'desc'.")
         }
         this.sort.push(
