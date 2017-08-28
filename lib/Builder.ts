@@ -9,6 +9,9 @@ import {Promise} from 'es6-promise';
 import axios from 'axios';
 import {Option} from "./Option";
 import {PaginationStrategy} from "./PaginationStrategy";
+import {PaginationSpec} from "./paginationspec/PaginationSpec";
+import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationSpec";
+import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
 
 export class Builder
 {
@@ -39,6 +42,7 @@ export class Builder
     protected pageOffsetParamName: string;
 
     protected pageLimitParamName: string;
+    protected paginationSpec: PaginationSpec;
 
     private axiosInstance;
 
@@ -58,6 +62,7 @@ export class Builder
         this.pageSizeParamName = modelType.getPaginationPageSizeParamName();
         this.pageOffsetParamName = modelType.getPaginationOffsetParamName();
         this.pageLimitParamName = modelType.getPaginationLimitParamName();
+        this.initPaginationSpec();
         this.axiosInstance = axios.create({
             baseURL: this.model.getJsonApiBaseUrl(),
             withCredentials: true
@@ -172,6 +177,27 @@ export class Builder
 
             case PaginationStrategy.PageBased:
                 this.pageNumber = page;
+                break;
+        }
+    }
+
+    private initPaginationSpec(): void
+    {
+        switch (this.modelType.getPaginationStrategy()) {
+            case PaginationStrategy.OffsetBased:
+                this.paginationSpec = new OffsetBasedPaginationSpec(
+                    this.modelType.getPaginationOffsetParamName(),
+                    this.modelType.getPaginationLimitParamName(),
+                    this.modelType.getPageSize()
+                );
+                break;
+
+            case PaginationStrategy.PageBased:
+                this.paginationSpec = new PageBasedPaginationSpec(
+                    this.modelType.getPaginationPageNumberParamName(),
+                    this.modelType.getPaginationPageSizeParamName(),
+                    this.modelType.getPageSize()
+                );
                 break;
         }
     }
