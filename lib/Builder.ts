@@ -192,7 +192,8 @@ export class Builder
         return parameters;
     }
 
-    private getOptionsParameters(): string[] {
+    private getOptionsParameters(): string[]
+    {
         let parameters: string[] = [];
 
         for (let option of this.options) {
@@ -202,7 +203,8 @@ export class Builder
         return parameters;
     }
 
-    private getPaginationParameters(): string[] {
+    private getPaginationParameters(): string[]
+    {
         let parameters: string[] = [];
 
         switch (this.paginationStrategy) {
@@ -220,7 +222,8 @@ export class Builder
         return parameters;
     }
 
-    private getSortParameters(): string[] {
+    private getSortParameters(): string[]
+    {
         let parameters: string[] = [];
 
         if (this.sort.length > 0) {
@@ -240,7 +243,8 @@ export class Builder
         return parameters;
     }
 
-    private getIncludeParameters(): string[] {
+    private getIncludeParameters(): string[]
+    {
         let parameters: string[] = [];
 
         if (this.include.length > 0) {
@@ -257,7 +261,8 @@ export class Builder
         return parameters;
     }
 
-    private getFilterParameters(): string[] {
+    private getFilterParameters(): string[]
+    {
         let parameters: string[] = [];
 
         for (let f of this.filters) {
