@@ -1,4 +1,5 @@
 import {PaginationSpec} from "./PaginationSpec";
+import {QueryParam} from "../QueryParam";
 
 export class OffsetBasedPaginationSpec extends PaginationSpec
 {
@@ -9,6 +10,8 @@ export class OffsetBasedPaginationSpec extends PaginationSpec
     protected pageLimit: number;
 
     protected pageOffset: number;
+
+    private queryParams: QueryParam[] = [];
 
     constructor(
         pageOffsetParamName: string,
@@ -21,14 +24,14 @@ export class OffsetBasedPaginationSpec extends PaginationSpec
         this.pageLimit = limit;
     }
 
-    public getPaginationParameters(): string[]
+    public getPaginationParameters(): QueryParam[]
     {
-        return this.pageOffset !== undefined
-            ? [
-                `page[${this.pageOffsetParamName}]=${this.pageOffset}`,
-                `page[${this.pageLimitParamName}]=${this.pageLimit}`
-            ]
-            : [];
+        if (this.pageOffset !== undefined) {
+            this.queryParams.push(new QueryParam(`page.${this.pageOffsetParamName}`, this.pageOffset))
+            this.queryParams.push(new QueryParam(`page.${this.pageLimitParamName}`, this.pageLimit))
+        }
+
+        return this.queryParams;
     }
 
     public setPage(page: number)

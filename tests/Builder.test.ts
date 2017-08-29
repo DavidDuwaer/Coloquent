@@ -23,7 +23,7 @@ describe('Builder', () => {
             let request = moxios.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
-            assert.equal(request.url, 'http://coloquent.app/api/heros?page[offset]=0&page[limit]=50');
+            assert.equal(request.url, 'http://coloquent.app/api/heros?page%5Boffset%5D=0&page%5Blimit%5D=50');
 
             done();
         });
@@ -53,7 +53,7 @@ describe('Builder', () => {
             let request = moxios.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
-            assert.include(request.url, 'filter[name]=Bob');
+            assert.include(request.url, 'filter%5Bname%5D=Bob');
 
             done();
         });
@@ -83,7 +83,7 @@ describe('Builder', () => {
             let request = moxios.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
-            assert.include(request.url, 'include=weapons,costume');
+            assert.include(request.url, 'include=weapons%2Ccostume');
 
             done();
         });
@@ -161,8 +161,8 @@ describe('Builder', () => {
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
 
-            assert.include(request.url, 'page[limit]');
-            assert.include(request.url, 'page[offset]');
+            assert.include(request.url, 'page%5Blimit%5D');
+            assert.include(request.url, 'page%5Boffset%5D');
 
             done();
         })
@@ -177,8 +177,8 @@ describe('Builder', () => {
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
 
-            assert.include(request.url, 'page[limit]='+limit);
-            assert.include(request.url, 'page[offset]='+(page-1)*limit);
+            assert.include(request.url, 'page%5Blimit%5D='+limit);
+            assert.include(request.url, 'page%5Boffset%5D='+(page-1)*limit);
 
             done();
         })
@@ -195,8 +195,8 @@ describe('Builder', () => {
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
 
-            assert.include(request.url, 'page[size]='+limit);
-            assert.include(request.url, 'page[number]='+page);
+            assert.include(request.url, 'page%5Bsize%5D='+limit);
+            assert.include(request.url, 'page%5Bnumber%5D='+page);
 
             done();
         })
