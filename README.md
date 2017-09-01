@@ -1,8 +1,5 @@
 ![Coloquent](https://user-images.githubusercontent.com/8791690/28809914-c0c8e938-7686-11e7-8d22-599328c73cb5.png)
 
-[![npm version](https://badge.fury.io/js/coloquent.svg)](https://badge.fury.io/js/coloquent)
-[![Build Status](https://travis-ci.org/DavidDuwaer/Coloquent.svg?branch=master)](https://travis-ci.org/DavidDuwaer/Coloquent)
-
 Javascript/Typescript library mapping objects and their interrelations to [JSON API](http://jsonapi.org), with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
 
 ```javascript
@@ -15,6 +12,9 @@ Teacher
         // do stuff with response
     });
 ```
+
+[![npm version](https://badge.fury.io/js/coloquent.svg)](https://badge.fury.io/js/coloquent)
+[![Build Status](https://travis-ci.org/DavidDuwaer/Coloquent.svg?branch=master)](https://travis-ci.org/DavidDuwaer/Coloquent)
 
 # Usage
 
