@@ -1,6 +1,5 @@
 import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
-import {ClassFilterSpec} from "./ClassFilterSpec";
 import {SortSpec} from "./SortSpec";
 import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
 import {PluralResponse} from "./PluralResponse";
@@ -167,70 +166,17 @@ export class Builder
 
     private setQueryParameters(): void
     {
-       this.setFilterParameters();
-       this.setIncludeParameters();
-       this.setSortParameters();
-       this.setOptionsParameters();
-
-       for (let param of this.paginationSpec.getPaginationParameters()) {
-           this.query.set(param.name, param.value);
-       }
-    }
-
-    private setOptionsParameters(): void
-    {
-        for (let option of this.options) {
-            this.query.set(option.getParameter(), option.getValue());
-        }
-    }
-
-    private setSortParameters(): void
-    {
-        if (this.sort.length > 0) {
-            let p = '';
-            for (let sortSpec of this.sort) {
-                if (p !== '') {
-                    p += ',';
-                }
-                if (!sortSpec.getPositiveDirection()) {
-                    p += '-';
-                }
-                p += sortSpec.getAttribute();
-            }
-            this.query.set('sort', p);
-        }
-    }
-
-    private setIncludeParameters(): void
-    {
-        if (this.include.length > 0) {
-            let p = '';
-            for (let incl of this.include) {
-                if (p !== '') {
-                    p += ',';
-                }
-                p += incl;
-            }
-            this.query.set('include', p);
-        }
-    }
-
-    private setFilterParameters(): void
-    {
-        for (let f of this.filters) {
-            if (f instanceof ClassFilterSpec) {
-                let ff = <ClassFilterSpec> f;
-                this.query.set(`filter.${ff.getClass()}.${ff.getAttribute()}`, ff.getValue());
-            } else {
-                this.query.set(`filter.${f.getAttribute()}`, f.getValue());
-            }
-        }
+        this.query.setFilterParameters(this.filters);
+        this.query.setIncludeParameters(this.include);
+        this.query.setOptionsParameters(this.options);
+        this.query.setPaginationParameters(this.paginationSpec);
+        this.query.setSortParameters(this.sort);
     }
 
     private getParameterString(): string
     {
         this.setQueryParameters();
 
-        return (this.query.toString()) ? '?' + this.query.toString() : '';
+        return this.query.toString();
     }
 }
