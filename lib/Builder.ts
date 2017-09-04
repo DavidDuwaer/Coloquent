@@ -164,18 +164,13 @@ export class Builder
         }
     }
 
-    private setQueryParameters(): void
+    private getParameterString(): string
     {
         this.query.setFilterParameters(this.filters);
         this.query.setIncludeParameters(this.include);
         this.query.setOptionsParameters(this.options);
         this.query.setPaginationParameters(this.paginationSpec);
         this.query.setSortParameters(this.sort);
-    }
-
-    private getParameterString(): string
-    {
-        this.setQueryParameters();
 
         return this.query.toString();
     }
