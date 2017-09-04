@@ -1,6 +1,5 @@
 import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
-import {ClassFilterSpec} from "./ClassFilterSpec";
 import {SortSpec} from "./SortSpec";
 import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
 import {PluralResponse} from "./PluralResponse";
@@ -12,6 +11,7 @@ import {PaginationStrategy} from "./PaginationStrategy";
 import {PaginationSpec} from "./paginationspec/PaginationSpec";
 import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationSpec";
 import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
+import {Query} from "./Query";
 
 export class Builder
 {
@@ -31,6 +31,8 @@ export class Builder
 
     private axiosInstance;
 
+    private query: Query;
+
     constructor(modelType: typeof Model)
     {
         this.modelType = modelType;
@@ -39,6 +41,7 @@ export class Builder
         this.options = [];
         this.include = [];
         this.sort = [];
+        this.query = new Query();
         this.initPaginationSpec();
         this.axiosInstance = axios.create({
             baseURL: this.model.getJsonApiBaseUrl(),
@@ -161,98 +164,19 @@ export class Builder
         }
     }
 
-    private getQueryParameters(): string[]
+    private setQueryParameters(): void
     {
-        let parameters: string[] = [];
-
-        parameters = parameters.concat(this.getFilterParameters());
-        parameters = parameters.concat(this.getIncludeParameters());
-        parameters = parameters.concat(this.getSortParameters());
-        parameters = parameters.concat(this.getOptionsParameters());
-        parameters = parameters.concat(this.paginationSpec.getPaginationParameters());
-
-        return parameters;
-    }
-
-    private getOptionsParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        for (let option of this.options) {
-            parameters.push(option.getParameter() + '=' + option.getValue());
-        }
-
-        return parameters;
-    }
-
-    private getSortParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        if (this.sort.length > 0) {
-            let p = '';
-            for (let sortSpec of this.sort) {
-                if (p !== '') {
-                    p += ',';
-                }
-                if (!sortSpec.getPositiveDirection()) {
-                    p += '-';
-                }
-                p += sortSpec.getAttribute();
-            }
-            parameters.push('sort=' + p);
-        }
-
-        return parameters;
-    }
-
-    private getIncludeParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        if (this.include.length > 0) {
-            let p = '';
-            for (let incl of this.include) {
-                if (p !== '') {
-                    p += ',';
-                }
-                p += incl;
-            }
-            parameters.push('include=' + p);
-        }
-
-        return parameters;
-    }
-
-    private getFilterParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        for (let f of this.filters) {
-            if (f instanceof ClassFilterSpec) {
-                let ff = <ClassFilterSpec> f;
-                parameters.push('filter[' + ff.getClass() + '][' + ff.getAttribute() + ']=' + ff.getValue());
-            } else {
-                parameters.push('filter[' + f.getAttribute() + ']=' + f.getValue());
-            }
-        }
-
-        return parameters;
+        this.query.setFilterParameters(this.filters);
+        this.query.setIncludeParameters(this.include);
+        this.query.setOptionsParameters(this.options);
+        this.query.setPaginationParameters(this.paginationSpec);
+        this.query.setSortParameters(this.sort);
     }
 
     private getParameterString(): string
     {
-        let r = '';
+        this.setQueryParameters();
 
-        for (let queryParameter of this.getQueryParameters()) {
-            if (r === '') {
-                r += '?';
-            } else {
-                r += '&';
-            }
-            r += queryParameter;
-        }
-
-        return r;
+        return this.query.toString();
     }
 }
