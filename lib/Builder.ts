@@ -54,7 +54,7 @@ export class Builder
         let thiss = this;
         this.paginationSpec.setPage(page);
         return <Promise<PluralResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+this.getParameterString())
+            .get(this.model.getJsonApiType()+this.getQueryString())
             .then(
                 function (response: AxiosResponse) {
                     return new PluralResponse(thiss.modelType, response.data);
@@ -70,7 +70,7 @@ export class Builder
         let thiss = this;
         this.paginationSpec.setPageLimit(1);
         return <Promise<SingularResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+this.getParameterString())
+            .get(this.model.getJsonApiType()+this.getQueryString())
             .then(
                 function (response: AxiosResponse) {
                     return new SingularResponse(thiss.modelType, response.data);
@@ -85,7 +85,7 @@ export class Builder
     {
         let thiss = this;
         return <Promise<SingularResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+'/'+id+this.getParameterString())
+            .get(this.model.getJsonApiType()+'/'+id+this.getQueryString())
             .then(
                 function (response: AxiosResponse) {
                     return new SingularResponse(thiss.modelType, response.data);
@@ -164,7 +164,7 @@ export class Builder
         }
     }
 
-    private getParameterString(): string
+    private getQueryString(): string
     {
         this.query.setFilterParameters(this.filters);
         this.query.setIncludeParameters(this.include);
