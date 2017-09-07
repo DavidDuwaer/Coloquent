@@ -1,6 +1,6 @@
 ![Coloquent](https://user-images.githubusercontent.com/8791690/28809914-c0c8e938-7686-11e7-8d22-599328c73cb5.png)
 
-Javascript/Typescript library mapping objects and their interrelations to [JSON API](http://jsonapi.org), with a clean, fluent syntax inspired by Laravel's Eloquent for creating, retrieving, updating and deleting model objects. For example:
+Javascript/Typescript library mapping objects and their interrelations to [JSON API](http://jsonapi.org), with a clean, fluent ActiveRecord (e.g. similar to Laravel's Eloquent) syntax for creating, retrieving, updating and deleting model objects. For example:
 
 ```javascript
 Teacher
