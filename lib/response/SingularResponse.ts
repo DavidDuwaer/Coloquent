@@ -1,9 +1,9 @@
-import {Response} from "./Response";
+import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {JsonApiDoc} from "../JsonApiDoc";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 
-export class SingularResponse extends Response
+export class SingularResponse extends RetrievalResponse
 {
     protected data: Model;
 

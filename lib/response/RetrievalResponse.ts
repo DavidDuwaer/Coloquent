@@ -7,7 +7,7 @@ import {Relation} from "../Relation";
 import {ToOneRelation} from "../ToOneRelation";
 import {Map} from "../util/Map";
 
-export abstract class Response
+export abstract class RetrievalResponse
 {
     protected modelType: any;
 
