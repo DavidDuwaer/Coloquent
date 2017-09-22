@@ -214,6 +214,11 @@ export abstract class Model
         this.relations.set(relationName, value);
     }
 
+    public getAttributes(): {[key: string]: any}
+    {
+        return this.attributes.toArray();
+    }
+
     protected getAttribute(attributeName: string): any
     {
         if (this.isDateAttribute(attributeName)) {
