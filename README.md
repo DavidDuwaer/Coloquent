@@ -16,6 +16,8 @@ Teacher
 [![npm version](https://badge.fury.io/js/coloquent.svg)](https://badge.fury.io/js/coloquent)
 [![Build Status](https://travis-ci.org/DavidDuwaer/Coloquent.svg?branch=master)](https://travis-ci.org/DavidDuwaer/Coloquent)
 
+To get started, see our more elaborate guide in our [wiki](https://github.com/DavidDuwaer/Coloquent/wiki)! A short version is featured below.
+
 # Usage
 
 ### Retrieving
