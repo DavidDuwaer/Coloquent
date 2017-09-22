@@ -6,8 +6,9 @@ import {JsonApiStub} from "../JsonApiStub";
 import {Relation} from "../Relation";
 import {ToOneRelation} from "../ToOneRelation";
 import {Map} from "../util/Map";
+import {Response} from "./Response";
 
-export abstract class RetrievalResponse
+export abstract class RetrievalResponse extends Response
 {
     protected modelType: any;
 
@@ -21,6 +22,7 @@ export abstract class RetrievalResponse
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
+        super();
         this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();
