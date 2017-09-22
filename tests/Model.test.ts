@@ -90,4 +90,30 @@ describe('Model', () => {
             });
         });
     });
+
+    it('should update in ID when it had none and gets saved', (done) => {
+        let superHero = new Hero();
+        let id: string = Math.floor(Math.random()*10000).toString();
+        expect(null, superHero.getApiId());
+        superHero.save()
+            .then(function (response: SaveResponse) {
+                assert.equal(id, response.getModelId());
+                assert.equal(id, superHero.getApiId());
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            request.respondWith({
+                response: {
+                    data: {
+                        type: superHero.getJsonApiType(),
+                        id: id,
+                        attributes: superHero.getAttributes()
+                    }
+                }
+            })
+        });
+    });
 });
