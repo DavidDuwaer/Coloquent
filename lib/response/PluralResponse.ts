@@ -1,6 +1,6 @@
 import {Response} from "./Response";
-import {Model} from "./Model";
-import {JsonApiDoc} from "./JsonApiDoc";
+import {Model} from "../Model";
+import {JsonApiDoc} from "../JsonApiDoc";
 
 export class PluralResponse extends Response
 {

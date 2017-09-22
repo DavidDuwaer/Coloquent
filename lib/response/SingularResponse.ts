@@ -1,7 +1,7 @@
 import {Response} from "./Response";
-import {Model} from "./Model";
-import {JsonApiDoc} from "./JsonApiDoc";
-import {JsonApiResponseBody} from "./JsonApiResponseBody";
+import {Model} from "../Model";
+import {JsonApiDoc} from "../JsonApiDoc";
+import {JsonApiResponseBody} from "../JsonApiResponseBody";
 
 export class SingularResponse extends Response
 {

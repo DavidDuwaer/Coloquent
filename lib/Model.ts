@@ -3,8 +3,8 @@ import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
 import {AxiosInstance, AxiosPromise} from "axios";
 import axios from 'axios';
-import {PluralResponse} from "./PluralResponse";
-import {SingularResponse} from "./SingularResponse";
+import {PluralResponse} from "./response/PluralResponse";
+import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
 import DateFormatter from "php-date-formatter";
 
