@@ -41,7 +41,7 @@ export class Builder
             .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
-                    return new PluralResponse(thiss.modelType, response.data);
+                    return new PluralResponse(thiss.modelType, response.data, page);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);

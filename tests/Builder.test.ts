@@ -3,6 +3,7 @@ import * as moxios from 'moxios';
 import {Hero} from './dummy/Hero';
 import {Builder} from '../lib/Builder';
 import {PaginationStrategy} from "../lib/PaginationStrategy";
+import {PluralResponse} from "../lib/PluralResponse";
 
 describe('Builder', () => {
     let builder;
@@ -200,5 +201,32 @@ describe('Builder', () => {
 
             done();
         })
+    });
+
+    it('pagination strategy pagesize-pagenumber properly serializes pagination spec', (done) => {
+        Hero.setPaginationStrategy(PaginationStrategy.PageBased);
+        let id: string = Math.floor(Math.random()*10000).toString();
+        builder = new Builder(Hero);
+        let page: number = Math.round(Math.random() * 100) + 2;
+        let limit: number = Hero.getPageSize();
+        builder
+            .get(page)
+            .then(function (response: PluralResponse) {
+                assert.equal(page, response.getPageNumber());
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            request.respondWith({
+                response: {
+                    data: [{
+                        type: (new Hero()).getJsonApiType(),
+                        id: id,
+                        attributes: {}
+                    }]
+                }
+            })
+        });
     });
 });
