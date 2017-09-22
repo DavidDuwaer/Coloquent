@@ -7,58 +7,74 @@ import {PaginationSpec} from "./paginationspec/PaginationSpec";
 
 export class Query
 {
-    private searchParams: URLSearchParams;
+    protected jsonApiType: string;
 
-    constructor()
+    protected idToFind: number;
+
+    protected paginationSpec: PaginationSpec;
+
+    protected include: string[];
+
+    protected filters: FilterSpec[];
+
+    protected options: Option[];
+
+    protected sort: SortSpec[];
+
+    constructor(jsonApiType: string)
     {
-        this.searchParams = new URLSearchParams();
+        this.jsonApiType = jsonApiType;
+        this.include = [];
+        this.filters = [];
+        this.options = [];
+        this.sort = [];
     }
 
-    public setFilterParameters(filters: FilterSpec[]): void
+    protected addFilterParameters(searchParams: URLSearchParams): void
     {
-        for (let f of filters) {
+        for (let f of this.filters) {
             if (f instanceof ClassFilterSpec) {
                 let ff = <ClassFilterSpec> f;
-                this.searchParams.set(`filter[${ff.getClass()}][${ff.getAttribute()}]`, ff.getValue());
+                searchParams.set(`filter[${ff.getClass()}][${ff.getAttribute()}]`, ff.getValue());
             } else {
-                this.searchParams.set(`filter[${f.getAttribute()}]`, f.getValue());
+                searchParams.set(`filter[${f.getAttribute()}]`, f.getValue());
             }
         }
     }
 
-    public setIncludeParameters(include: string[]): void
+    protected addIncludeParameters(searchParams: URLSearchParams): void
     {
-        if (include.length > 0) {
+        if (this.include.length > 0) {
             let p = '';
-            for (let incl of include) {
+            for (let incl of this.include) {
                 if (p !== '') {
                     p += ',';
                 }
                 p += incl;
             }
-            this.searchParams.set('include', p);
+            searchParams.set('include', p);
         }
     }
 
-    public setOptionsParameters(options: Option[]): void
+    protected addOptionsParameters(searchParams: URLSearchParams): void
     {
-        for (let option of options) {
-            this.searchParams.set(option.getParameter(), option.getValue());
+        for (let option of this.options) {
+            searchParams.set(option.getParameter(), option.getValue());
         }
     }
 
-    public setPaginationParameters(paginationSpec: PaginationSpec): void
+    protected addPaginationParameters(searchParams: URLSearchParams): void
     {
-        for (let param of paginationSpec.getPaginationParameters()) {
-            this.searchParams.set(param.name, param.value);
+        for (let param of this.paginationSpec.getPaginationParameters()) {
+            searchParams.set(param.name, param.value);
         }
     }
 
-    public setSortParameters(sort: SortSpec[]): void
+    protected addSortParameters(searchParams: URLSearchParams): void
     {
-        if (sort.length > 0) {
+        if (this.sort.length > 0) {
             let p = '';
-            for (let sortSpec of sort) {
+            for (let sortSpec of this.sort) {
                 if (p !== '') {
                     p += ',';
                 }
@@ -67,12 +83,61 @@ export class Query
                 }
                 p += sortSpec.getAttribute();
             }
-            this.searchParams.set('sort', p);
+            searchParams.set('sort', p);
         }
     }
 
     public toString(): string
     {
-        return (this.searchParams.toString()) ? '?' + this.searchParams.toString() : '';
+        let idToFind: string = this.idToFind
+            ? '/' + this.idToFind
+            : '';
+
+        let searchParams: URLSearchParams = new URLSearchParams();
+        this.addFilterParameters(searchParams);
+        this.addIncludeParameters(searchParams);
+        this.addOptionsParameters(searchParams);
+        this.addPaginationParameters(searchParams);
+        this.addSortParameters(searchParams);
+
+        let params: string = searchParams.toString()
+            ? '?' + searchParams.toString()
+            : '';
+        return this.jsonApiType + idToFind + params;
+    }
+
+    public setIdToFind(idToFind: number): void
+    {
+        this.idToFind = idToFind;
+    }
+
+    public getPaginationSpec(): PaginationSpec
+    {
+        return this.paginationSpec;
+    }
+
+    public setPaginationSpec(paginationSpec: PaginationSpec): void
+    {
+        this.paginationSpec = paginationSpec;
+    }
+
+    public addInclude(includeSpec: string): void
+    {
+        this.include.push(includeSpec);
+    }
+
+    public addFilter(filter: FilterSpec): void
+    {
+        this.filters.push(filter);
+    }
+
+    public addSort(sort: SortSpec): void
+    {
+        this.sort.push(sort);
+    }
+
+    public addOption(option: Option): void
+    {
+        this.options.push(option);
     }
 }

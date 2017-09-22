@@ -4,16 +4,26 @@ import {FilterSpec} from "../lib/FilterSpec";
 import {Option} from "../lib/Option";
 import {OffsetBasedPaginationSpec} from "../lib/paginationspec/OffsetBasedPaginationSpec";
 import {SortSpec} from "../lib/SortSpec";
+import {Hero} from "./dummy/Hero";
 
 describe('Query', () => {
+    let model;
     let query;
 
     beforeEach(() => {
-        query = new Query();
+        model = new Hero();
+        query = new Query(model.getJsonApiType());
+        query.setPaginationSpec(
+            new OffsetBasedPaginationSpec(
+                Hero.getPaginationOffsetParamName(),
+                Hero.getPaginationLimitParamName(),
+                Hero.getPageSize()
+            )
+        )
     });
 
-    it('should return an empty string when there are no parameters set', () => {
-        assert.equal(query.toString(), '');
+    it('should return only jsonapitype when there are no parameters set', () => {
+        assert.equal(query.toString(), model.getJsonApiType());
     });
 
     it('filter parameters should nest under filter key', () => {
@@ -22,15 +32,19 @@ describe('Query', () => {
             new FilterSpec('age', '99'),
         ];
 
-        query.setFilterParameters(filters);
+        for (let filter of filters) {
+            query.addFilter(filter);
+        }
 
-        assert.equal(query.toString(), '?filter%5Bname%5D=Bob&filter%5Bage%5D=99');
+        assert.equal(query.toString(), model.getJsonApiType()+'?filter%5Bname%5D=Bob&filter%5Bage%5D=99');
     });
 
     it('include parameters should nest under include key', () => {
-        query.setIncludeParameters(['weapons', 'costume']);
+        for (let include of ['weapons', 'costume']) {
+            query.addInclude(include);
+        }
 
-        assert.equal(query.toString(), '?include=weapons%2Ccostume');
+        assert.equal(query.toString(), model.getJsonApiType()+'?include=weapons%2Ccostume');
     });
 
     it('option parameters should append to the query string', () => {
@@ -39,28 +53,32 @@ describe('Query', () => {
             new Option('age', '99'),
         ];
 
-        query.setOptionsParameters(options);
+        for (let option of options) {
+            query.addOption(option);
+        }
 
-        assert.equal(query.toString(), '?name=Bob&age=99');
+        assert.equal(query.toString(), model.getJsonApiType()+'?name=Bob&age=99');
     });
 
     it('pagination parameters should nest under page key', () => {
         let pageSpec = new OffsetBasedPaginationSpec('offset', 'limit', 10);
         pageSpec.setPage(1);
 
-        query.setPaginationParameters(pageSpec);
+        query.setPaginationSpec(pageSpec);
 
-        assert.equal(query.toString(), '?page%5Boffset%5D=0&page%5Blimit%5D=10');
+        assert.equal(query.toString(), model.getJsonApiType()+'?page%5Boffset%5D=0&page%5Blimit%5D=10');
     });
 
     it('sort parameters should append to sort key', () => {
-        let orderBy = [
+        let sorts = [
             new SortSpec('name', true),
             new SortSpec('age', false),
         ];
 
-        query.setSortParameters(orderBy);
+        for (let sort of sorts) {
+            query.addSort(sort);
+        }
 
-        assert.equal(query.toString(), '?sort=name%2C-age');
+        assert.equal(query.toString(), model.getJsonApiType()+'?sort=name%2C-age');
     });
 });
