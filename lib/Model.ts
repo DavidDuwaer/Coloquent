@@ -263,4 +263,14 @@ export abstract class Model
         }
         return Model.dateFormatter;
     }
+
+    public getApiId(): string
+    {
+        return this.id;
+    }
+
+    public setApiId(id: string): void
+    {
+        this.id = id;
+    }
 }
