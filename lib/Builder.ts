@@ -1,6 +1,5 @@
 import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
-import {ClassFilterSpec} from "./ClassFilterSpec";
 import {SortSpec} from "./SortSpec";
 import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
 import {PluralResponse} from "./PluralResponse";
@@ -12,36 +11,24 @@ import {PaginationStrategy} from "./PaginationStrategy";
 import {PaginationSpec} from "./paginationspec/PaginationSpec";
 import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationSpec";
 import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
+import {Query} from "./Query";
 
 export class Builder
 {
-    protected model: Model;
-
     protected modelType: any;
 
-    protected filters: FilterSpec[];
-
-    protected options: Option[];
-
-    protected include: string[];
-
-    protected sort: SortSpec[];
-
-    protected paginationSpec: PaginationSpec;
-
     private axiosInstance;
+
+    private query: Query;
 
     constructor(modelType: typeof Model)
     {
         this.modelType = modelType;
-        this.model = new this.modelType();
-        this.filters = [];
-        this.options = [];
-        this.include = [];
-        this.sort = [];
+        let model = new this.modelType();
+        this.query = new Query(model.getJsonApiType());
         this.initPaginationSpec();
         this.axiosInstance = axios.create({
-            baseURL: this.model.getJsonApiBaseUrl(),
+            baseURL: model.getJsonApiBaseUrl(),
             withCredentials: true
         });
     }
@@ -49,9 +36,9 @@ export class Builder
     public get(page: number = 0): Promise<PluralResponse>
     {
         let thiss = this;
-        this.paginationSpec.setPage(page);
+        this.query.getPaginationSpec().setPage(page);
         return <Promise<PluralResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+this.getParameterString())
+            .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
                     return new PluralResponse(thiss.modelType, response.data);
@@ -65,9 +52,9 @@ export class Builder
     public first(): Promise<SingularResponse>
     {
         let thiss = this;
-        this.paginationSpec.setPageLimit(1);
+        this.query.getPaginationSpec().setPageLimit(1);
         return <Promise<SingularResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+this.getParameterString())
+            .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
                     return new SingularResponse(thiss.modelType, response.data);
@@ -80,9 +67,10 @@ export class Builder
 
     public find(id: number): Promise<SingularResponse>
     {
+        this.query.setIdToFind(id);
         let thiss = this;
         return <Promise<SingularResponse>> this.getAxiosInstance()
-            .get(this.model.getJsonApiType()+'/'+id+this.getParameterString())
+            .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
                     return new SingularResponse(thiss.modelType, response.data);
@@ -93,24 +81,19 @@ export class Builder
             );
     }
 
-    public getAxiosInstance(): AxiosInstance
-    {
-        return this.axiosInstance;
-    }
-
     public where(attribute: string, value: string): Builder
     {
-        this.filters.push(new FilterSpec(attribute, value));
+        this.query.addFilter(new FilterSpec(attribute, value));
         return this;
     }
 
     public with(value: any): Builder
     {
         if (typeof value === 'string') {
-            this.include.push(value);
+            this.query.addInclude(value);
         } else if (Array.isArray(value)) {
             for (let v of value) {
-                this.include.push(v);
+                this.query.addInclude(v);
             }
         } else {
             throw new Error("The argument for 'with' must be a string or an array of strings.");
@@ -123,7 +106,7 @@ export class Builder
         if (direction && ['asc', 'desc'].indexOf(direction) === -1) {
             throw new Error("The 'direction' parameter must be string of value 'asc' or 'desc'.")
         }
-        this.sort.push(
+        this.query.addSort(
             new SortSpec(
                 attribute,
                 !direction || direction === 'asc'
@@ -134,7 +117,7 @@ export class Builder
 
     public option(queryParameter: string, value: string): Builder
     {
-        this.options.push(
+        this.query.addOption(
             new Option(queryParameter, value)
         );
         return this;
@@ -142,117 +125,30 @@ export class Builder
 
     private initPaginationSpec(): void
     {
-        switch (this.modelType.getPaginationStrategy()) {
-            case PaginationStrategy.OffsetBased:
-                this.paginationSpec = new OffsetBasedPaginationSpec(
+        let paginationStrategy = this.modelType.getPaginationStrategy();
+        if (paginationStrategy === PaginationStrategy.OffsetBased) {
+            this.query.setPaginationSpec(
+                new OffsetBasedPaginationSpec(
                     this.modelType.getPaginationOffsetParamName(),
                     this.modelType.getPaginationLimitParamName(),
                     this.modelType.getPageSize()
-                );
-                break;
-
-            case PaginationStrategy.PageBased:
-                this.paginationSpec = new PageBasedPaginationSpec(
+                )
+            );
+        } else if (paginationStrategy === PaginationStrategy.PageBased) {
+            this.query.setPaginationSpec(
+                new PageBasedPaginationSpec(
                     this.modelType.getPaginationPageNumberParamName(),
                     this.modelType.getPaginationPageSizeParamName(),
                     this.modelType.getPageSize()
-                );
-                break;
+                )
+            );
+        } else {
+            throw new Error('Illegal state: Pagination strategy is not set.');
         }
     }
 
-    private getQueryParameters(): string[]
+    private getAxiosInstance(): AxiosInstance
     {
-        let parameters: string[] = [];
-
-        parameters = parameters.concat(this.getFilterParameters());
-        parameters = parameters.concat(this.getIncludeParameters());
-        parameters = parameters.concat(this.getSortParameters());
-        parameters = parameters.concat(this.getOptionsParameters());
-        parameters = parameters.concat(this.paginationSpec.getPaginationParameters());
-
-        return parameters;
-    }
-
-    private getOptionsParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        for (let option of this.options) {
-            parameters.push(option.getParameter() + '=' + option.getValue());
-        }
-
-        return parameters;
-    }
-
-    private getSortParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        if (this.sort.length > 0) {
-            let p = '';
-            for (let sortSpec of this.sort) {
-                if (p !== '') {
-                    p += ',';
-                }
-                if (!sortSpec.getPositiveDirection()) {
-                    p += '-';
-                }
-                p += sortSpec.getAttribute();
-            }
-            parameters.push('sort=' + p);
-        }
-
-        return parameters;
-    }
-
-    private getIncludeParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        if (this.include.length > 0) {
-            let p = '';
-            for (let incl of this.include) {
-                if (p !== '') {
-                    p += ',';
-                }
-                p += incl;
-            }
-            parameters.push('include=' + p);
-        }
-
-        return parameters;
-    }
-
-    private getFilterParameters(): string[]
-    {
-        let parameters: string[] = [];
-
-        for (let f of this.filters) {
-            if (f instanceof ClassFilterSpec) {
-                let ff = <ClassFilterSpec> f;
-                parameters.push('filter[' + ff.getClass() + '][' + ff.getAttribute() + ']=' + ff.getValue());
-            } else {
-                parameters.push('filter[' + f.getAttribute() + ']=' + f.getValue());
-            }
-        }
-
-        return parameters;
-    }
-
-    private getParameterString(): string
-    {
-        let r = '';
-
-        for (let queryParameter of this.getQueryParameters()) {
-            if (r === '') {
-                r += '?';
-            } else {
-                r += '&';
-            }
-            r += queryParameter;
-        }
-
-        return r;
+        return this.axiosInstance;
     }
 }

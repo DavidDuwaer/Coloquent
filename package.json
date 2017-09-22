@@ -3,9 +3,16 @@
   "version": "0.5.0",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
-    "coloquent", "eloquent",
-    "json-api", "json", "api", "json-api client", "api client", "json-api-client",
-    "model", "orm",
+    "coloquent",
+    "eloquent",
+    "json-api",
+    "json",
+    "api",
+    "json-api client",
+    "api client",
+    "json-api-client",
+    "model",
+    "orm",
     "mvc"
   ],
   "author": "David Duwaer",
@@ -28,7 +35,8 @@
   "dependencies": {
     "@types/es6-promise": "0.0.32",
     "axios": "^0.16.2",
-    "php-date-formatter": "^1.3.4"
+    "php-date-formatter": "^1.3.4",
+    "url-search-params": "^0.10.0"
   },
   "devDependencies": {
     "@types/chai": "^4.0.3",
