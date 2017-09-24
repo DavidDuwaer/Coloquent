@@ -8,6 +8,8 @@ import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
 import DateFormatter from "php-date-formatter";
 import {SaveResponse} from "./response/SaveResponse";
+import {ToManyRelation} from "./relation/ToManyRelation";
+import {ToOneRelation} from "./relation/ToOneRelation";
 
 export abstract class Model
 {
@@ -295,5 +297,15 @@ export abstract class Model
     public setApiId(id: string): void
     {
         this.id = id;
+    }
+
+    protected hasMany(relatedType: typeof Model): ToManyRelation
+    {
+        return new ToManyRelation(relatedType, this);
+    }
+
+    protected hasOne(relatedType: typeof Model): ToOneRelation
+    {
+        return new ToOneRelation(relatedType, this);
     }
 }

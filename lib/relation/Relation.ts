@@ -1,13 +1,14 @@
+import {Model} from "../Model";
 export class Relation
 {
     private relatedType;
 
-    private referringType;
+    private referringObject: Model;
 
-    constructor(relatedType, referringType = null)
+    constructor(relatedType, referringObject: Model = null)
     {
         this.relatedType = relatedType;
-        this.referringType = referringType;
+        this.referringObject = referringObject;
     }
 
     public getType(): any
@@ -15,14 +16,14 @@ export class Relation
         return this.relatedType;
     }
 
-    public getReferringType(): any
+    public getReferringObject(): Model
     {
-        if (!this.referringType) {
+        if (!this.referringObject) {
             throw new Error(
                 "Referring type not set on this relation. You should define the relation on your model with e.g." +
                 " 'this.hasMany(...)' instead of with 'new ToManyRelation(...)'"
             )
         }
-        return this.referringType;
+        return this.referringObject;
     }
 }
