@@ -1,13 +1,14 @@
-import {JsonApiResponseBody} from "./JsonApiResponseBody";
-import {JsonApiDoc} from "./JsonApiDoc";
-import {Model} from "./Model";
-import {ToManyRelation} from "./ToManyRelation";
-import {JsonApiStub} from "./JsonApiStub";
-import {Relation} from "./Relation";
-import {ToOneRelation} from "./ToOneRelation";
-import {Map} from "./util/Map";
+import {JsonApiResponseBody} from "../JsonApiResponseBody";
+import {JsonApiDoc} from "../JsonApiDoc";
+import {Model} from "../Model";
+import {ToManyRelation} from "../ToManyRelation";
+import {JsonApiStub} from "../JsonApiStub";
+import {Relation} from "../Relation";
+import {ToOneRelation} from "../ToOneRelation";
+import {Map} from "../util/Map";
+import {Response} from "./Response";
 
-export abstract class Response
+export abstract class RetrievalResponse extends Response
 {
     protected modelType: any;
 
@@ -21,6 +22,7 @@ export abstract class Response
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
+        super();
         this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();

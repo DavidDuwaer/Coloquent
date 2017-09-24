@@ -3,7 +3,7 @@ import * as moxios from 'moxios';
 import {Hero} from './dummy/Hero';
 import {Builder} from '../lib/Builder';
 import {PaginationStrategy} from "../lib/PaginationStrategy";
-import {PluralResponse} from "../lib/PluralResponse";
+import {PluralResponse} from "../lib/response/PluralResponse";
 
 describe('Builder', () => {
     let builder;

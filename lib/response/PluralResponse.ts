@@ -1,9 +1,9 @@
-import {Response} from "./Response";
-import {Model} from "./Model";
-import {JsonApiDoc} from "./JsonApiDoc";
-import {JsonApiResponseBody} from "./JsonApiResponseBody";
+import {RetrievalResponse} from "./RetrievalResponse";
+import {Model} from "../Model";
+import {JsonApiDoc} from "../JsonApiDoc";
+import {JsonApiResponseBody} from "../JsonApiResponseBody";
 
-export class PluralResponse extends Response
+export class PluralResponse extends RetrievalResponse
 {
     protected data: Model[];
 

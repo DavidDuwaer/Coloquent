@@ -1,12 +1,13 @@
 import {Builder} from "./Builder";
 import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
-import {AxiosInstance, AxiosPromise} from "axios";
+import {AxiosInstance, AxiosPromise, AxiosResponse, AxiosError} from "axios";
 import axios from 'axios';
-import {PluralResponse} from "./PluralResponse";
-import {SingularResponse} from "./SingularResponse";
+import {PluralResponse} from "./response/PluralResponse";
+import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
 import DateFormatter from "php-date-formatter";
+import {SaveResponse} from "./response/SaveResponse";
 
 export abstract class Model
 {
@@ -114,9 +115,10 @@ export abstract class Model
             .option(queryParameter, value);
     }
 
-    public save(): Promise<void>
+    public save(): Promise<SaveResponse>
     {
         let attributes = {};
+        let thiss = this;
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
                 attributes[key] = this.attributes.get(key);
@@ -134,7 +136,14 @@ export abstract class Model
                     this.getJsonApiType()+'/'+this.id,
                     payload
                 )
-                .then(function () {});
+                .then(
+                    function (response: AxiosResponse) {
+                        return new SaveResponse(thiss.constructor, response.data);
+                    },
+                    function (response: AxiosError) {
+                        throw new Error(response.message);
+                    }
+                );
         } else {
             payload['data']['id'] = this.id;
             return this.axiosInstance
@@ -142,7 +151,14 @@ export abstract class Model
                     this.getJsonApiType(),
                     payload
                 )
-                .then(function () {});
+                .then(
+                    function (response: AxiosResponse) {
+                        return new SaveResponse(thiss.constructor, response.data);
+                    },
+                    function (response: AxiosError) {
+                        throw new Error(response.message);
+                    }
+                );
         }
     }
 
@@ -214,6 +230,11 @@ export abstract class Model
         this.relations.set(relationName, value);
     }
 
+    public getAttributes(): {[key: string]: any}
+    {
+        return this.attributes.toArray();
+    }
+
     protected getAttribute(attributeName: string): any
     {
         if (this.isDateAttribute(attributeName)) {
@@ -262,5 +283,15 @@ export abstract class Model
             Model.dateFormatter = new DateFormatter();
         }
         return Model.dateFormatter;
+    }
+
+    public getApiId(): string
+    {
+        return this.id;
+    }
+
+    public setApiId(id: string): void
+    {
+        this.id = id;
     }
 }
