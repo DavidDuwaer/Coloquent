@@ -20,4 +20,8 @@ describe('Relation', () => {
     it('successufly stores its referring object', () => {
         assert.equal(model, model.friends().getReferringObject());
     });
+
+    it('knows its own name', () => {
+        assert.equal('friends', model.friends().getName());
+    });
 });
