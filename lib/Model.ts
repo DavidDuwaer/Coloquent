@@ -138,6 +138,7 @@ export abstract class Model
                 )
                 .then(
                     function (response: AxiosResponse) {
+                        thiss.setApiId(response.data.data.id);
                         return new SaveResponse(thiss.constructor, response.data);
                     },
                     function (response: AxiosError) {
@@ -153,6 +154,7 @@ export abstract class Model
                 )
                 .then(
                     function (response: AxiosResponse) {
+                        thiss.setApiId(response.data.data.id);
                         return new SaveResponse(thiss.constructor, response.data);
                     },
                     function (response: AxiosError) {
