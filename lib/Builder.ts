@@ -41,7 +41,7 @@ export class Builder
             .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
-                    return new PluralResponse(thiss.modelType, response.data, page);
+                    return new PluralResponse(response, thiss.modelType, response.data, page);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -57,7 +57,7 @@ export class Builder
             .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularResponse(thiss.modelType, response.data);
+                    return new SingularResponse(response, thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -73,7 +73,7 @@ export class Builder
             .get(this.query.toString())
             .then(
                 function (response: AxiosResponse) {
-                    return new SingularResponse(thiss.modelType, response.data);
+                    return new SingularResponse(response, thiss.modelType, response.data);
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);

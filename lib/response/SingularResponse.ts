@@ -2,16 +2,18 @@ import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {JsonApiDoc} from "../JsonApiDoc";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
+import {AxiosResponse} from "axios";
 
 export class SingularResponse extends RetrievalResponse
 {
     protected data: Model;
 
     constructor(
+        axiosResponse: AxiosResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
-        super(modelType, responseBody);
+        super(axiosResponse, modelType, responseBody);
     }
 
     public getData(): Model
