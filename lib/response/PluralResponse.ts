@@ -1,10 +1,24 @@
 import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {JsonApiDoc} from "../JsonApiDoc";
+import {JsonApiResponseBody} from "../JsonApiResponseBody";
 
 export class PluralResponse extends RetrievalResponse
 {
     protected data: Model[];
+
+    protected pageNumber: number;
+
+    constructor(modelType: typeof Model, responseBody: JsonApiResponseBody, pageNumber: number = 1)
+    {
+        super(modelType, responseBody);
+        this.pageNumber = pageNumber;
+    }
+
+    public getPageNumber(): number
+    {
+        return Math.max(this.pageNumber, 1);
+    }
 
     public getData(): Model[]
     {
