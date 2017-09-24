@@ -1,14 +1,28 @@
 export class Relation
 {
-    private type;
+    private relatedType;
 
-    constructor(type)
+    private referringType;
+
+    constructor(relatedType, referringType = null)
     {
-        this.type = type;
+        this.relatedType = relatedType;
+        this.referringType = referringType;
     }
 
     public getType(): any
     {
-        return this.type;
+        return this.relatedType;
+    }
+
+    public getReferringType(): any
+    {
+        if (!this.referringType) {
+            throw new Error(
+                "Referring type not set on this relation. You should define the relation on your model with e.g." +
+                " 'this.hasMany(...)' instead of with 'new ToManyRelation(...)'"
+            )
+        }
+        return this.referringType;
     }
 }
