@@ -106,8 +106,7 @@ artist.delete();
 # Requirements
 
 * Use in a project of which the runtime code is Javascript ES5 or higher.
-* The attribute `jsonApiBaseUrl` explained in the Setup section of this readme must point to an API implementing the [JSON API](http://jsonapi.org) standard, extended with one requirement:
-  * Pagination is offered with `offset` and `limit` query parameters, with `offset=0` being equivalent to specifying no offset.
+* The attribute `jsonApiBaseUrl` explained in the Setup section of this readme must point to an API implementing the [JSON API](http://jsonapi.org) standard.
 
 # Setup
 
