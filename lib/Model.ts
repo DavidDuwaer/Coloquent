@@ -10,6 +10,7 @@ import DateFormatter from "php-date-formatter";
 import {SaveResponse} from "./response/SaveResponse";
 import {ToManyRelation} from "./relation/ToManyRelation";
 import {ToOneRelation} from "./relation/ToOneRelation";
+import {Reflection} from "./util/Reflection";
 
 export abstract class Model
 {
@@ -301,11 +302,13 @@ export abstract class Model
 
     protected hasMany(relatedType: typeof Model): ToManyRelation
     {
-        return new ToManyRelation(relatedType, this);
+        let relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        return new ToManyRelation(relatedType, this, relationName);
     }
 
     protected hasOne(relatedType: typeof Model): ToOneRelation
     {
-        return new ToOneRelation(relatedType, this);
+        let relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        return new ToOneRelation(relatedType, this, relationName);
     }
 }
