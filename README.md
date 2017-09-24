@@ -65,11 +65,11 @@ This will retrieve only a single model from the server. To retrieve a single mod
 ```javascript
 Artist.find(324);
 ```
-If, for some reason, you need to add a raw URL query parameter (e.g. `?foo=somevalue`) to the underlying endpoint, use
+If, for some reason, you need to add a raw URL query parameter (e.g. `?_foo=somevalue`) to the underlying endpoint, use
 the `option` clause:
 ```javascript
 Artist
-    .option('foo', 'somevalue')
+    .option('_foo', 'somevalue')
     .get();
 ```
 
