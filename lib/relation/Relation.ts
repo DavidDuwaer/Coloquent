@@ -1,14 +1,21 @@
 import {Model} from "../Model";
+import {Reflection} from "../util/Reflection";
 export class Relation
 {
     private relatedType;
 
     private referringObject: Model;
 
-    constructor(relatedType, referringObject: Model = null)
+    private name: string;
+
+    constructor(relatedType, referringObject: Model = null, name: string = null)
     {
         this.relatedType = relatedType;
         this.referringObject = referringObject;
+        if (name === null) {
+            name = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        }
+        this.name = name;
     }
 
     public getType(): any
@@ -25,5 +32,16 @@ export class Relation
             )
         }
         return this.referringObject;
+    }
+
+    public getName(): string
+    {
+        if (!this.name) {
+            throw new Error(
+                "Cannot deduce name of relation. You should define the relation on your model with e.g." +
+                " 'this.hasMany(...)' instead of with 'new ToManyRelation(...)'"
+            );
+        }
+        return this.name;
     }
 }
