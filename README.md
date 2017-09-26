@@ -247,7 +247,7 @@ Coloquent is in active development and all feedback and contributions are sincer
 
 
 ```bash
-npm install coloquent
+npm install coloquent --save
 ```
 
 # License
