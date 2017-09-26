@@ -139,7 +139,7 @@ export abstract class Model
                 .then(
                     function (response: AxiosResponse) {
                         thiss.setApiId(response.data.data.id);
-                        return new SaveResponse(thiss.constructor, response.data);
+                        return new SaveResponse(response, thiss.constructor, response.data);
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -155,7 +155,7 @@ export abstract class Model
                 .then(
                     function (response: AxiosResponse) {
                         thiss.setApiId(response.data.data.id);
-                        return new SaveResponse(thiss.constructor, response.data);
+                        return new SaveResponse(response, thiss.constructor, response.data);
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);

@@ -1,13 +1,16 @@
-import {JsonApiResponseBody} from "../JsonApiResponseBody";
-import {JsonApiDoc} from "../JsonApiDoc";
-import {Model} from "../Model";
-import {ToManyRelation} from "../relation/ToManyRelation";
-import {JsonApiStub} from "../JsonApiStub";
-import {Relation} from "../relation/Relation";
-import {ToOneRelation} from "../relation/ToOneRelation";
-import {Map} from "../util/Map";
+import {AxiosResponse} from "axios";
 
 export abstract class Response
 {
+    private axiosResponse: AxiosResponse;
 
+    constructor(axiosResponse: AxiosResponse)
+    {
+        this.axiosResponse = axiosResponse;
+    }
+
+    public getHttpClientResponse(): AxiosResponse
+    {
+        return this.axiosResponse;
+    }
 }

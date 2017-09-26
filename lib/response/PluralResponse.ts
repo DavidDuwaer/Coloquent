@@ -2,6 +2,7 @@ import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {JsonApiDoc} from "../JsonApiDoc";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
+import {AxiosResponse} from "axios";
 
 export class PluralResponse extends RetrievalResponse
 {
@@ -9,9 +10,13 @@ export class PluralResponse extends RetrievalResponse
 
     protected pageNumber: number;
 
-    constructor(modelType: typeof Model, responseBody: JsonApiResponseBody, pageNumber: number = 1)
-    {
-        super(modelType, responseBody);
+    constructor(
+        axiosResponse: AxiosResponse,
+        modelType: typeof Model,
+        responseBody: JsonApiResponseBody,
+        pageNumber: number = 1
+    ) {
+        super(axiosResponse, modelType, responseBody);
         this.pageNumber = pageNumber;
     }
 
