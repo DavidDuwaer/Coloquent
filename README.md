@@ -154,7 +154,7 @@ class Artist extends AppModel
 
     albums()
     {
-        return new ToManyRelation(Album);
+        return this.hasMany(Album);
     }
 
     getAlbums(): Album[]
@@ -189,12 +189,12 @@ class Album extends AppModel
 
     artist()
     {
-        return new ToOneRelation(Artist);
+        return this.hasOne(Artist);
     }
 
     songs()
     {
-        return new ToManyRelation(Song);
+        return this.hasMany(Song);
     }
 
     getArtist(): Artist
@@ -214,7 +214,7 @@ class Song extends AppModel
 
     album()
     {
-        return new ToOneRelation(Album);
+        return this.hasOne(Album);
     }
 
     getAlbum(): Album {
