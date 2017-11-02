@@ -6,7 +6,7 @@ import {PaginationStrategy} from "../lib/PaginationStrategy";
 import {PluralResponse} from "../lib/response/PluralResponse";
 
 describe('Builder', () => {
-    let builder;
+    let builder: Builder;
 
     beforeEach(() => {
         moxios.install();

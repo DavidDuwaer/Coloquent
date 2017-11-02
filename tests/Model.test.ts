@@ -30,6 +30,21 @@ describe('Model', () => {
         expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api/');
     });
 
+    it('should have an orderBy method', (done) => {
+        Hero
+            .orderBy('name')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.equal(request.config.method, 'get');
+            assert.include(request.url, 'sort=name');
+
+            done();
+        });
+    });
+
     it('should properly run its save() method when it has no ID', () => {
         let superHero = new Hero();
         superHero.save();

@@ -112,6 +112,12 @@ export abstract class Model
             .where(attribute, value);
     }
 
+    public static orderBy(attribute: string, direction: string = null): Builder
+    {
+        return new Builder(this)
+            .orderBy(attribute, direction);
+    }
+
     public static option(queryParameter: string, value: string): Builder
     {
         return new Builder(this)
