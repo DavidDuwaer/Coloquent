@@ -6,7 +6,7 @@ import {PaginationStrategy} from "../lib/PaginationStrategy";
 import {PluralResponse} from "../lib/response/PluralResponse";
 
 describe('Builder', () => {
-    let builder;
+    let builder: Builder;
 
     beforeEach(() => {
         moxios.install();
@@ -33,13 +33,13 @@ describe('Builder', () => {
     // TODO: add first method test here
 
     it('find method should append argument to the resource uri', (done) => {
-        builder.find('007');
+        builder.find(7);
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
-            assert.equal(request.url, 'http://coloquent.app/api/heros/007');
+            assert.equal(request.url, 'http://coloquent.app/api/heros/7');
 
             done();
         });

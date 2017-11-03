@@ -5,9 +5,11 @@ import {SaveResponse} from "../lib/response/SaveResponse";
 import * as moxios from 'moxios';
 
 describe('Model', () => {
+    let superHero: Hero;
 
     beforeEach(() => {
         moxios.install();
+        superHero = new Hero();
     });
 
     afterEach(() => {
@@ -15,14 +17,10 @@ describe('Model', () => {
     });
 
     it('should be able to initiate', () => {
-        let superHero = new Hero();
-
         expect(superHero).to.be.an.instanceof(Model);
     });
 
     it('should set default properties', () => {
-        let superHero = new Hero();
-
         /** @see Hero */
         expect(superHero.getJsonApiType()).to.equal('heros');
 
@@ -46,18 +44,15 @@ describe('Model', () => {
     });
 
     it('should properly run its save() method when it has no ID', () => {
-        let superHero = new Hero();
         superHero.save();
     });
 
     it('should properly run its save() method when it has an ID', () => {
-        let superHero = new Hero();
         superHero.setApiId(Math.floor(Math.random()*10000).toString());
         superHero.save();
     });
 
     it('should pass a proper response object to its save() promise callback when id was set', (done) => {
-        let superHero = new Hero();
         superHero.setApiId(Math.floor(Math.random()*10000).toString());
         superHero.save()
             .then(function (response: SaveResponse) {
@@ -82,7 +77,6 @@ describe('Model', () => {
     });
 
     it('should pass a proper response object to its save() promise callback when id was not set', (done) => {
-        let superHero = new Hero();
         let id: string = Math.floor(Math.random()*10000).toString();
         superHero.save()
             .then(function (response: SaveResponse) {
@@ -107,7 +101,6 @@ describe('Model', () => {
     });
 
     it('should update in ID when it had none and gets saved', (done) => {
-        let superHero = new Hero();
         let id: string = Math.floor(Math.random()*10000).toString();
         expect(null, superHero.getApiId());
         superHero.save()
