@@ -140,6 +140,7 @@ export abstract class Model
             }
         };
         if (this.id !== null) {
+            payload['data']['id'] = this.id;
             return this.axiosInstance
                 .patch(
                     this.getJsonApiType()+'/'+this.id,
@@ -155,7 +156,6 @@ export abstract class Model
                     }
                 );
         } else {
-            payload['data']['id'] = this.id;
             return this.axiosInstance
                 .post(
                     this.getJsonApiType(),

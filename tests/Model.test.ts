@@ -52,6 +52,30 @@ describe('Model', () => {
         superHero.save();
     });
 
+    it('should include the ID in the payload for save() when it has one', (done) => {
+        let id = Math.floor(Math.random()*10000).toString();
+        superHero.setApiId(id);
+        superHero.save();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.equal(JSON.parse(request.config.data).data.id, id);
+
+            done();
+        });
+    });
+
+    it('should NOT include the ID in the payload for save() when it has no ID', (done) => {
+        superHero.save();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.isUndefined(JSON.parse(request.config.data).data['id'])
+
+            done();
+        });
+    });
+
     it('should pass a proper response object to its save() promise callback when id was set', (done) => {
         superHero.setApiId(Math.floor(Math.random()*10000).toString());
         superHero.save()
