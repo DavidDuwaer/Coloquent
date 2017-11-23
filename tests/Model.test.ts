@@ -148,4 +148,57 @@ describe('Model', () => {
             })
         });
     });
+
+    it('should properly run its create() method when it has an ID', () => {
+        superHero.setApiId(Math.floor(Math.random()*10000).toString());
+        superHero.create();
+    });
+
+    it('should include the ID in the payload for create() when it has one', (done) => {
+        let id = Math.floor(Math.random()*10000).toString();
+        superHero.setApiId(id);
+        superHero.create();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.equal(JSON.parse(request.config.data).data.id, id);
+
+            done();
+        });
+    });
+
+    it('should NOT include the ID in the payload for create() when it has no ID', (done) => {
+        superHero.create();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.isUndefined(JSON.parse(request.config.data).data['id'])
+
+            done();
+        });
+    });
+
+    it('should pass a proper response object to its create() promise callback', (done) => {
+        superHero.setApiId(Math.floor(Math.random()*10000).toString());
+        superHero.create()
+            .then(function (response: SaveResponse) {
+                assert.equal(superHero.getApiId(), response.getModelId());
+
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            request.respondWith({
+                response: {
+                    data: {
+                        type: superHero.getJsonApiType(),
+                        id: superHero.getApiId(),
+                        attributes: superHero.getAttributes()
+                    }
+                }
+            });
+        });
+    });
 });

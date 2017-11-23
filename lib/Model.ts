@@ -126,8 +126,8 @@ export abstract class Model
 
     public save(): Promise<SaveResponse>
     {
-        let attributes = {};
         let thiss = this;
+        let attributes = {};
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
                 attributes[key] = this.attributes.get(key);
@@ -171,6 +171,40 @@ export abstract class Model
                     }
                 );
         }
+    }
+
+    public create(): Promise<SaveResponse>
+    {
+        let thiss = this;
+        let attributes = {};
+        for (let key in this.attributes.toArray()) {
+            if (this.readOnlyAttributes.indexOf(key) == -1) {
+                attributes[key] = this.attributes.get(key);
+            }
+        }
+        let payload = {
+            data: {
+                type: this.getJsonApiType(),
+                attributes: attributes
+            }
+        };
+        if (this.id !== null) {
+            payload['data']['id'] = this.id;
+        }
+        return this.axiosInstance
+            .post(
+                this.getJsonApiType(),
+                payload
+            )
+            .then(
+                function (response: AxiosResponse) {
+                    thiss.setApiId(response.data.data.id);
+                    return new SaveResponse(response, thiss.constructor, response.data);
+                },
+                function (response: AxiosError) {
+                    throw new Error(response.message);
+                }
+            );
     }
 
     public delete(): Promise<void>
