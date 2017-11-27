@@ -84,7 +84,7 @@ export abstract class Model
 
     public static get(page: number = null): Promise<PluralResponse>
     {
-        return new Builder(this)
+        return <Promise<PluralResponse>> new Builder(this)
             .get(page);
     }
 
