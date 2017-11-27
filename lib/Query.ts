@@ -4,10 +4,13 @@ import {SortSpec} from "./SortSpec";
 import {Option} from "./Option";
 import {PaginationSpec} from "./paginationspec/PaginationSpec";
 import {QueryParam} from "./QueryParam";
+import {Model} from "./Model";
 
 export class Query
 {
     protected jsonApiType: string;
+
+    protected queriedRelationName: string;
 
     protected idToFind: number;
 
@@ -21,9 +24,10 @@ export class Query
 
     protected sort: SortSpec[];
 
-    constructor(jsonApiType: string)
+    constructor(jsonApiType: string, queriedRelationName: string = null)
     {
         this.jsonApiType = jsonApiType;
+        this.queriedRelationName = queriedRelationName;
         this.include = [];
         this.filters = [];
         this.options = [];
@@ -89,6 +93,10 @@ export class Query
 
     public toString(): string
     {
+        let relationToFind: string = this.queriedRelationName
+            ? '/' + this.queriedRelationName
+            : '';
+
         let idToFind: string = this.idToFind
             ? '/' + this.idToFind
             : '';
@@ -109,7 +117,7 @@ export class Query
             paramString += encodeURIComponent(searchParam.name) + '=' + encodeURIComponent(searchParam.value);
         }
 
-        return this.jsonApiType + idToFind + paramString;
+        return this.jsonApiType + relationToFind + idToFind + paramString;
     }
 
     public setIdToFind(idToFind: number): void

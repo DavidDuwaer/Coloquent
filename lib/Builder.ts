@@ -8,12 +8,13 @@ import {Promise} from 'es6-promise';
 import axios from 'axios';
 import {Option} from "./Option";
 import {PaginationStrategy} from "./PaginationStrategy";
-import {PaginationSpec} from "./paginationspec/PaginationSpec";
 import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationSpec";
 import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
 import {Query} from "./Query";
+import {QueryMethods} from "./QueryMethods";
+import {Response} from "./response/Response";
 
-export class Builder
+export class Builder implements QueryMethods
 {
     protected modelType: any;
 
@@ -21,32 +22,58 @@ export class Builder
 
     private query: Query;
 
-    constructor(modelType: typeof Model)
-    {
+    /**
+     * If true, then this function will in all cases return a SingularResponse. This is used by ToOneRelations, which
+     * when queried spawn a Builder with this property set to true.
+     */
+    private forceSingular: boolean;
+
+    constructor(
+        modelType: typeof Model,
+        queriedRelationName: string = null,
+        baseModelJsonApiType: string = null,
+        forceSingular: boolean = false
+    ) {
         this.modelType = modelType;
-        let model = new this.modelType();
-        this.query = new Query(model.getJsonApiType());
+        baseModelJsonApiType = baseModelJsonApiType
+            ? baseModelJsonApiType
+            : (new (<any> modelType)()).getJsonApiType();
+        this.query = new Query(baseModelJsonApiType, queriedRelationName);
         this.initPaginationSpec();
         this.axiosInstance = axios.create({
-            baseURL: model.getJsonApiBaseUrl(),
+            baseURL: (new (<any> modelType)()).getJsonApiBaseUrl(),
             withCredentials: true
         });
+        this.forceSingular = forceSingular;
     }
 
-    public get(page: number = 0): Promise<PluralResponse>
+    public get(page: number = 0): Promise<Response>
     {
         let thiss = this;
         this.query.getPaginationSpec().setPage(page);
-        return <Promise<PluralResponse>> this.getAxiosInstance()
-            .get(this.query.toString())
-            .then(
-                function (response: AxiosResponse) {
-                    return new PluralResponse(response, thiss.modelType, response.data, page);
-                },
-                function (response: AxiosError) {
-                    throw new Error(response.message);
-                }
-            );
+        if (this.forceSingular) {
+            return <Promise<SingularResponse>> this.getAxiosInstance()
+                .get(this.query.toString())
+                .then(
+                    function (response: AxiosResponse) {
+                        return new SingularResponse(response, thiss.modelType, response.data);
+                    },
+                    function (response: AxiosError) {
+                        throw new Error(response.message);
+                    }
+                );
+        } else {
+            return <Promise<PluralResponse>> this.getAxiosInstance()
+                .get(this.query.toString())
+                .then(
+                    function (response: AxiosResponse) {
+                        return new PluralResponse(response, thiss.modelType, response.data, page);
+                    },
+                    function (response: AxiosError) {
+                        throw new Error(response.message);
+                    }
+                );
+        }
     }
 
     public first(): Promise<SingularResponse>
