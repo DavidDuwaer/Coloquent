@@ -97,7 +97,7 @@ If `artist` has the property `id` set, Coloquent will attempt a `PATCH` request 
 
 ### Deleting
 
-To delete an instance of `Artist`:
+To delete an instance of `Artist` from the server:
 
 ```javascript
 artist.delete();
