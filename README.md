@@ -8,8 +8,8 @@ Teacher
     .with('students')                       // eager loads related models
     .with('schools.address')                // eager loads directly and indirectly related models
     .get()                                  // submits the HTTP request, returns an ES6 Promise
-    .then(function (coloquentResponse) {    // response is turned into full-fledged, interrelated models
-        // do stuff with response
+    .then(function (coloquentResponse) {
+        // do stuff with response of full-fledged, interrelated Teacher, Student, School and Address objects
     });
 ```
 
