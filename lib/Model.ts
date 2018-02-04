@@ -6,7 +6,6 @@ import axios from 'axios';
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
-import DateFormatter from "php-date-formatter";
 import {SaveResponse} from "./response/SaveResponse";
 import {ToManyRelation} from "./relation/ToManyRelation";
 import {ToOneRelation} from "./relation/ToOneRelation";
@@ -61,9 +60,7 @@ export abstract class Model
 
     protected readOnlyAttributes: string[];
 
-    protected dates: {[key: string]: string};
-
-    private static dateFormatter;
+    protected dates: string[];
 
     constructor()
     {
@@ -71,6 +68,7 @@ export abstract class Model
         this.relations = new Map();
         this.attributes = new Map();
         this.readOnlyAttributes = [];
+        this.dates = [];
         this.initAxiosInstance();
     }
 
@@ -282,52 +280,30 @@ export abstract class Model
 
     protected getAttribute(attributeName: string): any
     {
-        if (this.isDateAttribute(attributeName)) {
-            return this.getAttributeAsDate(attributeName);
-        }
-
         return this.attributes.get(attributeName);
     }
 
-    protected getAttributeAsDate(attributeName: string): any
+    public asDateTime(value: string): any
     {
-        if (!Date.parse(this.attributes.get(attributeName))) {
-            throw new Error(`Attribute ${attributeName} cannot be cast to type Date`);
+        if (!Date.parse(value)) {
+            throw new Error(`${value} cannot be cast to type Date`);
         }
 
-        return new Date(this.attributes.get(attributeName));
+        return new Date(value);
     }
 
     private isDateAttribute(attributeName: string): boolean
     {
-        return this.dates.hasOwnProperty(attributeName);
+        return this.dates.indexOf(attributeName) != -1;
     }
 
     protected setAttribute(attributeName: string, value: any): void
     {
         if (this.isDateAttribute(attributeName)) {
-            if (!Date.parse(value)) {
-                throw new Error(`${value} cannot be cast to type Date`);
-            }
-            value = Model.getDateFormatter().parseDate(value, this.dates[attributeName]);
+            value = this.asDateTime(value);
         }
 
         this.attributes.set(attributeName, value);
-    }
-
-    /**
-     * We use a single instance of DateFormatter, which is stored as a static property on Model, to minimize the number
-     * of times we need to instantiate the DateFormatter class. By using this getter a DateFormatter is instantiated
-     * only when it is used at least once.
-     *
-     * @returns DateFormatter
-     */
-    private static getDateFormatter(): DateFormatter
-    {
-        if (!Model.dateFormatter) {
-            Model.dateFormatter = new DateFormatter();
-        }
-        return Model.dateFormatter;
     }
 
     public getApiId(): string
