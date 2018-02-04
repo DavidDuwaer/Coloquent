@@ -35,7 +35,7 @@
   "dependencies": {
     "@types/es6-promise": "0.0.32",
     "@types/moxios": "^0.4.8",
-    "axios": "^0.16.2",
+    "axios": "^0.16.2"
   },
   "devDependencies": {
     "@types/chai": "^4.0.3",
