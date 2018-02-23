@@ -3,6 +3,7 @@ import {Model} from "../Model";
 import {JsonApiDoc} from "../JsonApiDoc";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
+import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 
 export class PluralResponse extends RetrievalResponse
 {
@@ -11,12 +12,12 @@ export class PluralResponse extends RetrievalResponse
     protected pageNumber: number;
 
     constructor(
-        axiosResponse: AxiosResponse,
+        httpClientResponse: HttpClientResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody,
         pageNumber: number = 1
     ) {
-        super(axiosResponse, modelType, responseBody);
+        super(httpClientResponse, modelType, responseBody);
         this.pageNumber = pageNumber;
     }
 

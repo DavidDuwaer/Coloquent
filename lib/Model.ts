@@ -11,6 +11,9 @@ import {SaveResponse} from "./response/SaveResponse";
 import {ToManyRelation} from "./relation/ToManyRelation";
 import {ToOneRelation} from "./relation/ToOneRelation";
 import {Reflection} from "./util/Reflection";
+import {HttpClient} from "./httpclient/HttpClient";
+import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
+import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 
 export abstract class Model
 {
@@ -57,7 +60,7 @@ export abstract class Model
 
     private attributes: Map<any>;
 
-    private axiosInstance: AxiosInstance;
+    private httpClient: HttpClient;
 
     protected readOnlyAttributes: string[];
 
@@ -71,15 +74,14 @@ export abstract class Model
         this.relations = new Map();
         this.attributes = new Map();
         this.readOnlyAttributes = [];
-        this.initAxiosInstance();
+        this.httpClient = new AxiosHttpClient();
+        this.initHttpClient();
     }
 
-    private initAxiosInstance(): void
+    private initHttpClient(): void
     {
-        this.axiosInstance = axios.create({
-            baseURL: this.getJsonApiBaseUrl(),
-            withCredentials: true
-        });
+        this.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
+        this.httpClient.setWithCredentials(true);
     }
 
     public static get(page: number = null): Promise<PluralResponse>
@@ -141,30 +143,30 @@ export abstract class Model
         };
         if (this.id !== null) {
             payload['data']['id'] = this.id;
-            return this.axiosInstance
+            return this.httpClient
                 .patch(
                     this.getJsonApiType()+'/'+this.id,
                     payload
                 )
                 .then(
-                    function (response: AxiosResponse) {
-                        thiss.setApiId(response.data.data.id);
-                        return new SaveResponse(response, thiss.constructor, response.data);
+                    function (response: HttpClientResponse) {
+                        thiss.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, thiss.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
                     }
                 );
         } else {
-            return this.axiosInstance
+            return this.httpClient
                 .post(
                     this.getJsonApiType(),
                     payload
                 )
                 .then(
-                    function (response: AxiosResponse) {
-                        thiss.setApiId(response.data.data.id);
-                        return new SaveResponse(response, thiss.constructor, response.data);
+                    function (response: HttpClientResponse) {
+                        thiss.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, thiss.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -191,15 +193,15 @@ export abstract class Model
         if (this.id !== null) {
             payload['data']['id'] = this.id;
         }
-        return this.axiosInstance
+        return this.httpClient
             .post(
                 this.getJsonApiType(),
                 payload
             )
             .then(
-                function (response: AxiosResponse) {
-                    thiss.setApiId(response.data.data.id);
-                    return new SaveResponse(response, thiss.constructor, response.data);
+                function (response: HttpClientResponse) {
+                    thiss.setApiId(response.getData().data.id);
+                    return new SaveResponse(response, thiss.constructor, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -212,7 +214,7 @@ export abstract class Model
         if (this.id === null) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return this.axiosInstance
+        return this.httpClient
             .delete(this.getJsonApiType()+'/'+this.id)
             .then(function () {});
     }
@@ -221,6 +223,25 @@ export abstract class Model
      * @returns {string} e.g. 'http://www.foo.com/bar/'
      */
     public abstract getJsonApiBaseUrl(): string;
+
+    /**
+     * Allows you to get the current HTTP client (AxiosHttpClient by default), e.g. to alter its configuration.
+     * @returns {HttpClient}
+     */
+    public getHttpClient(): HttpClient
+    {
+        return this.httpClient;
+    }
+
+    /**
+     * Allows you to use any HTTP client library, as long as you write a wrapper for it that implements the interfaces
+     * HttpClient, HttpClientPromise and HttpClientResponse.
+     * @param httpClient
+     */
+    public setHttpClient(httpClient: HttpClient)
+    {
+        this.httpClient = httpClient;
+    }
 
     public getJsonApiType(): string
     {

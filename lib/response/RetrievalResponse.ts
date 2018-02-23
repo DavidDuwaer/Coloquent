@@ -8,6 +8,7 @@ import {ToOneRelation} from "../relation/ToOneRelation";
 import {Map} from "../util/Map";
 import {Response} from "./Response";
 import {AxiosResponse} from "axios";
+import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 
 export abstract class RetrievalResponse extends Response
 {
@@ -20,11 +21,11 @@ export abstract class RetrievalResponse extends Response
     protected included: Model[];
 
     constructor(
-        axiosResponse: AxiosResponse,
+        httpClientResponse: HttpClientResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
-        super(axiosResponse);
+        super(httpClientResponse);
         this.modelType = modelType;
         this.docIndex = new Map<Map<JsonApiDoc>>();
         this.modelIndex = new Map<Map<Model>>();

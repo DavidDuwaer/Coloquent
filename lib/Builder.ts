@@ -13,12 +13,14 @@ import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec"
 import {Query} from "./Query";
 import {QueryMethods} from "./QueryMethods";
 import {Response} from "./response/Response";
+import {HttpClientResponse} from "./httpclient/HttpClientResponse";
+import {HttpClient} from "./httpclient/HttpClient";
 
 export class Builder implements QueryMethods
 {
     protected modelType: any;
 
-    private axiosInstance;
+    private httpClient: HttpClient;
 
     private query: Query;
 
@@ -35,15 +37,13 @@ export class Builder implements QueryMethods
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
+        let modelInstance: Model = (new (<any> modelType)());
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
-            : (new (<any> modelType)()).getJsonApiType();
+            : modelInstance.getJsonApiType();
         this.query = new Query(baseModelJsonApiType, queriedRelationName);
         this.initPaginationSpec();
-        this.axiosInstance = axios.create({
-            baseURL: (new (<any> modelType)()).getJsonApiBaseUrl(),
-            withCredentials: true
-        });
+        this.httpClient = modelInstance.getHttpClient();
         this.forceSingular = forceSingular;
     }
 
@@ -52,22 +52,22 @@ export class Builder implements QueryMethods
         let thiss = this;
         this.query.getPaginationSpec().setPage(page);
         if (this.forceSingular) {
-            return <Promise<SingularResponse>> this.getAxiosInstance()
+            return <Promise<SingularResponse>> this.getHttpClient()
                 .get(this.query.toString())
                 .then(
-                    function (response: AxiosResponse) {
-                        return new SingularResponse(response, thiss.modelType, response.data);
+                    function (response: HttpClientResponse) {
+                        return new SingularResponse(response, thiss.modelType, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
                     }
                 );
         } else {
-            return <Promise<PluralResponse>> this.getAxiosInstance()
+            return <Promise<PluralResponse>> this.getHttpClient()
                 .get(this.query.toString())
                 .then(
-                    function (response: AxiosResponse) {
-                        return new PluralResponse(response, thiss.modelType, response.data, page);
+                    function (response: HttpClientResponse) {
+                        return new PluralResponse(response, thiss.modelType, response.getData(), page);
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -80,11 +80,11 @@ export class Builder implements QueryMethods
     {
         let thiss = this;
         this.query.getPaginationSpec().setPageLimit(1);
-        return <Promise<SingularResponse>> this.getAxiosInstance()
+        return <Promise<SingularResponse>> this.getHttpClient()
             .get(this.query.toString())
             .then(
-                function (response: AxiosResponse) {
-                    return new SingularResponse(response, thiss.modelType, response.data);
+                function (response: HttpClientResponse) {
+                    return new SingularResponse(response, thiss.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -96,11 +96,11 @@ export class Builder implements QueryMethods
     {
         this.query.setIdToFind(id);
         let thiss = this;
-        return <Promise<SingularResponse>> this.getAxiosInstance()
+        return <Promise<SingularResponse>> this.getHttpClient()
             .get(this.query.toString())
             .then(
-                function (response: AxiosResponse) {
-                    return new SingularResponse(response, thiss.modelType, response.data);
+                function (response: HttpClientResponse) {
+                    return new SingularResponse(response, thiss.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -174,8 +174,8 @@ export class Builder implements QueryMethods
         }
     }
 
-    private getAxiosInstance(): AxiosInstance
+    private getHttpClient(): HttpClient
     {
-        return this.axiosInstance;
+        return this.httpClient;
     }
 }
