@@ -81,7 +81,6 @@ export abstract class Model
     private initHttpClient(): void
     {
         this.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
-        this.httpClient.setWithCredentials(true);
     }
 
     public static get(page: number = null): Promise<PluralResponse>
