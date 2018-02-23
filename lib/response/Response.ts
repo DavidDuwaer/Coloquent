@@ -1,15 +1,16 @@
 import {AxiosResponse} from "axios";
+import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 
 export abstract class Response
 {
-    private axiosResponse: AxiosResponse;
+    private axiosResponse: HttpClientResponse;
 
-    constructor(axiosResponse: AxiosResponse)
+    constructor(axiosResponse: HttpClientResponse)
     {
         this.axiosResponse = axiosResponse;
     }
 
-    public getHttpClientResponse(): AxiosResponse
+    public getHttpClientResponse(): HttpClientResponse
     {
         return this.axiosResponse;
     }
