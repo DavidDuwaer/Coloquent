@@ -2,7 +2,7 @@ import {Builder} from "./Builder";
 import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
 import {AxiosInstance, AxiosPromise, AxiosResponse, AxiosError} from "axios";
-import axios from 'axios';
+import axios from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
@@ -95,7 +95,7 @@ export abstract class Model
             .first();
     }
 
-    public static find(id: number): Promise<SingularResponse>
+    public static find(id: string | number): Promise<SingularResponse>
     {
         return new Builder(this)
             .find(id);

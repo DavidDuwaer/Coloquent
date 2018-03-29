@@ -16,7 +16,7 @@ export class ToManyRelation extends Relation implements QueryMethods
             .first();
     }
 
-    find(id: number): Promise<SingularResponse> {
+    find(id: string | number): Promise<SingularResponse> {
         return new Builder(this.getType(), this.getName(), this.getReferringObject().getJsonApiType())
             .find(id);
     }

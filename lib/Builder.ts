@@ -92,7 +92,7 @@ export class Builder implements QueryMethods
             );
     }
 
-    public find(id: number): Promise<SingularResponse>
+    public find(id: string | number): Promise<SingularResponse>
     {
         this.query.setIdToFind(id);
         let thiss = this;

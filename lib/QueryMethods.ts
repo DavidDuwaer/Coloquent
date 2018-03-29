@@ -9,7 +9,7 @@ export interface QueryMethods
 
     first(): Promise<SingularResponse>;
 
-    find(id: number): Promise<SingularResponse>;
+    find(id: number | string): Promise<SingularResponse>;
 
     where(attribute: string, value: string): Builder;
 
