@@ -127,7 +127,6 @@ export abstract class Model
 
     public save(): Promise<SaveResponse>
     {
-        let thiss = this;
         let attributes = {};
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
@@ -148,9 +147,9 @@ export abstract class Model
                     payload
                 )
                 .then(
-                    function (response: HttpClientResponse) {
-                        thiss.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, thiss.constructor, response.getData());
+                    (response: HttpClientResponse) => {
+                        this.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -163,9 +162,9 @@ export abstract class Model
                     payload
                 )
                 .then(
-                    function (response: HttpClientResponse) {
-                        thiss.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, thiss.constructor, response.getData());
+                    (response: HttpClientResponse) => {
+                        this.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -176,7 +175,6 @@ export abstract class Model
 
     public create(): Promise<SaveResponse>
     {
-        let thiss = this;
         let attributes = {};
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
@@ -198,9 +196,9 @@ export abstract class Model
                 payload
             )
             .then(
-                function (response: HttpClientResponse) {
-                    thiss.setApiId(response.getData().data.id);
-                    return new SaveResponse(response, thiss.constructor, response.getData());
+                (response: HttpClientResponse) => {
+                    this.setApiId(response.getData().data.id);
+                    return new SaveResponse(response, this.constructor, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);

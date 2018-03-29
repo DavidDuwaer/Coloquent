@@ -1,5 +1,4 @@
 import {Builder} from "./Builder";
-import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {Response} from "./response/Response";
 
