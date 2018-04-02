@@ -1,9 +1,6 @@
 import {assert, expect} from 'chai';
 import * as moxios from 'moxios';
-import {Hero} from './dummy/Hero';
-import {Builder} from '../lib/Builder';
-import {PaginationStrategy} from "../lib/PaginationStrategy";
-import {PluralResponse} from "../lib/response/PluralResponse";
+import {Hero} from './model1/dummy/Hero';
 import {split} from "ts-node/dist";
 
 describe('Relation', () => {

@@ -1,10 +1,10 @@
-import {Query} from './../lib/Query';
 import {assert} from 'chai';
-import {FilterSpec} from "../lib/FilterSpec";
-import {Option} from "../lib/Option";
-import {OffsetBasedPaginationSpec} from "../lib/paginationspec/OffsetBasedPaginationSpec";
-import {SortSpec} from "../lib/SortSpec";
-import {Hero} from "./dummy/Hero";
+import {Hero} from "./model1/dummy/Hero";
+import {Query} from "../dist/Query";
+import {OffsetBasedPaginationSpec} from "../dist/paginationspec/OffsetBasedPaginationSpec";
+import {FilterSpec} from "../dist/FilterSpec";
+import {SortSpec} from "../dist/SortSpec";
+import {Option} from "../dist/Option";
 
 describe('Query', () => {
     let model;

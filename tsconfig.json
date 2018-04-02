@@ -5,5 +5,9 @@
         "declaration": true,
         "outDir": "./dist",
         "strict": false
-    }
+    },
+    "exclude": [
+        "tests/**",
+        "dist/**"
+    ]
 }

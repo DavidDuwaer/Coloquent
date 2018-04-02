@@ -1,6 +1,6 @@
 {
   "name": "coloquent",
-  "version": "0.9.2",
+  "version": "0.9.5",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
     "coloquent",
@@ -27,8 +27,12 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "directories": {
+    "dist": "dist"
+  },
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublish": "npm run clear && npm run build && npm test",
+    "clear": "rm -rf dist/*",
     "build": "tsc",
     "test": "mocha -r ts-node/register tests/**/*.test.ts"
   },

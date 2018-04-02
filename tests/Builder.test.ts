@@ -1,9 +1,10 @@
 import {assert, expect} from 'chai';
 import * as moxios from 'moxios';
-import {Hero} from './dummy/Hero';
-import {Builder} from '../lib/Builder';
-import {PaginationStrategy} from "../lib/PaginationStrategy";
-import {PluralResponse} from "../lib/response/PluralResponse";
+import {Hero} from './model1/dummy/Hero';
+import {Builder} from "../dist/Builder";
+import {PaginationStrategy} from "../dist/PaginationStrategy";
+import {Response} from "../dist/response/Response";
+import {PluralResponse} from "../dist/response/PluralResponse";
 
 describe('Builder', () => {
     let builder: Builder;
@@ -211,8 +212,8 @@ describe('Builder', () => {
         let limit: number = Hero.getPageSize();
         builder
             .get(page)
-            .then(function (response: PluralResponse) {
-                assert.equal(page, response.getPageNumber());
+            .then(function (response: Response) {
+                assert.equal(page, (<PluralResponse> response).getPageNumber());
                 done();
             });
 

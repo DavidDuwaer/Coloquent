@@ -1,10 +1,10 @@
 import {assert, expect} from 'chai';
 import {Hero} from './dummy/Hero';
-import {Model} from '../lib/Model';
-import {SaveResponse} from "../lib/response/SaveResponse";
 import * as moxios from 'moxios';
+import {Model} from "../../dist/Model";
+import {SaveResponse} from "../../dist/response/SaveResponse";
 
-describe('Model', () => {
+describe('Model1', () => {
     let superHero: Hero;
 
     beforeEach(() => {
