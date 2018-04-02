@@ -31,6 +31,7 @@
     "dist": "dist"
   },
   "scripts": {
+    "dist": "npm run prepublish && npm publish",
     "prepublish": "npm run clear && npm run build && npm test",
     "clear": "rm -rf dist/*",
     "build": "tsc",
