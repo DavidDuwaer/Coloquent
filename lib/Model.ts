@@ -360,15 +360,23 @@ export abstract class Model
         this.id = id;
     }
 
-    protected hasMany(relatedType: typeof Model): ToManyRelation
+    protected hasMany(relatedType: typeof Model): ToManyRelation;
+    protected hasMany(relatedType: typeof Model, relationName: string): ToManyRelation;
+    protected hasMany(relatedType: typeof Model, relationName?: string): ToManyRelation
     {
-        let relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        if (typeof relationName === 'undefined') {
+            relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        }
         return new ToManyRelation(relatedType, this, relationName);
     }
 
-    protected hasOne(relatedType: typeof Model): ToOneRelation
+    protected hasOne(relatedType: typeof Model): ToOneRelation;
+    protected hasOne(relatedType: typeof Model, relationName: string): ToOneRelation;
+    protected hasOne(relatedType: typeof Model, relationName?: string): ToOneRelation
     {
-        let relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        if (typeof relationName === 'undefined') {
+            relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
+        }
         return new ToOneRelation(relatedType, this, relationName);
     }
 }

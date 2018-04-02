@@ -26,6 +26,10 @@ describe('Relation', () => {
         assert.equal('friends', model.friends().getName());
     });
 
+    it('knows its own name when overridden', () => {
+        assert.equal('enemies', model.foes().getName());
+    });
+
     it('yields a query with "\<base class\>/\<relation class\>" at the start of the URL', (done) => {
         model
             .friends()

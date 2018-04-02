@@ -9,4 +9,9 @@ export class Hero extends BaseModel {
     {
         return this.hasMany(Hero);
     }
+
+    public foes(): ToManyRelation
+    {
+        return this.hasMany(Hero, 'enemies');
+    }
 }
