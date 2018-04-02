@@ -12,7 +12,7 @@ export class Query
 
     protected queriedRelationName: string;
 
-    protected idToFind: number;
+    protected idToFind: string | number;
 
     protected paginationSpec: PaginationSpec;
 
@@ -120,7 +120,7 @@ export class Query
         return this.jsonApiType + relationToFind + idToFind + paramString;
     }
 
-    public setIdToFind(idToFind: number): void
+    public setIdToFind(idToFind: string | number): void
     {
         this.idToFind = idToFind;
     }

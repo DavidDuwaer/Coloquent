@@ -1,5 +1,4 @@
 import {Builder} from "./Builder";
-import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {Response} from "./response/Response";
 
@@ -9,7 +8,7 @@ export interface QueryMethods
 
     first(): Promise<SingularResponse>;
 
-    find(id: number): Promise<SingularResponse>;
+    find(id: string | number ): Promise<SingularResponse>;
 
     where(attribute: string, value: string): Builder;
 

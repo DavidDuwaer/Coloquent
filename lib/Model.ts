@@ -2,7 +2,7 @@ import {Builder} from "./Builder";
 import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
 import {AxiosInstance, AxiosPromise, AxiosResponse, AxiosError} from "axios";
-import axios from 'axios';
+import axios from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
@@ -95,7 +95,7 @@ export abstract class Model
             .first();
     }
 
-    public static find(id: number): Promise<SingularResponse>
+    public static find(id: string | number): Promise<SingularResponse>
     {
         return new Builder(this)
             .find(id);
@@ -127,7 +127,6 @@ export abstract class Model
 
     public save(): Promise<SaveResponse>
     {
-        let thiss = this;
         let attributes = {};
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
@@ -148,9 +147,9 @@ export abstract class Model
                     payload
                 )
                 .then(
-                    function (response: HttpClientResponse) {
-                        thiss.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, thiss.constructor, response.getData());
+                    (response: HttpClientResponse) => {
+                        this.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -163,9 +162,9 @@ export abstract class Model
                     payload
                 )
                 .then(
-                    function (response: HttpClientResponse) {
-                        thiss.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, thiss.constructor, response.getData());
+                    (response: HttpClientResponse) => {
+                        this.setApiId(response.getData().data.id);
+                        return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -176,7 +175,6 @@ export abstract class Model
 
     public create(): Promise<SaveResponse>
     {
-        let thiss = this;
         let attributes = {};
         for (let key in this.attributes.toArray()) {
             if (this.readOnlyAttributes.indexOf(key) == -1) {
@@ -198,9 +196,9 @@ export abstract class Model
                 payload
             )
             .then(
-                function (response: HttpClientResponse) {
-                    thiss.setApiId(response.getData().data.id);
-                    return new SaveResponse(response, thiss.constructor, response.getData());
+                (response: HttpClientResponse) => {
+                    this.setApiId(response.getData().data.id);
+                    return new SaveResponse(response, this.constructor, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
