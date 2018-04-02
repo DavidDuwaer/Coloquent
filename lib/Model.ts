@@ -75,6 +75,7 @@ export abstract class Model
         this.attributes = new Map();
         this.readOnlyAttributes = [];
         this.httpClient = new AxiosHttpClient();
+        this.dates = {};
         this.initHttpClient();
     }
 
