@@ -49,14 +49,13 @@ export class Builder implements QueryMethods
 
     public get(page: number = 0): Promise<Response>
     {
-        let thiss = this;
         this.query.getPaginationSpec().setPage(page);
         if (this.forceSingular) {
             return <Promise<SingularResponse>> this.getHttpClient()
                 .get(this.query.toString())
                 .then(
-                    function (response: HttpClientResponse) {
-                        return new SingularResponse(response, thiss.modelType, response.getData());
+                    (response: HttpClientResponse) => {
+                        return new SingularResponse(response, this.modelType, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -66,8 +65,8 @@ export class Builder implements QueryMethods
             return <Promise<PluralResponse>> this.getHttpClient()
                 .get(this.query.toString())
                 .then(
-                    function (response: HttpClientResponse) {
-                        return new PluralResponse(response, thiss.modelType, response.getData(), page);
+                    (response: HttpClientResponse) => {
+                        return new PluralResponse(response, this.modelType, response.getData(), page);
                     },
                     function (response: AxiosError) {
                         throw new Error(response.message);
@@ -78,13 +77,12 @@ export class Builder implements QueryMethods
 
     public first(): Promise<SingularResponse>
     {
-        let thiss = this;
         this.query.getPaginationSpec().setPageLimit(1);
         return <Promise<SingularResponse>> this.getHttpClient()
             .get(this.query.toString())
             .then(
-                function (response: HttpClientResponse) {
-                    return new SingularResponse(response, thiss.modelType, response.getData());
+                (response: HttpClientResponse) => {
+                    return new SingularResponse(response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
@@ -92,15 +90,14 @@ export class Builder implements QueryMethods
             );
     }
 
-    public find(id: number): Promise<SingularResponse>
+    public find(id: string | number): Promise<SingularResponse>
     {
         this.query.setIdToFind(id);
-        let thiss = this;
         return <Promise<SingularResponse>> this.getHttpClient()
             .get(this.query.toString())
             .then(
-                function (response: HttpClientResponse) {
-                    return new SingularResponse(response, thiss.modelType, response.getData());
+                (response: HttpClientResponse) => {
+                    return new SingularResponse(response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error(response.message);
