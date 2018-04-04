@@ -1,7 +1,8 @@
 import {BaseModel} from './BaseModel';
 import {ToManyRelation} from "../../../dist/relation/ToManyRelation";
 
-export class Hero extends BaseModel {
+export class Hero extends BaseModel
+{
     protected jsonApiType = 'heros';
 
     public friends(): ToManyRelation
