@@ -1,11 +1,9 @@
 import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
 import {SortSpec} from "./SortSpec";
-import {AxiosResponse, AxiosError, AxiosInstance} from "axios";
+import {AxiosError} from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
-import {Promise} from 'es6-promise';
-import axios from 'axios';
 import {Option} from "./Option";
 import {PaginationStrategy} from "./PaginationStrategy";
 import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationSpec";
@@ -58,7 +56,7 @@ export class Builder implements QueryMethods
                         return new SingularResponse(response, this.modelType, response.getData());
                     },
                     function (response: AxiosError) {
-                        throw new Error(response.message);
+                        throw new Error((<Error> response).message);
                     }
                 );
         } else {
@@ -69,7 +67,7 @@ export class Builder implements QueryMethods
                         return new PluralResponse(response, this.modelType, response.getData(), page);
                     },
                     function (response: AxiosError) {
-                        throw new Error(response.message);
+                        throw new Error((<Error> response).message);
                     }
                 );
         }
@@ -85,7 +83,7 @@ export class Builder implements QueryMethods
                     return new SingularResponse(response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.message);
+                    throw new Error((<Error> response).message);
                 }
             );
     }
@@ -100,7 +98,7 @@ export class Builder implements QueryMethods
                     return new SingularResponse(response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.message);
+                    throw new Error((<Error> response).message);
                 }
             );
     }

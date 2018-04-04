@@ -1,8 +1,7 @@
 import {Builder} from "./Builder";
 import {JsonApiDoc} from "./JsonApiDoc";
 import {Map} from "./util/Map";
-import {AxiosInstance, AxiosPromise, AxiosResponse, AxiosError} from "axios";
-import axios from "axios";
+import {AxiosError} from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
@@ -14,6 +13,7 @@ import {Reflection} from "./util/Reflection";
 import {HttpClient} from "./httpclient/HttpClient";
 import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
+import {Moment} from "moment";
 
 export abstract class Model
 {
@@ -153,7 +153,7 @@ export abstract class Model
                         return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
-                        throw new Error(response.message);
+                        throw new Error((<Error> response).message);
                     }
                 );
         } else {
@@ -168,7 +168,7 @@ export abstract class Model
                         return new SaveResponse(response, this.constructor, response.getData());
                     },
                     function (response: AxiosError) {
-                        throw new Error(response.message);
+                        throw new Error((<Error> response).message);
                     }
                 );
         }
@@ -202,7 +202,7 @@ export abstract class Model
                     return new SaveResponse(response, this.constructor, response.getData());
                 },
                 function (response: AxiosError) {
-                    throw new Error(response.message);
+                    throw new Error((<Error> response).message);
                 }
             );
     }
@@ -328,7 +328,7 @@ export abstract class Model
             if (!Date.parse(value)) {
                 throw new Error(`${value} cannot be cast to type Date`);
             }
-            value = Model.getDateFormatter().parseDate(value, this.dates[attributeName]);
+            value = (<any> Model.getDateFormatter()).parseDate(value, this.dates[attributeName]);
         }
 
         this.attributes.set(attributeName, value);
