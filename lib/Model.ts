@@ -13,7 +13,6 @@ import {Reflection} from "./util/Reflection";
 import {HttpClient} from "./httpclient/HttpClient";
 import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
-import {Moment} from "moment";
 
 export abstract class Model
 {
