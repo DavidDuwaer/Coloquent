@@ -45,8 +45,10 @@
   },
   "devDependencies": {
     "@types/chai": "^4.0.3",
+    "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^2.2.41",
     "chai": "^4.1.1",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^3.5.0",
     "moxios": "^0.4.0",
     "ts-node": "^3.3.0",

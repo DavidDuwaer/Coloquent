@@ -1,10 +1,14 @@
 import {assert, expect} from 'chai';
+import * as chai from 'chai';
 import * as moxios from 'moxios';
+import * as chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
 import {Builder} from "../dist/Builder";
 import {PaginationStrategy} from "../dist/PaginationStrategy";
 import {Response} from "../dist/response/Response";
 import {PluralResponse} from "../dist/response/PluralResponse";
+
+chai.use(<any> chaip);
 
 describe('Builder', () => {
     let builder: Builder;
@@ -256,5 +260,66 @@ describe('Builder', () => {
                 }
             })
         });
+    });
+
+    it('goes to catch clause when an exception is thrown', (done) => {
+        Hero.setPaginationStrategy(PaginationStrategy.PageBased);
+        let id: string = Math.floor(Math.random()*10000).toString();
+        builder = new Builder(Hero);
+        let page: number = Math.round(Math.random() * 100) + 2;
+        let limit: number = Hero.getPageSize();
+        let visitedCatchClause = false;
+        builder
+            .get(page)
+            .then(function (response: PluralResponse) {
+                return response;
+            })
+            .catch((response: PluralResponse) => {
+                visitedCatchClause = true;
+                return response;
+            })
+            .then((response: PluralResponse) => {
+                assert(visitedCatchClause);
+                done();
+            });
+
+        moxios.wait(() => {
+            moxios.requests.mostRecent()
+                .respondWith({
+                    status: 401
+                })
+        });
+    });
+
+    it('throws an exception when no catch clause is registered', () => {
+        Hero.setPaginationStrategy(PaginationStrategy.PageBased);
+        let id: string = Math.floor(Math.random()*10000).toString();
+        builder = new Builder(Hero);
+        let page: number = Math.round(Math.random() * 100) + 2;
+
+        moxios.wait(() => {
+            moxios.requests.mostRecent()
+                .respondWith({
+                    status: 501
+                });
+        });
+
+        return expect(builder.get(page)).to.be.rejected;
+    });
+
+    it('throws no exception when catch clause is registered', () => {
+        Hero.setPaginationStrategy(PaginationStrategy.PageBased);
+        let id: string = Math.floor(Math.random()*10000).toString();
+        builder = new Builder(Hero);
+        let page: number = Math.round(Math.random() * 100) + 2;
+
+        moxios.wait(() => {
+            moxios.requests.mostRecent()
+                .respondWith({
+                    status: 504
+                });
+        });
+
+        return expect(builder.get(page).catch(response => Promise.resolve())).to.be.fulfilled;
     });
 });
