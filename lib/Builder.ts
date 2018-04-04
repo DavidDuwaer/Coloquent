@@ -15,6 +15,7 @@ import {QueryMethods} from "./QueryMethods";
 import {Response} from "./response/Response";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 import {HttpClient} from "./httpclient/HttpClient";
+import {SortDirection} from "./SortDirection";
 
 export class Builder implements QueryMethods
 {
@@ -125,15 +126,26 @@ export class Builder implements QueryMethods
         return this;
     }
 
-    public orderBy(attribute: string, direction: string = 'asc'): Builder
+    public orderBy(attribute: string, direction?: SortDirection|string): Builder
     {
-        if (direction && ['asc', 'desc'].indexOf(direction) === -1) {
-            throw new Error("The 'direction' parameter must be string of value 'asc' or 'desc'.")
+        if (typeof direction === 'undefined' || direction === null) {
+            direction = SortDirection.ASC;
+        } else if (typeof direction === 'string') {
+            if (direction === 'asc') {
+                direction = SortDirection.ASC;
+            } else if (direction === 'desc') {
+                direction = SortDirection.DESC;
+            } else {
+                throw new Error(
+                    "The 'direction' parameter must be string of value 'asc' or 'desc', " +
+                    "value '"+direction+"' invalid."
+                );
+            }
         }
         this.query.addSort(
             new SortSpec(
                 attribute,
-                !direction || direction === 'asc'
+                direction === SortDirection.ASC
             )
         );
         return this;
