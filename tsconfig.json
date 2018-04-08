@@ -4,8 +4,7 @@
         "target": "es5",
         "sourceMap": true,
         "declaration": true,
-        "outDir": "./dist",
-        "strict": false
+        "outDir": "./dist"
     },
     "exclude": [
         "tests/**",
