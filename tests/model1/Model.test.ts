@@ -1,8 +1,8 @@
 import {assert, expect} from 'chai';
 import {Hero} from './dummy/Hero';
 import * as moxios from 'moxios';
-import {Model} from "../../dist";
-import {SaveResponse} from "../../dist";
+import {Model} from "../../lib";
+import {SaveResponse} from "../../lib";
 
 describe('Model1', () => {
     let superHero: Hero;
