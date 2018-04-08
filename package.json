@@ -31,11 +31,11 @@
     "dist": "dist"
   },
   "scripts": {
-    "clear": "rm -rf dist/*",
-    "build": "npm run clear && tsc",
+    "clean": "rm -rf _bundles && rm -rf lib",
+    "build": "npm run clean && tsc && webpack",
     "test": "npm run build && mocha -r ts-node/register tests/**/*.test.ts",
     "prepublish": "npm test",
-    "dist": "npm run prepublish && npm publish"
+    "dist": "npm run prepublish && npm publish dist"
   },
   "dependencies": {
     "@types/es6-promise": "0.0.32",
@@ -47,11 +47,15 @@
     "@types/chai": "^4.0.3",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^2.2.41",
+    "awesome-typescript-loader": "^5.0.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
+    "latest": "^0.2.0",
     "mocha": "^3.5.0",
     "moxios": "^0.4.0",
     "ts-node": "^3.3.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.8.1",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
   }
 }

@@ -3,5 +3,6 @@
 **/*.d.ts
 node_modules
 lib
+_bundles
 .idea
 !.idea/codeStyleSettings.xml
