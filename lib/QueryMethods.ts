@@ -1,6 +1,7 @@
 import {Builder} from "./Builder";
 import {SingularResponse} from "./response/SingularResponse";
 import {Response} from "./response/Response";
+import {SortDirection} from "./SortDirection";
 
 export interface QueryMethods
 {
@@ -39,7 +40,7 @@ export interface QueryMethods
      * @param {string} attribute - The attribute to sort by
      * @param {string direction - The direction to sort in
      */
-    orderBy(attribute: string, direction: string): Builder;
+    orderBy(attribute: string, direction?: SortDirection|string): Builder;
 
     /**
      * Specify a custom query parameter to add to the resulting HTTP request URL

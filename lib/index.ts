@@ -10,6 +10,9 @@ export { _Builder as Builder };
 import { PaginationStrategy as _PaginationStrategy } from "./PaginationStrategy";
 export { _PaginationStrategy as PaginationStrategy };
 
+import { SortDirection as _SortDirection } from "./SortDirection";
+export { _SortDirection as SortDirection };
+
 /**
  * httpclient
  */

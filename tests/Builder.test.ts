@@ -7,6 +7,7 @@ import {Builder} from "../dist";
 import {PaginationStrategy} from "../dist";
 import {Response} from "../dist";
 import {PluralResponse} from "../dist";
+import {SortDirection} from "../dist";
 
 chai.use(<any> chaip);
 
@@ -121,9 +122,54 @@ describe('Builder', () => {
         });
     });
 
-    it('orderBy method should allow sort direction as the second parameter and prepend value with - when it is descending', (done) => {
+    it('orderBy method should allow sort direction string as the second parameter - case ASC', (done) => {
+        builder
+            .orderBy('name', 'asc')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.equal(request.config.method, 'get');
+            assert.include(request.url, 'sort=name');
+
+            done();
+        });
+    });
+
+    it('orderBy method should allow sort direction string as the second parameter - case DESC', (done) => {
         builder
             .orderBy('name', 'desc')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.equal(request.config.method, 'get');
+            assert.include(request.url, 'sort=-name');
+
+            done();
+        });
+    });
+
+    it('orderBy method should allow sort direction enum as the second parameter - case ASC', (done) => {
+        builder
+            .orderBy('name', SortDirection.ASC)
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.equal(request.config.method, 'get');
+            assert.include(request.url, 'sort=name');
+
+            done();
+        });
+    });
+
+    it('orderBy method should allow sort direction enum as the second parameter - case DESC', (done) => {
+        builder
+            .orderBy('name', SortDirection.DESC)
             .get();
 
         moxios.wait(() => {
@@ -142,7 +188,7 @@ describe('Builder', () => {
                 .orderBy('name', 'invalid')
                 .get();
 
-        }).to.throw('The \'direction\' parameter must be string of value \'asc\' or \'desc\'.');
+        }).to.throw();
     });
 
     it('option method should allow adding parameters to query string', (done) => {

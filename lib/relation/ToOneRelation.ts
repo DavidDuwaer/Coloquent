@@ -3,6 +3,7 @@ import {PluralResponse} from "../response/PluralResponse";
 import {Builder} from "../Builder";
 import {SingularResponse} from "../response/SingularResponse";
 import {QueryMethods} from "../QueryMethods";
+import {SortDirection} from "../SortDirection";
 
 export class ToOneRelation extends Relation implements QueryMethods
 {
@@ -31,7 +32,7 @@ export class ToOneRelation extends Relation implements QueryMethods
             .with(value);
     }
 
-    orderBy(attribute: string, direction?: string): Builder {
+    orderBy(attribute: string, direction?: SortDirection|string): Builder {
         return new Builder(this.getType(), this.getName(), this.getReferringObject().getJsonApiType(), true)
             .orderBy(attribute, direction);
     }
