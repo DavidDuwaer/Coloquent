@@ -15,14 +15,14 @@ export class AxiosHttpClientPromise implements HttpClientPromise
     then<U>(onFulfilled?: (value: HttpClientResponse) => (Thenable<U>|U), onRejected?: (error: any) => void): Promise<U> {
         let onFulfilled2: (value: AxiosResponse) => (Thenable<U>|U) =
             (axiosResponse => onFulfilled(new AxiosHttpClientResponse(axiosResponse)));
-        return this.axiosPromise.then(
+        return <Promise<U>> this.axiosPromise.then(
             onFulfilled2,
             onRejected
         );
     }
 
     catch<U>(onRejected?: (error: any) => (Thenable<U>|U)): Promise<U> {
-        return this.axiosPromise.catch(
+        return <Promise<U>> this.axiosPromise.catch(
             onRejected
         );
     }
