@@ -4,9 +4,9 @@ import * as moxios from 'moxios';
 import * as chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
 import {Builder} from "../dist/Builder";
-import {PaginationStrategy} from "../dist/PaginationStrategy";
-import {Response} from "../dist/response/Response";
-import {PluralResponse} from "../dist/response/PluralResponse";
+import {PaginationStrategy} from "../dist";
+import {Response} from "../dist";
+import {PluralResponse} from "../dist";
 
 chai.use(<any> chaip);
 

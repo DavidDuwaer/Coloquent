@@ -1,5 +1,5 @@
 import {BaseModel} from './BaseModel';
-import {ToManyRelation} from "../../../dist/relation/ToManyRelation";
+import {ToManyRelation} from "../../../dist";
 
 export class Hero extends BaseModel {
     protected jsonApiType = 'heros';

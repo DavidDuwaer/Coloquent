@@ -1,7 +1,7 @@
 **/*.js
 **/*.js.map
 **/*.d.ts
-node_modules/*
-.idea/*
+node_modules
+.idea
 !.idea/codeStyleSettings.xml
-dist/
+dist
