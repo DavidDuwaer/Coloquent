@@ -34,24 +34,24 @@ export abstract class Model
     protected static paginationStrategy: PaginationStrategy = PaginationStrategy.OffsetBased;
 
     /**
-     * @type {string} the number query parameter name
+     * @type {string} The number query parameter name. By default: 'page[number]'
      */
-    protected static paginationPageNumberParamName: string = 'number';
+    protected static paginationPageNumberParamName: string = 'page[number]';
 
     /**
-     * @type {string} the size query parameter name
+     * @type {string} The size query parameter name. By default: 'page[size]'
      */
-    protected static paginationPageSizeParamName: string = 'size';
+    protected static paginationPageSizeParamName: string = 'page[size]';
 
     /**
-     * @type {string} the offset query parameter name
+     * @type {string} The offset query parameter name. By default: 'page[offset]'
      */
-    protected static paginationOffsetParamName: string = 'offset';
+    protected static paginationOffsetParamName: string = 'page[offset]';
 
     /**
-     * @type {string} the limit query parameter name
+     * @type {string} The limit query parameter name. By default: 'page[limit]'
      */
-    protected static paginationLimitParName: string = 'limit';
+    protected static paginationLimitParName: string = 'page[limit]';
 
     private id: string;
 

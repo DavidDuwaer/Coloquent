@@ -60,13 +60,13 @@ describe('Query', () => {
         assert.equal(query.toString(), model.getJsonApiType()+'?name=Bob&age=99');
     });
 
-    it('pagination parameters should nest under page key', () => {
-        let pageSpec = new OffsetBasedPaginationSpec('offset', 'limit', 10);
+    it('pagination parameters do not always have to nest under page key', () => {
+        let pageSpec = new OffsetBasedPaginationSpec('foo', 'bar', 10);
         pageSpec.setPage(1);
 
         query.setPaginationSpec(pageSpec);
 
-        assert.equal(query.toString(), model.getJsonApiType()+'?page%5Boffset%5D=0&page%5Blimit%5D=10');
+        assert.equal(query.toString(), model.getJsonApiType()+'?foo=0&bar=10');
     });
 
     it('sort parameters should append to sort key', () => {

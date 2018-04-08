@@ -27,8 +27,8 @@ export class PageBasedPaginationSpec extends PaginationSpec
     public getPaginationParameters(): QueryParam[]
     {
         if (this.pageNumber !== undefined) {
-            this.queryParams.push(new QueryParam(`page[${this.pageNumberParamName}]`, this.pageNumber))
-            this.queryParams.push(new QueryParam(`page[${this.pageSizeParamName}]`, this.pageLimit))
+            this.queryParams.push(new QueryParam(`${this.pageNumberParamName}`, this.pageNumber));
+            this.queryParams.push(new QueryParam(`${this.pageSizeParamName}`, this.pageLimit));
         }
 
         return this.queryParams;
