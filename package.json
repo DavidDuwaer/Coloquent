@@ -1,6 +1,6 @@
 {
-  "name": "coloquent",
-  "version": "0.9.5",
+  "name": "coloquent-test",
+  "version": "0.9.7",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
     "coloquent",
