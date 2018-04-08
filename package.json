@@ -25,10 +25,10 @@
   "bugs": {
     "url": "https://github.com/DavidDuwaer/coloquent/issues"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "directories": {
-    "dist": "dist"
+    "lib": "lib"
   },
   "scripts": {
     "clean": "rm -rf _bundles && rm -rf lib",
