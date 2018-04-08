@@ -1,8 +1,8 @@
 
 import * as moxios from 'moxios';
 import {AxiosInstance} from "axios";
-import {Model} from "../../../dist/Model";
-import {PaginationStrategy} from "../../../dist/PaginationStrategy";
+import {Model} from "../../../dist";
+import {PaginationStrategy} from "../../../dist";
 
 export abstract class BaseModel extends Model {
     constructor() {

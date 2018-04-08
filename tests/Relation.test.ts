@@ -1,7 +1,6 @@
 import {assert, expect} from 'chai';
 import * as moxios from 'moxios';
 import {Hero} from './model1/dummy/Hero';
-import {split} from "ts-node/dist";
 
 describe('Relation', () => {
     let model: Hero;

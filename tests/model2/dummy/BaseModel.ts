@@ -1,6 +1,6 @@
 import {AxiosInstance} from "axios";
 import * as moxios from 'moxios';
-import {Model} from "../../../dist/Model";
+import {Model} from "../../../dist";
 
 export abstract class BaseModel extends Model {
     constructor() {
