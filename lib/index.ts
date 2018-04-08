@@ -4,6 +4,9 @@
 import { Model as _Model } from "./Model";
 export { _Model as Model };
 
+import { Builder as _Builder } from "./Builder";
+export { _Builder as Builder };
+
 import { PaginationStrategy as _PaginationStrategy } from "./PaginationStrategy";
 export { _PaginationStrategy as PaginationStrategy };
 

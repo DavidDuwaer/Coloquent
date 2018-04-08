@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import * as moxios from 'moxios';
 import * as chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
-import {Builder} from "../dist/Builder";
+import {Builder} from "../dist";
 import {PaginationStrategy} from "../dist";
 import {Response} from "../dist";
 import {PluralResponse} from "../dist";
