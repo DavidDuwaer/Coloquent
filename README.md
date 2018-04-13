@@ -54,7 +54,7 @@ Artist
     .orderBy('birthDate', 'desc')
     .get();
 ```
-The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc`.
+The second argument denoting the sorting direction is optional and is either `asc` (default) or `desc` (or `SortDirection.ASC` and `SortDirection.DESC`).
 If you are only interested in the youngest `Artist`, it is more efficient to use `first` instead of `get`:
 ```javascript
 Artist
