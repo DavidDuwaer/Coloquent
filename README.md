@@ -65,6 +65,12 @@ This will retrieve only a single model from the server. To retrieve a single mod
 ```javascript
 Artist.find(324);
 ```
+To query a relation of an object you've instantiated:
+```typescript
+artist.albums()
+    .orderBy('name', SortDirection.DESC)
+    .get()
+```
 If, for some reason, you need to add a raw URL query parameter (e.g. `?_foo=somevalue`) to the underlying endpoint, use
 the `option` clause:
 ```javascript
