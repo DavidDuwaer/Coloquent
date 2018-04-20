@@ -78,29 +78,28 @@ export abstract class RetrievalResponse extends Response
             this.modelIndex.set(type, new Map<Model>());
         }
         let model: Model = new modelType();
-        if (!this.modelIndex.get(type).get(id)) { // visit every doc only once
-            model.populateFromJsonApiDoc(doc);
-            this.modelIndex.get(type).set(id, model);
-            for (let relationName in doc.relationships) {
-                let relation: Relation = model[relationName]();
-                if (relation instanceof ToManyRelation) {
-                    let relatedStubs: JsonApiStub[] = doc.relationships[relationName].data;
-                    if (relatedStubs) {
-                        let r: Model[] = [];
-                        for (let stub of relatedStubs) {
-                            let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
-                            r.push(this.indexAsModel(relatedDoc, relation.getType()));
-                        }
-                        model.setRelation(relationName, r);
+        model.populateFromJsonApiDoc(doc);
+        this.modelIndex.get(type).set(id, model);
+        for (let relationName in doc.relationships) {
+            let relation: Relation = model[relationName]();
+            if (relation instanceof ToManyRelation) {
+                let relatedStubs: JsonApiStub[] = doc.relationships[relationName].data;
+                if (relatedStubs) {
+                    let r: Model[] = [];
+                    for (let stub of relatedStubs) {
+                        let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
+                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
+                        r.push(relatedModel);
                     }
-                } else if (relation instanceof ToOneRelation) {
-                    let stub: JsonApiStub = doc.relationships[relationName].data;
-                    let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
-                    let m: Model = this.indexAsModel(relatedDoc, relation.getType());
-                    model.setRelation(relationName, m);
-                } else {
-                    throw new Error('Unknown type of Relation encountered: '+typeof relation);
+                    model.setRelation(relationName, r);
                 }
+            } else if (relation instanceof ToOneRelation) {
+                let stub: JsonApiStub = doc.relationships[relationName].data;
+                let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
+                let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
+                model.setRelation(relationName, relatedModel);
+            } else {
+                throw new Error('Unknown type of Relation encountered: ' + typeof relation);
             }
         }
         return model;

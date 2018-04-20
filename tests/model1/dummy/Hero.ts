@@ -14,4 +14,14 @@ export class Hero extends BaseModel
     {
         return this.hasMany(Hero, 'enemies');
     }
+
+    public getName(): string
+    {
+        return this.getAttribute('name');
+    }
+
+    public getFoes(): Hero[]
+    {
+        return this.getRelation('foes');
+    }
 }
