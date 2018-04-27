@@ -59,7 +59,7 @@ export abstract class Model
 
     private attributes: Map<any>;
 
-    private httpClient: HttpClient;
+    private static httpClient: HttpClient;
 
     protected readOnlyAttributes: string[];
 
@@ -73,14 +73,14 @@ export abstract class Model
         this.relations = new Map();
         this.attributes = new Map();
         this.readOnlyAttributes = [];
-        this.httpClient = new AxiosHttpClient();
+        Model.httpClient = new AxiosHttpClient();
         this.dates = {};
         this.initHttpClient();
     }
 
     private initHttpClient(): void
     {
-        this.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
+        Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
     }
 
     public static get(page: number = null): Promise<PluralResponse>
@@ -141,7 +141,7 @@ export abstract class Model
         };
         if (this.id !== null) {
             payload['data']['id'] = this.id;
-            return this.httpClient
+            return Model.httpClient
                 .patch(
                     this.getJsonApiType()+'/'+this.id,
                     payload
@@ -156,7 +156,7 @@ export abstract class Model
                     }
                 );
         } else {
-            return this.httpClient
+            return Model.httpClient
                 .post(
                     this.getJsonApiType(),
                     payload
@@ -190,7 +190,7 @@ export abstract class Model
         if (this.id !== null) {
             payload['data']['id'] = this.id;
         }
-        return this.httpClient
+        return Model.httpClient
             .post(
                 this.getJsonApiType(),
                 payload
@@ -211,7 +211,7 @@ export abstract class Model
         if (this.id === null) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return this.httpClient
+        return Model.httpClient
             .delete(this.getJsonApiType()+'/'+this.id)
             .then(function () {});
     }
@@ -225,7 +225,7 @@ export abstract class Model
      * Allows you to get the current HTTP client (AxiosHttpClient by default), e.g. to alter its configuration.
      * @returns {HttpClient}
      */
-    public getHttpClient(): HttpClient
+    public static getHttpClient(): HttpClient
     {
         return this.httpClient;
     }
@@ -235,7 +235,7 @@ export abstract class Model
      * HttpClient, HttpClientPromise and HttpClientResponse.
      * @param httpClient
      */
-    public setHttpClient(httpClient: HttpClient)
+    public static setHttpClient(httpClient: HttpClient)
     {
         this.httpClient = httpClient;
     }

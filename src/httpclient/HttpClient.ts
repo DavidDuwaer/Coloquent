@@ -11,6 +11,8 @@ export interface HttpClient
      */
     setWithCredentials(withCredientials: boolean): void
 
+    setHeader()
+
     get(url: string): HttpClientPromise;
 
     delete(url: string): HttpClientPromise;

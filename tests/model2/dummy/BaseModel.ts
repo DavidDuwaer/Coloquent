@@ -5,7 +5,7 @@ import {Model} from "../../../dist";
 export abstract class BaseModel extends Model {
     constructor() {
         super();
-        moxios.install((<AxiosInstance> this.getHttpClient().getImplementingClient()));
+        moxios.install((<AxiosInstance> BaseModel.getHttpClient().getImplementingClient()));
     }
 
     getJsonApiBaseUrl(): string {

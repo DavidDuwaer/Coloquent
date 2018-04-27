@@ -3,6 +3,7 @@ import {Hero} from './dummy/Hero';
 import * as moxios from 'moxios';
 import {Model} from "../../dist";
 import {SaveResponse} from "../../dist";
+import {AxiosInstance} from "axios";
 
 describe('Model2', () => {
     let superHero: Hero;
@@ -199,6 +200,22 @@ describe('Model2', () => {
                     }
                 }
             });
+        });
+    });
+
+    it('should allow a header to be set', (done) => {
+        let httpClient: AxiosInstance = Hero.getHttpClient().getImplementingClient();
+        httpClient.defaults.headers.authentication = 'someAuthenticationHeader5636rt3';
+        Hero.find('1');
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            assert.equal(request.headers.authentication, 'someAuthenticationHeader5636rt3');
+
+            assert.notEqual(request.headers.authentication, 'asdfasdf');
+
+            done();
         });
     });
 });

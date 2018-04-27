@@ -42,7 +42,7 @@ export class Builder implements QueryMethods
             : modelInstance.getJsonApiType();
         this.query = new Query(baseModelJsonApiType, queriedRelationName);
         this.initPaginationSpec();
-        this.httpClient = modelInstance.getHttpClient();
+        this.httpClient = modelType.getHttpClient();
         this.forceSingular = forceSingular;
     }
 
