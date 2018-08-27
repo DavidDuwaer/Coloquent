@@ -133,10 +133,23 @@ export abstract class Model
                 attributes[key] = this.attributes.get(key);
             }
         }
+        let relationships = {};
+        for (let key in this.relations.toArray()) {
+            let model = this.relations.get(key);
+            if (model instanceof Model) {
+                relationships[key] = {
+                    data: {
+                        type: model.getJsonApiType(),
+                        id: model.id
+                    }
+                };
+            }
+        }
         let payload = {
             data: {
                 type: this.getJsonApiType(),
-                attributes: attributes
+                attributes,
+                relationships
             }
         };
         if (this.id !== null) {
@@ -181,10 +194,23 @@ export abstract class Model
                 attributes[key] = this.attributes.get(key);
             }
         }
+        let relationships = {};
+        for (let key in this.relations.toArray()) {
+            let model = this.relations.get(key);
+            if (model instanceof Model) {
+                relationships[key] = {
+                    data: {
+                        type: model.getJsonApiType(),
+                        id: model.id
+                    }
+                };
+            }
+        }
         let payload = {
             data: {
                 type: this.getJsonApiType(),
-                attributes: attributes
+                attributes,
+                relationships
             }
         };
         if (this.id !== null) {
