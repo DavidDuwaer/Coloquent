@@ -95,9 +95,14 @@ export abstract class RetrievalResponse extends Response
                 }
             } else if (relation instanceof ToOneRelation) {
                 let stub: JsonApiStub = doc.relationships[relationName].data;
-                let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
-                let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
-                model.setRelation(relationName, relatedModel);
+                if (stub) {
+                    let typeMap = this.docIndex.get(stub.type);
+                    if (typeMap) {
+                        let relatedDoc: JsonApiDoc = typeMap.get(stub.id);
+                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
+                        model.setRelation(relationName, relatedModel);
+                    }
+                }
             } else {
                 throw new Error('Unknown type of Relation encountered: ' + typeof relation);
             }
