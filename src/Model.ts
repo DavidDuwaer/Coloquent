@@ -125,7 +125,7 @@ export abstract class Model
             .option(queryParameter, value);
     }
 
-    public save(): Promise<SaveResponse>
+    private serialize()
     {
         let attributes = {};
         for (let key in this.attributes.toArray()) {
@@ -133,63 +133,58 @@ export abstract class Model
                 attributes[key] = this.attributes.get(key);
             }
         }
+        let relationships = {};
+        for (let key in this.relations.toArray()) {
+            let model = this.relations.get(key);
+            if (model instanceof Model) {
+                relationships[key] = {
+                    data: {
+                        type: model.getJsonApiType(),
+                        id: model.id
+                    }
+                };
+            }
+        }
+
         let payload = {
             data: {
                 type: this.getJsonApiType(),
-                attributes: attributes
+                attributes,
+                relationships
             }
         };
         if (this.id !== null) {
             payload['data']['id'] = this.id;
-            return Model.httpClient
-                .patch(
-                    this.getJsonApiType()+'/'+this.id,
-                    payload
-                )
-                .then(
-                    (response: HttpClientResponse) => {
-                        this.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, this.constructor, response.getData());
-                    },
-                    function (response: AxiosError) {
-                        throw new Error((<Error> response).message);
-                    }
-                );
-        } else {
-            return Model.httpClient
-                .post(
-                    this.getJsonApiType(),
-                    payload
-                )
-                .then(
-                    (response: HttpClientResponse) => {
-                        this.setApiId(response.getData().data.id);
-                        return new SaveResponse(response, this.constructor, response.getData());
-                    },
-                    function (response: AxiosError) {
-                        throw new Error((<Error> response).message);
-                    }
-                );
         }
+        return payload;
+    }
+
+    public save(): Promise<SaveResponse>
+    {
+        if (this.id === null) {
+            return this.create();
+        }
+
+        let payload = this.serialize();
+        return Model.httpClient
+            .patch(
+                this.getJsonApiType()+'/'+this.id,
+                payload
+            )
+            .then(
+                (response: HttpClientResponse) => {
+                    this.setApiId(response.getData().data.id);
+                    return new SaveResponse(response, this.constructor, response.getData());
+                },
+                function (response: AxiosError) {
+                    throw new Error((<Error> response).message);
+                }
+            );
     }
 
     public create(): Promise<SaveResponse>
     {
-        let attributes = {};
-        for (let key in this.attributes.toArray()) {
-            if (this.readOnlyAttributes.indexOf(key) == -1) {
-                attributes[key] = this.attributes.get(key);
-            }
-        }
-        let payload = {
-            data: {
-                type: this.getJsonApiType(),
-                attributes: attributes
-            }
-        };
-        if (this.id !== null) {
-            payload['data']['id'] = this.id;
-        }
+        let payload = this.serialize();
         return Model.httpClient
             .post(
                 this.getJsonApiType(),
