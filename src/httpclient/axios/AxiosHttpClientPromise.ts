@@ -2,6 +2,7 @@ import {HttpClientResponse} from "../HttpClientResponse";
 import {AxiosPromise, AxiosResponse} from "axios";
 import {HttpClientPromise} from "../HttpClientPromise";
 import {AxiosHttpClientResponse} from "./AxiosHttpClientResponse";
+import {Thenable} from "../Types";
 
 export class AxiosHttpClientPromise implements HttpClientPromise
 {

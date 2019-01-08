@@ -38,7 +38,6 @@
     "dist": "npm run prepublish && npm publish"
   },
   "dependencies": {
-    "@types/es6-promise": "0.0.32",
     "@types/moxios": "^0.4.8",
     "axios": "^0.16.2",
     "php-date-formatter": "^1.3.4"
@@ -51,7 +50,6 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^3.5.0",
     "moxios": "^0.4.0",
-    "ts-node": "^3.3.0",
-    "typescript": "^2.8.1"
+    "ts-node": "^3.3.0"
   }
 }

@@ -1,5 +1,6 @@
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "./HttpClientResponse";
+import {Thenable} from "./Types";
 export interface HttpClientPromise
 {
     // /**
