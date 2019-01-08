@@ -1,4 +1,4 @@
-export class JsonApiStub
+export class ResourceStub
 {
     public type: string;
 

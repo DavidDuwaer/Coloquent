@@ -1,6 +1,6 @@
 import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
-import {JsonApiDoc} from "../JsonApiDoc";
+import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
@@ -31,21 +31,21 @@ export class PluralResponse extends RetrievalResponse
         return this.data;
     }
 
-    protected indexRequestedDocs(requestedDocs: JsonApiDoc[] = [])
+    protected indexRequestedResources(requestedResources: Resource[] = [])
     {
-        for (let doc of requestedDocs) {
+        for (let doc of requestedResources) {
             this.indexDoc(doc);
         }
     }
 
-    protected makeModelIndex(requestedDocs: JsonApiDoc[] = []): void
+    protected makeModelIndex(requestedResources: Resource[] = []): void
     {
-        for (let doc of requestedDocs) {
+        for (let doc of requestedResources) {
             this.indexAsModel(doc, this.modelType);
         }
     }
 
-    protected makeDataArray(requestedDocs: JsonApiDoc[] = [])
+    protected makeDataArray(requestedDocs: Resource[] = [])
     {
         this.data = [];
         for (let doc of requestedDocs) {

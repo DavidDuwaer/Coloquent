@@ -1,8 +1,8 @@
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
-import {JsonApiDoc} from "../JsonApiDoc";
+import {Resource} from "../Resource";
 import {Model} from "../Model";
 import {ToManyRelation} from "../relation/ToManyRelation";
-import {JsonApiStub} from "../JsonApiStub";
+import {ResourceStub} from "../ResourceStub";
 import {Relation} from "../relation/Relation";
 import {ToOneRelation} from "../relation/ToOneRelation";
 import {Map} from "../util/Map";
@@ -14,7 +14,7 @@ export abstract class RetrievalResponse extends Response
 {
     protected modelType: any;
 
-    protected docIndex: Map<Map<JsonApiDoc>>;
+    protected resourceIndex: Map<Map<Resource>>;
 
     protected modelIndex: Map<Map<Model>>;
 
@@ -27,12 +27,12 @@ export abstract class RetrievalResponse extends Response
     ) {
         super(httpClientResponse);
         this.modelType = modelType;
-        this.docIndex = new Map<Map<JsonApiDoc>>();
+        this.resourceIndex = new Map<Map<Resource>>();
         this.modelIndex = new Map<Map<Model>>();
 
         // Index the JsonApiDocs
         this.indexIncludedDocs(responseBody.included);
-        this.indexRequestedDocs(responseBody.data);
+        this.indexRequestedResources(responseBody.data);
 
         // Build Models from the JsonApiDocs, for which the previously built indexes come in handy
         this.makeModelIndex(responseBody.data);
@@ -51,26 +51,26 @@ export abstract class RetrievalResponse extends Response
 
     protected abstract makeModelIndex(requested: any): void;
 
-    private indexIncludedDocs(includedDocs: JsonApiDoc[] = []): void
+    private indexIncludedDocs(includedDocs: Resource[] = []): void
     {
         for (let doc of includedDocs) {
             this.indexDoc(doc);
         }
     }
 
-    protected abstract indexRequestedDocs(requested: any);
+    protected abstract indexRequestedResources(requested: any);
 
-    protected indexDoc(doc: JsonApiDoc)
+    protected indexDoc(doc: Resource)
     {
         let type = doc.type;
         let id = doc.id;
-        if (!this.docIndex.get(type)) {
-            this.docIndex.set(type, new Map<JsonApiDoc>());
+        if (!this.resourceIndex.get(type)) {
+            this.resourceIndex.set(type, new Map<Resource>());
         }
-        this.docIndex.get(type).set(id, doc);
+        this.resourceIndex.get(type).set(id, doc);
     }
 
-    protected indexAsModel(doc: JsonApiDoc, modelType): Model
+    protected indexAsModel(doc: Resource, modelType): Model
     {
         let type = doc.type;
         let id = doc.id;
@@ -78,27 +78,27 @@ export abstract class RetrievalResponse extends Response
             this.modelIndex.set(type, new Map<Model>());
         }
         let model: Model = new modelType();
-        model.populateFromJsonApiDoc(doc);
+        model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
         for (let relationName in doc.relationships) {
             let relation: Relation = model[relationName]();
             if (relation instanceof ToManyRelation) {
-                let relatedStubs: JsonApiStub[] = doc.relationships[relationName].data;
+                let relatedStubs: ResourceStub[] = doc.relationships[relationName].data;
                 if (relatedStubs) {
                     let r: Model[] = [];
                     for (let stub of relatedStubs) {
-                        let relatedDoc: JsonApiDoc = this.docIndex.get(stub.type).get(stub.id);
+                        let relatedDoc: Resource = this.resourceIndex.get(stub.type).get(stub.id);
                         let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
                         r.push(relatedModel);
                     }
                     model.setRelation(relationName, r);
                 }
             } else if (relation instanceof ToOneRelation) {
-                let stub: JsonApiStub = doc.relationships[relationName].data;
+                let stub: ResourceStub = doc.relationships[relationName].data;
                 if (stub) {
-                    let typeMap = this.docIndex.get(stub.type);
+                    let typeMap = this.resourceIndex.get(stub.type);
                     if (typeMap) {
-                        let relatedDoc: JsonApiDoc = typeMap.get(stub.id);
+                        let relatedDoc: Resource = typeMap.get(stub.id);
                         let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
                         model.setRelation(relationName, relatedModel);
                     }
@@ -112,7 +112,7 @@ export abstract class RetrievalResponse extends Response
 
     protected abstract makeDataArray(requestedDocs: any): void;
 
-    protected makeIncludedArray(includedDocs: JsonApiDoc[] = [])
+    protected makeIncludedArray(includedDocs: Resource[] = [])
     {
         this.included = [];
         for (let doc of includedDocs) {

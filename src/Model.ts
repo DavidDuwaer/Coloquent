@@ -1,5 +1,5 @@
 import {Builder} from "./Builder";
-import {JsonApiDoc} from "./JsonApiDoc";
+import {Resource} from "./Resource";
 import {Map} from "./util/Map";
 import {AxiosError} from "axios";
 import {PluralResponse} from "./response/PluralResponse";
@@ -240,11 +240,11 @@ export abstract class Model
         return this.jsonApiType;
     }
 
-    public populateFromJsonApiDoc(jsonApiDoc: JsonApiDoc): void
+    public populateFromResource(resource: Resource): void
     {
-        this.id = jsonApiDoc.id;
-        for (let key in jsonApiDoc.attributes) {
-            this.setAttribute(key, jsonApiDoc.attributes[key]);
+        this.id = resource.id;
+        for (let key in resource.attributes) {
+            this.setAttribute(key, resource.attributes[key]);
         }
     }
 

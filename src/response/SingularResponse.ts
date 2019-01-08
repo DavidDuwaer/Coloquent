@@ -1,6 +1,6 @@
 import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
-import {JsonApiDoc} from "../JsonApiDoc";
+import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
@@ -22,9 +22,9 @@ export class SingularResponse extends RetrievalResponse
         return this.data;
     }
 
-    protected makeModelIndex(data: JsonApiDoc|JsonApiDoc[]): void
+    protected makeModelIndex(data: Resource|Resource[]): void
     {
-        let doc: JsonApiDoc = null;
+        let doc: Resource = null;
         if (Array.isArray(data)) {
             doc = data[0];
         } else {
@@ -35,9 +35,9 @@ export class SingularResponse extends RetrievalResponse
         }
     }
 
-    protected indexRequestedDocs(data: JsonApiDoc|JsonApiDoc[])
+    protected indexRequestedResources(data: Resource|Resource[])
     {
-        let doc: JsonApiDoc = null;
+        let doc: Resource = null;
         if (Array.isArray(data)) {
             doc = data[0];
         } else {
@@ -48,9 +48,9 @@ export class SingularResponse extends RetrievalResponse
         }
     }
 
-    protected makeDataArray(data: JsonApiDoc|JsonApiDoc[]): void
+    protected makeDataArray(data: Resource|Resource[]): void
     {
-        let doc: JsonApiDoc = null;
+        let doc: Resource = null;
         if (Array.isArray(data)) {
             doc = data[0];
         } else {

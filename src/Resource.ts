@@ -1,4 +1,4 @@
-export class JsonApiDoc
+export class Resource
 {
     public type: string;
 

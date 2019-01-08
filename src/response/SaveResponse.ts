@@ -1,5 +1,5 @@
 import {Model} from "../Model";
-import {JsonApiDoc} from "../JsonApiDoc";
+import {Resource} from "../Resource";
 import {Response} from "./Response";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
@@ -18,7 +18,7 @@ export class SaveResponse extends Response
         let modelTypeUntyped: any = modelType; // Do this to shut IDE up about not being able to instantiate
                                                // abstract classes
         this.model = new (<any> modelType)();
-        this.model.populateFromJsonApiDoc(responseBody.data);
+        this.model.populateFromResource(responseBody.data);
     }
 
     public getModel(): Model

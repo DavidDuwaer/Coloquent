@@ -1,7 +1,7 @@
-import {JsonApiDoc} from "./JsonApiDoc";
+import {Resource} from "./Resource";
 
 export class JsonApiResponseBody
 {
     public data;
-    public included: JsonApiDoc[];
+    public included: Resource[];
 }
