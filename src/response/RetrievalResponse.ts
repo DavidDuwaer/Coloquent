@@ -9,6 +9,7 @@ import {Map} from "../util/Map";
 import {Response} from "./Response";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
+import {Query} from "../Query";
 
 export abstract class RetrievalResponse extends Response
 {
@@ -21,11 +22,12 @@ export abstract class RetrievalResponse extends Response
     protected included: Model[];
 
     constructor(
+        query: Query,
         httpClientResponse: HttpClientResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
-        super(httpClientResponse);
+        super(query, httpClientResponse);
         this.modelType = modelType;
         this.resourceIndex = new Map<Map<Resource>>();
         this.modelIndex = new Map<Map<Model>>();
@@ -70,7 +72,7 @@ export abstract class RetrievalResponse extends Response
         this.resourceIndex.get(type).set(id, doc);
     }
 
-    protected indexAsModel(doc: Resource, modelType): Model
+    protected indexAsModel(doc: Resource, modelType, includeTree: any): Model
     {
         let type = doc.type;
         let id = doc.id;
@@ -80,29 +82,39 @@ export abstract class RetrievalResponse extends Response
         let model: Model = new modelType();
         model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
-        for (let relationName in doc.relationships) {
+        for (let relationName in {...includeTree, ...doc.relationships}) {
+            const includeSubtree = includeTree[relationName];
             let relation: Relation = model[relationName]();
             if (relation instanceof ToManyRelation) {
-                let relatedStubs: ResourceStub[] = doc.relationships[relationName].data;
+                let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[relationName] !== undefined)
+                    ?
+                        doc.relationships[relationName].data
+                    :
+                        undefined;
+                let r: Model[] = [];
                 if (relatedStubs) {
-                    let r: Model[] = [];
                     for (let stub of relatedStubs) {
                         let relatedDoc: Resource = this.resourceIndex.get(stub.type).get(stub.id);
-                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
+                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
                         r.push(relatedModel);
                     }
-                    model.setRelation(relationName, r);
                 }
+                model.setRelation(relationName, r);
             } else if (relation instanceof ToOneRelation) {
-                let stub: ResourceStub = doc.relationships[relationName].data;
+                let stub: ResourceStub = (doc.relationships !== undefined && doc.relationships[relationName] !== undefined)
+                    ?
+                        doc.relationships[relationName].data
+                    :
+                        undefined;
+                let relatedModel: Model = null;
                 if (stub) {
                     let typeMap = this.resourceIndex.get(stub.type);
                     if (typeMap) {
                         let relatedDoc: Resource = typeMap.get(stub.id);
-                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType());
-                        model.setRelation(relationName, relatedModel);
+                        relatedModel = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
                     }
                 }
+                model.setRelation(relationName, relatedModel);
             } else {
                 throw new Error('Unknown type of Relation encountered: ' + typeof relation);
             }

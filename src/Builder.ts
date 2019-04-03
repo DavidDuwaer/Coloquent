@@ -54,7 +54,7 @@ export class Builder implements QueryMethods
                 .get(this.query.toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new SingularResponse(response, this.modelType, response.getData());
+                        return new SingularResponse(this.query, response, this.modelType, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -65,7 +65,7 @@ export class Builder implements QueryMethods
                 .get(this.query.toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new PluralResponse(response, this.modelType, response.getData(), page);
+                        return new PluralResponse(this.query, response, this.modelType, response.getData(), page);
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -81,7 +81,7 @@ export class Builder implements QueryMethods
             .get(this.query.toString())
             .then(
                 (response: HttpClientResponse) => {
-                    return new SingularResponse(response, this.modelType, response.getData());
+                    return new SingularResponse(this.query, response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error((<Error> response).message);
@@ -96,7 +96,7 @@ export class Builder implements QueryMethods
             .get(this.query.toString())
             .then(
                 (response: HttpClientResponse) => {
-                    return new SingularResponse(response, this.modelType, response.getData());
+                    return new SingularResponse(this.query, response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error((<Error> response).message);

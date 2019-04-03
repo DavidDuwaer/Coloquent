@@ -154,4 +154,37 @@ export class Query
     {
         this.options.push(option);
     }
+
+    /**
+     * Example: When including 'foo.bar, goo', then the include paths are [[foo, bar], [goo]].
+     */
+    private get includePaths(): string[][]
+    {
+        return this
+            .include
+            .map(includePath => includePath.split('.'));
+    }
+
+    /**
+     * Example: When including 'foo.bar, goo', then the include tree is {foo: {bar: true}, goo: true}.
+     */
+    public get includeTree(): any
+    {
+        const tree = {};
+        for (let path of this.includePaths) {
+            this.includeTreeRecurse(tree, path);
+        }
+        return tree;
+    }
+
+    private includeTreeRecurse(tree: any, path: string[])
+    {
+        if (path.length === 1) {
+            tree[path[0]] = {};
+        } else if (path.length > 1) {
+            const subtree = {};
+            tree[path[0]] = subtree;
+            this.includeTreeRecurse(subtree, path.slice(1));
+        }
+    }
 }

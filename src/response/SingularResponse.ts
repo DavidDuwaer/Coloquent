@@ -4,17 +4,19 @@ import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
+import {Query} from "../Query";
 
 export class SingularResponse extends RetrievalResponse
 {
     protected data: Model;
 
     constructor(
+        query: Query,
         httpClientResponse: HttpClientResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody
     ) {
-        super(httpClientResponse, modelType, responseBody);
+        super(query, httpClientResponse, modelType, responseBody);
     }
 
     public getData(): Model
@@ -31,7 +33,7 @@ export class SingularResponse extends RetrievalResponse
             doc = data;
         }
         if (doc) {
-            this.indexAsModel(doc, this.modelType);
+            this.indexAsModel(doc, this.modelType, this.includeTree);
         }
     }
 

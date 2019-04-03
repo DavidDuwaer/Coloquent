@@ -8,7 +8,7 @@ import {Option} from "../dist/Option";
 
 describe('Query', () => {
     let model;
-    let query;
+    let query: Query;
 
     beforeEach(() => {
         model = new Hero();

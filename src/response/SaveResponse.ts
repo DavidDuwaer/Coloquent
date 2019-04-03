@@ -4,6 +4,7 @@ import {Response} from "./Response";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
+import {Query} from "../Query";
 
 export class SaveResponse extends Response
 {
@@ -14,7 +15,7 @@ export class SaveResponse extends Response
         modelType: Function,
         responseBody: JsonApiResponseBody
     ) {
-        super(httpClientResponse);
+        super(undefined, httpClientResponse);
         let modelTypeUntyped: any = modelType; // Do this to shut IDE up about not being able to instantiate
                                                // abstract classes
         this.model = new (<any> modelType)();

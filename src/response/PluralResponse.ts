@@ -4,6 +4,7 @@ import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
+import {Query} from "../Query";
 
 export class PluralResponse extends RetrievalResponse
 {
@@ -12,12 +13,13 @@ export class PluralResponse extends RetrievalResponse
     protected pageNumber: number;
 
     constructor(
+        query: Query,
         httpClientResponse: HttpClientResponse,
         modelType: typeof Model,
         responseBody: JsonApiResponseBody,
         pageNumber: number = 1
     ) {
-        super(httpClientResponse, modelType, responseBody);
+        super(query, httpClientResponse, modelType, responseBody);
         this.pageNumber = pageNumber;
     }
 
@@ -41,7 +43,7 @@ export class PluralResponse extends RetrievalResponse
     protected makeModelIndex(requestedResources: Resource[] = []): void
     {
         for (let doc of requestedResources) {
-            this.indexAsModel(doc, this.modelType);
+            this.indexAsModel(doc, this.modelType, this.includeTree);
         }
     }
 

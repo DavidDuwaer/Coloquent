@@ -33,7 +33,8 @@
   "scripts": {
     "clear": "rm -rf dist/*",
     "build": "npm run clear && tsc",
-    "test": "npm run build && mocha -r ts-node/register tests/**/*.test.ts",
+    "build-dev": "npm run clear && tsc --sourceMap",
+    "test": "npm run build-dev && mocha -r ts-node/register tests/**/*.test.ts",
     "prepublish": "npm test",
     "dist": "npm run prepublish && npm publish"
   },

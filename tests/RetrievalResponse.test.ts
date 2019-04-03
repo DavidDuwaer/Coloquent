@@ -11,7 +11,7 @@ import {SortDirection} from "../dist";
 
 chai.use(<any> chaip);
 
-describe('Builder', () => {
+describe('RetrievalResponse', () => {
     let builder: Builder;
     let model: Hero;
 
@@ -97,6 +97,39 @@ describe('Builder', () => {
                             }
                         }
                     ]
+                }
+            })
+        });
+    });
+
+    it('should create empty collections when including without results, instead of leaving relations undefined', (done) => {
+        model.foes()
+            .with('foes')
+            .get()
+            .then((response: PluralResponse) => {
+                let beefMan: Hero = <Hero> response.getData()[0];
+                let foes = beefMan.getFoes();
+                assert(foes !== undefined);
+                assert(foes !== null);
+                assert(Array.isArray(foes));
+                assert(foes.length === 0);
+
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: "heroes",
+                            id: "1",
+                            attributes: {
+                                name: "BeefMan"
+                            },
+                        },
+                    ],
                 }
             })
         });
