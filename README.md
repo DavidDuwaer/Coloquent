@@ -158,7 +158,7 @@ class Artist extends AppModel
         'age'
     ];
 
-    albums()
+    albums(): ToManyRelation
     {
         return this.hasMany(Album);
     }
@@ -193,12 +193,12 @@ class Album extends AppModel
 {
     jsonApiType = 'albums';
 
-    artist()
+    artist(): ToOneRelation
     {
         return this.hasOne(Artist);
     }
 
-    songs()
+    songs(): ToManyRelation
     {
         return this.hasMany(Song);
     }
@@ -218,12 +218,13 @@ class Song extends AppModel
 {
     jsonApiType = 'songs';
 
-    album()
+    album(): ToOneRelation
     {
         return this.hasOne(Album);
     }
 
-    getAlbum(): Album {
+    getAlbum(): Album
+    {
         return this.getRelation('album');
     }
 }
