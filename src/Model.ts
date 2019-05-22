@@ -161,7 +161,7 @@ export abstract class Model
 
     public save(): Promise<SaveResponse>
     {
-        if (this.id === null) {
+        if (this.id === undefined || this.id === '') {
             return this.create();
         }
 
