@@ -31,7 +31,7 @@
     "dist": "dist"
   },
   "scripts": {
-    "clear": "rm -rf dist/*",
+    "clear": "rimraf dist",
     "build": "npm run clear && tsc",
     "build-dev": "npm run clear && tsc --sourceMap",
     "test": "npm run build-dev && mocha -r ts-node/register tests/**/*.test.ts",
@@ -49,9 +49,10 @@
     "@types/mocha": "^2.2.41",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^3.5.0",
+    "mocha": "^6.1.4",
     "moxios": "^0.4.0",
-    "typescript": "^3.0.0",
-    "ts-node": "^3.3.0"
+    "rimraf": "^2.6.3",
+    "ts-node": "^3.3.0",
+    "typescript": "^3.0.0"
   }
 }
