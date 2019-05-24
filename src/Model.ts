@@ -176,8 +176,8 @@ export abstract class Model
                     this.setApiId(response.getData().data.id);
                     return new SaveResponse(response, this.constructor, response.getData());
                 },
-                function (response: AxiosError) {
-                    throw new Error((<Error> response).message);
+                (response: AxiosError) => {
+                    throw response;
                 }
             );
     }
