@@ -31,8 +31,8 @@ export class Builder implements QueryMethods
 
     constructor(
         modelType: typeof Model,
-        queriedRelationName: string = null,
-        baseModelJsonApiType: string = null,
+        queriedRelationName: string | undefined = undefined,
+        baseModelJsonApiType: string | undefined = undefined,
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;

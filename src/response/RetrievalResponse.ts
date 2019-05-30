@@ -106,7 +106,7 @@ export abstract class RetrievalResponse extends Response
                         doc.relationships[relationName].data
                     :
                         undefined;
-                let relatedModel: Model = null;
+                let relatedModel: Model | null = null;
                 if (stub) {
                     let typeMap = this.resourceIndex.get(stub.type);
                     if (typeMap) {

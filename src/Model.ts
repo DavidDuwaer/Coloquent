@@ -53,7 +53,7 @@ export abstract class Model
      */
     protected static paginationLimitParName: string = 'page[limit]';
 
-    private id: string;
+    private id: string | undefined;
 
     private relations: Map<any>;
 
@@ -83,7 +83,7 @@ export abstract class Model
         Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
     }
 
-    public static get(page: number = null): Promise<PluralResponse>
+    public static get(page?: number): Promise<PluralResponse>
     {
         return <Promise<PluralResponse>> new Builder(this)
             .get(page);
@@ -113,7 +113,7 @@ export abstract class Model
             .where(attribute, value);
     }
 
-    public static orderBy(attribute: string, direction: string = null): Builder
+    public static orderBy(attribute: string, direction?: string): Builder
     {
         return new Builder(this)
             .orderBy(attribute, direction);
@@ -153,7 +153,7 @@ export abstract class Model
                 relationships
             }
         };
-        if (this.id !== null) {
+        if (this.hasId) {
             payload['data']['id'] = this.id;
         }
         return payload;
@@ -161,7 +161,7 @@ export abstract class Model
 
     public save(): Promise<SaveResponse>
     {
-        if (this.id === undefined || this.id === '') {
+        if (!this.hasId) {
             return this.create();
         }
 
@@ -173,7 +173,8 @@ export abstract class Model
             )
             .then(
                 (response: HttpClientResponse) => {
-                    this.setApiId(response.getData().data.id);
+                    const idFromJson: string | undefined = response.getData().data.id;
+                    this.setApiId(idFromJson);
                     return new SaveResponse(response, this.constructor, response.getData());
                 },
                 (response: AxiosError) => {
@@ -192,7 +193,8 @@ export abstract class Model
             )
             .then(
                 (response: HttpClientResponse) => {
-                    this.setApiId(response.getData().data.id);
+                    const idFromJson: string | undefined = response.getData().data.id;
+                    this.setApiId(idFromJson);
                     return new SaveResponse(response, this.constructor, response.getData());
                 },
                 function (response: AxiosError) {
@@ -203,7 +205,7 @@ export abstract class Model
 
     public delete(): Promise<void>
     {
-        if (this.id === null) {
+        if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
         return Model.httpClient
@@ -343,12 +345,12 @@ export abstract class Model
         return Model.dateFormatter;
     }
 
-    public getApiId(): string
+    public getApiId(): string | undefined
     {
         return this.id;
     }
 
-    public setApiId(id: string): void
+    public setApiId(id: string | undefined): void
     {
         this.id = id;
     }
@@ -371,5 +373,12 @@ export abstract class Model
             relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
         }
         return new ToOneRelation(relatedType, this, relationName);
+    }
+
+    private get hasId(): boolean
+    {
+        return this.id !== undefined
+            && this.id !== null
+            && this.id !== '';
     }
 }

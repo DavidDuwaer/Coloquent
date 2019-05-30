@@ -4,13 +4,12 @@ import {SortSpec} from "./SortSpec";
 import {Option} from "./Option";
 import {PaginationSpec} from "./paginationspec/PaginationSpec";
 import {QueryParam} from "./QueryParam";
-import {Model} from "./Model";
 
 export class Query
 {
     protected jsonApiType: string;
 
-    protected queriedRelationName: string;
+    protected queriedRelationName: string | undefined;
 
     protected idToFind: string | number;
 
@@ -24,7 +23,7 @@ export class Query
 
     protected sort: SortSpec[];
 
-    constructor(jsonApiType: string, queriedRelationName: string = null)
+    constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined)
     {
         this.jsonApiType = jsonApiType;
         this.queriedRelationName = queriedRelationName;

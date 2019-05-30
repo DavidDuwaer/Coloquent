@@ -1,10 +1,7 @@
 import {Model} from "../Model";
-import {Resource} from "../Resource";
 import {Response} from "./Response";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
-import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
-import {Query} from "../Query";
 
 export class SaveResponse extends Response
 {
@@ -27,7 +24,7 @@ export class SaveResponse extends Response
         return this.model;
     }
 
-    public getModelId(): string
+    public getModelId(): string | undefined
     {
         return this.model.getApiId();
     }

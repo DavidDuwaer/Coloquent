@@ -2,7 +2,6 @@ import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
-import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 
@@ -26,12 +25,11 @@ export class SingularResponse extends RetrievalResponse
 
     protected makeModelIndex(data: Resource|Resource[]): void
     {
-        let doc: Resource = null;
-        if (Array.isArray(data)) {
-            doc = data[0];
-        } else {
-            doc = data;
-        }
+        const doc: Resource = Array.isArray(data)
+            ?
+            data[0]
+            :
+            data;
         if (doc) {
             this.indexAsModel(doc, this.modelType, this.includeTree);
         }
@@ -39,12 +37,11 @@ export class SingularResponse extends RetrievalResponse
 
     protected indexRequestedResources(data: Resource|Resource[])
     {
-        let doc: Resource = null;
-        if (Array.isArray(data)) {
-            doc = data[0];
-        } else {
-            doc = data;
-        }
+        const doc: Resource = Array.isArray(data)
+            ?
+            data[0]
+            :
+            data;
         if (doc) {
             this.indexDoc(doc);
         }
@@ -52,12 +49,11 @@ export class SingularResponse extends RetrievalResponse
 
     protected makeDataArray(data: Resource|Resource[]): void
     {
-        let doc: Resource = null;
-        if (Array.isArray(data)) {
-            doc = data[0];
-        } else {
-            doc = data;
-        }
+        let doc: Resource = Array.isArray(data)
+            ?
+            data[0]
+            :
+            data;
         if (doc) {
             this.data = this.modelIndex.get(doc.type).get(doc.id);
         }
