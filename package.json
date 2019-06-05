@@ -1,6 +1,6 @@
 {
   "name": "coloquent",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Library for retrieving model objects from a JSON-API, with a fluent syntax inspired by Laravel Eloquent.",
   "keywords": [
     "coloquent",
@@ -35,8 +35,7 @@
     "build": "npm run clear && tsc",
     "build-dev": "npm run clear && tsc --sourceMap",
     "test": "npm run build-dev && mocha -r ts-node/register tests/**/*.test.ts",
-    "prepublish": "npm test",
-    "dist": "npm run prepublish && npm publish"
+    "dist": "npm install && npm run test && npm publish"
   },
   "dependencies": {
     "@types/moxios": "^0.4.8",
