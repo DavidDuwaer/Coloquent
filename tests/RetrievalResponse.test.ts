@@ -134,4 +134,89 @@ describe('RetrievalResponse', () => {
             })
         });
     });
+
+
+    it('should not throw an exception but ignore discovered relations that are not implemented in the models', (done) => {
+        model.foes()
+            .with('foes')
+            .get()
+            .then((response: PluralResponse) => {
+                let beefMan: Hero = <Hero> response.getData()[0];
+
+                done();
+            })
+            .catch((err) => {
+                // it should not come here
+                assert.isTrue(false);
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: "heroes",
+                            id: "1",
+                            attributes: {
+                                name: "BeefMan"
+                            },
+                            relationships: {
+                                foes: {
+                                    data: [
+                                        {
+                                            type: "heroes",
+                                            id: "3"
+                                        }
+                                    ]
+                                },
+                                sidekicks: {
+                                    data: [
+                                        {
+                                            type: "sidekicks",
+                                            id: "1",
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            type: "heroes",
+                            id: "2",
+                            attributes: {
+                                name: "CarrotMan"
+                            },
+                            relationships: {
+                                foes: {
+                                    data: [
+                                        {
+                                            type: "heroes",
+                                            id: "3"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                    ],
+                    included: [
+                        {
+                            type: "heroes",
+                            id: "3",
+                            attributes: {
+                                name: "EggplantMan"
+                            }
+                        },
+                        {
+                            type: "sidekicks",
+                            id: "1",
+                            attributes: {
+                                name: "BurgerBoy"
+                            }
+                        }
+                    ]
+                }
+            });
+        });
+    });
 });

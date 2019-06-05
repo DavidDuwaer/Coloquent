@@ -83,6 +83,9 @@ export abstract class RetrievalResponse extends Response
         model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
         for (let relationName in {...includeTree, ...doc.relationships}) {
+            if (model[relationName] === undefined) {
+                continue;
+            }
             const includeSubtree = includeTree[relationName];
             let relation: Relation = model[relationName]();
             if (relation instanceof ToManyRelation) {
@@ -128,9 +131,10 @@ export abstract class RetrievalResponse extends Response
     {
         this.included = [];
         for (let doc of includedDocs) {
-            this.included.push(
-                this.modelIndex.get(doc.type).get(doc.id)
-            );
+            const models = this.modelIndex.get(doc.type);
+            if (models !== undefined) {
+                this.included.push(models.get(doc.id));
+            }
         }
     }
 }
