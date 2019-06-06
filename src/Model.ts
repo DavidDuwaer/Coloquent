@@ -198,7 +198,7 @@ export abstract class Model
                     return new SaveResponse(response, this.constructor, response.getData());
                 },
                 function (response: AxiosError) {
-                    throw new Error((<Error> response).message);
+                    throw response;
                 }
             );
     }
