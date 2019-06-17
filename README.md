@@ -18,6 +18,13 @@ Teacher
 
 To get started, see our more elaborate guide in our [wiki](https://github.com/DavidDuwaer/Coloquent/wiki)! A short version is featured below.
 
+# Install
+
+
+```shell
+$ npm install coloquent
+```
+
 # Usage
 
 ### Retrieving
@@ -250,12 +257,6 @@ If something is missing from this library that makes it not fit your use case to
 it for you, don't hesitate to create an Issue or a Pull Request.
 Coloquent is in active development and all feedback and contributions are sincerely appreciated.
 
-# Install
-
-
-```bash
-npm install coloquent --save
-```
 
 # License
 
