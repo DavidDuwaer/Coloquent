@@ -1,5 +1,5 @@
 import {BaseModel} from './BaseModel';
-import {ToManyRelation} from "../../../dist";
+import {ToManyRelation, ToOneRelation} from "../../../dist";
 
 export class Hero extends BaseModel
 {
@@ -15,9 +15,19 @@ export class Hero extends BaseModel
         return this.hasMany(Hero, 'enemies');
     }
 
+    public rival(): ToOneRelation
+    {
+        return this.hasOne(Hero);
+    }
+
     public getName(): string
     {
         return this.getAttribute('name');
+    }
+
+    public setName(name: string): void
+    {
+        this.setAttribute('name', name);
     }
 
     public getFoes(): Hero[]

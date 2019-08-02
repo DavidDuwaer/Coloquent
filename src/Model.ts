@@ -139,14 +139,11 @@ export abstract class Model
         }
         let relationships = {};
         for (let key in this.relations.toArray()) {
-            let model = this.relations.get(key);
-            if (model instanceof Model) {
-                relationships[key] = {
-                    data: {
-                        type: model.getJsonApiType(),
-                        id: model.id
-                    }
-                };
+            let relation = this.relations.get(key);
+            if (relation instanceof Model) {
+                relationships[key] = this.serializeToOneRelation(relation);
+            } else if (relation instanceof Array && relation.length > 0) {
+                relationships[key] = this.serializeToManyRelation(relation);
             }
         }
 
@@ -161,6 +158,25 @@ export abstract class Model
             payload['data']['id'] = this.id;
         }
         return payload;
+    }
+
+    private serializeRelatedModel(model: Model): any {
+        return {
+            type: model.getJsonApiType(),
+            id: model.id
+        };
+    }
+
+    private serializeToOneRelation(model: Model): any {
+        return {
+            data: this.serializeRelatedModel(model),
+        }
+    }
+
+    private serializeToManyRelation(models: Model[]) {
+        return {
+            data: models.map((model) => this.serializeRelatedModel(model))
+        };
     }
 
     public save(): Promise<SaveResponse>
