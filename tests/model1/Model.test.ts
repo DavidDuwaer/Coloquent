@@ -218,4 +218,52 @@ describe('Model1', () => {
             done();
         });
     });
+
+    it('serializes a toOne relation when saving', (done) => {
+        const hero = new Hero();
+        hero.setName('MeatMan');
+
+        const rival = new Hero();
+        rival.setApiId(Math.floor(Math.random()*10000).toString());
+
+        hero.setRelation('rival', rival);
+        hero.save();
+
+        moxios.wait(() => {
+            const request = moxios.requests.mostRecent();
+            const requestBody = JSON.parse(request.config.data);
+            const relationships = requestBody.data.relationships;
+
+            expect(relationships.rival.data).to.be.an('object');
+            expect(relationships.rival.data.id).to.equal(rival.getApiId());
+            done();
+        })
+    });
+
+    it('serializes a toMany relation when saving', (done) => {
+        const hero = new Hero();
+        hero.setName('MeatMan');
+
+        const friendA = new Hero();
+        friendA.setApiId(Math.floor(Math.random()*10000).toString());
+
+        const friendB = new Hero();
+        friendB.setApiId(Math.floor(Math.random()*10000).toString());
+
+        hero.setRelation('friends', [friendA, friendB]);
+        hero.save();
+
+        moxios.wait(() => {
+            const request = moxios.requests.mostRecent();
+            const requestBody = JSON.parse(request.config.data);
+            const relationships = requestBody.data.relationships;
+
+            expect(relationships.friends.data).to.be.an('Array');
+            expect(relationships.friends.data.length).to.equal(2);
+            expect(relationships.friends.data[0].id).to.equal(friendA.getApiId());
+            expect(relationships.friends.data[1].id).to.equal(friendB.getApiId());
+
+            done();
+        });
+    });
 });
