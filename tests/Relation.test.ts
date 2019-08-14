@@ -37,4 +37,32 @@ describe('Relation', () => {
             done();
         });
     });
+
+    it('yields a query with "<base class\>/<\<base id\>/relationships/\<relation class\>" at the start of the URL when an id is provided when using ToManyRelation', (done) => {
+        model.setApiId('superman');
+
+        model
+            .friends()
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/relationships/friends');
+            done();
+        });
+    });
+
+    it('yields a query with "<base class\>/<\<base id\>/relationships/\<relation class\>" at the start of the URL when an id is provided when using ToOneRelation', (done) => {
+        model.setApiId('superman');
+
+        model
+            .rival()
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/relationships/rival');
+            done();
+        });
+    });
 });

@@ -33,6 +33,7 @@ export class Builder implements QueryMethods
         modelType: typeof Model,
         queriedRelationName: string | undefined = undefined,
         baseModelJsonApiType: string | undefined = undefined,
+        baseModelJsonApiId: string | undefined = undefined,
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
@@ -40,7 +41,7 @@ export class Builder implements QueryMethods
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
             : modelInstance.getJsonApiType();
-        this.query = new Query(baseModelJsonApiType, queriedRelationName);
+        this.query = new Query(baseModelJsonApiType, queriedRelationName, baseModelJsonApiId);
         this.initPaginationSpec();
         this.httpClient = modelType.getHttpClient();
         this.forceSingular = forceSingular;
