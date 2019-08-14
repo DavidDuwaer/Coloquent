@@ -9,6 +9,8 @@ export class Query
 {
     protected jsonApiType: string;
 
+    protected jsonApiId: string | undefined;
+
     protected queriedRelationName: string | undefined;
 
     protected idToFind: string | number;
@@ -23,9 +25,10 @@ export class Query
 
     protected sort: SortSpec[];
 
-    constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined)
+    constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined, jsonApiId: string | undefined = undefined)
     {
         this.jsonApiType = jsonApiType;
+        this.jsonApiId = jsonApiId;
         this.queriedRelationName = queriedRelationName;
         this.include = [];
         this.filters = [];
@@ -92,9 +95,17 @@ export class Query
 
     public toString(): string
     {
-        let relationToFind: string = this.queriedRelationName
-            ? '/' + this.queriedRelationName
-            : '';
+        let relationToFind = '';
+
+        if (!this.jsonApiId) {
+            relationToFind = this.queriedRelationName
+                ? '/' + this.queriedRelationName
+                : '';
+        } else {
+            relationToFind = this.queriedRelationName
+                ? '/' + this.jsonApiId + '/relationships/' + this.queriedRelationName
+                : '';
+        }
 
         let idToFind: string = this.idToFind
             ? '/' + this.idToFind

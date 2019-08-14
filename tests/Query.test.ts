@@ -81,4 +81,17 @@ describe('Query', () => {
 
         assert.equal(query.toString(), model.getJsonApiType()+'?sort=name%2C-age');
     });
+
+    it('when a JSON-API id is provided, it should parse the relationships to "relationships/\<relation\>"', () => {
+        query = new Query('hero', 'capes', 'batman');
+        query.setPaginationSpec(
+            new OffsetBasedPaginationSpec(
+                Hero.getPaginationOffsetParamName(),
+                Hero.getPaginationLimitParamName(),
+                Hero.getPageSize()
+            )
+        )
+
+        assert.equal(query.toString(), 'hero/batman/relationships/capes');
+    });
 });
