@@ -82,7 +82,7 @@ describe('Query', () => {
         assert.equal(query.toString(), model.getJsonApiType()+'?sort=name%2C-age');
     });
 
-    it('when a JSON-API id is provided, it should parse the relationships to "relationships/\<relation\>"', () => {
+    it('when a JSON-API id is provided, it should parse the relationships to "\<relation\>"', () => {
         query = new Query('hero', 'capes', 'batman');
         query.setPaginationSpec(
             new OffsetBasedPaginationSpec(
@@ -92,6 +92,6 @@ describe('Query', () => {
             )
         )
 
-        assert.equal(query.toString(), 'hero/batman/relationships/capes');
+        assert.equal(query.toString(), 'hero/batman/capes');
     });
 });

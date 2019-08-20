@@ -38,7 +38,7 @@ describe('Relation', () => {
         });
     });
 
-    it('yields a query with "<base class\>/<\<base id\>/relationships/\<relation class\>" at the start of the URL when an id is provided when using ToManyRelation', (done) => {
+    it('yields a query with "<base class\>/<\<base id\>/\<relation class\>" at the start of the URL when an id is provided when using ToManyRelation', (done) => {
         model.setApiId('superman');
 
         model
@@ -47,12 +47,12 @@ describe('Relation', () => {
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
-            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/relationships/friends');
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/friends');
             done();
         });
     });
 
-    it('yields a query with "<base class\>/<\<base id\>/relationships/\<relation class\>" at the start of the URL when an id is provided when using ToOneRelation', (done) => {
+    it('yields a query with "<base class\>/<\<base id\>/\<relation class\>" at the start of the URL when an id is provided when using ToOneRelation', (done) => {
         model.setApiId('superman');
 
         model
@@ -61,7 +61,7 @@ describe('Relation', () => {
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
-            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/relationships/rival');
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/rival');
             done();
         });
     });
