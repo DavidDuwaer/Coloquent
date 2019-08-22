@@ -103,7 +103,7 @@ export class Query
                 : '';
         } else {
             relationToFind = this.queriedRelationName
-                ? '/' + this.jsonApiId + '/relationships/' + this.queriedRelationName
+                ? '/' + this.jsonApiId + '/' + this.queriedRelationName
                 : '';
         }
 
