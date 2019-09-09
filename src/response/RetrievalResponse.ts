@@ -72,17 +72,17 @@ export abstract class RetrievalResponse extends Response
         this.resourceIndex.get(type).set(id, doc);
     }
 
-    protected indexAsModel(resource: Resource, modelType, includeTree: any): Model
+    protected indexAsModel(doc: Resource, modelType, includeTree: any): Model
     {
-        let type = resource.type;
-        let id = resource.id;
+        let type = doc.type;
+        let id = doc.id;
         if (!this.modelIndex.get(type)) {
             this.modelIndex.set(type, new Map<Model>());
         }
         let model: Model = new modelType();
-        model.populateFromResource(resource);
+        model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
-        for (let resourceRelationName in {...includeTree, ...resource.relationships}) {
+        for (let resourceRelationName in {...includeTree, ...doc.relationships}) {
             const modelRelationName = this.convertRelationNameToCamelCase(resourceRelationName);
 
             if (model[modelRelationName] === undefined) {
@@ -92,32 +92,32 @@ export abstract class RetrievalResponse extends Response
             const includeSubtree = includeTree ? includeTree[modelRelationName] : {};
             let relation: Relation = model[modelRelationName]();
             if (relation instanceof ToManyRelation) {
-                let relatedStubs: ResourceStub[] = (resource.relationships !== undefined && resource.relationships[resourceRelationName] !== undefined)
+                let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[resourceRelationName] !== undefined)
                     ?
-                    resource.relationships[resourceRelationName].data
+                    doc.relationships[resourceRelationName].data
                     :
                     undefined;
                 let r: Model[] = [];
                 if (relatedStubs) {
                     for (let stub of relatedStubs) {
-                        const relatedResource: Resource = this.resourceIndex.get(stub.type).get(stub.id);
-                        let relatedModel: Model = this.indexAsModel(relatedResource, relation.getType(), includeSubtree);
+                        let relatedDoc: Resource = this.resourceIndex.get(stub.type).get(stub.id);
+                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
                         r.push(relatedModel);
                     }
                 }
                 model.setRelation(modelRelationName, r);
             } else if (relation instanceof ToOneRelation) {
-                let stub: ResourceStub = (resource.relationships !== undefined && resource.relationships[resourceRelationName] !== undefined)
+                let stub: ResourceStub = (doc.relationships !== undefined && doc.relationships[resourceRelationName] !== undefined)
                     ?
-                    resource.relationships[resourceRelationName].data
+                    doc.relationships[resourceRelationName].data
                     :
                     undefined;
                 let relatedModel: Model | null = null;
                 if (stub) {
                     let typeMap = this.resourceIndex.get(stub.type);
                     if (typeMap) {
-                        const relatedResource: Resource = typeMap.get(stub.id);
-                        relatedModel = this.indexAsModel(relatedResource, relation.getType(), includeSubtree);
+                        let relatedDoc: Resource = typeMap.get(stub.id);
+                        relatedModel = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
                     }
                 }
                 model.setRelation(modelRelationName, relatedModel);
