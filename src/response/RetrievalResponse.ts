@@ -83,17 +83,21 @@ export abstract class RetrievalResponse extends Response
         model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
         for (let relationName in {...includeTree, ...doc.relationships}) {
+            let docRelationName = relationName;
+            relationName = this.convertRelationNameToCamelCase(relationName);
+
             if (model[relationName] === undefined) {
                 continue;
             }
+
             const includeSubtree = includeTree ? includeTree[relationName] : {};
             let relation: Relation = model[relationName]();
             if (relation instanceof ToManyRelation) {
-                let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[relationName] !== undefined)
+                let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[docRelationName] !== undefined)
                     ?
-                        doc.relationships[relationName].data
+                    doc.relationships[docRelationName].data
                     :
-                        undefined;
+                    undefined;
                 let r: Model[] = [];
                 if (relatedStubs) {
                     for (let stub of relatedStubs) {
@@ -104,11 +108,11 @@ export abstract class RetrievalResponse extends Response
                 }
                 model.setRelation(relationName, r);
             } else if (relation instanceof ToOneRelation) {
-                let stub: ResourceStub = (doc.relationships !== undefined && doc.relationships[relationName] !== undefined)
+                let stub: ResourceStub = (doc.relationships !== undefined && doc.relationships[docRelationName] !== undefined)
                     ?
-                        doc.relationships[relationName].data
+                    doc.relationships[docRelationName].data
                     :
-                        undefined;
+                    undefined;
                 let relatedModel: Model | null = null;
                 if (stub) {
                     let typeMap = this.resourceIndex.get(stub.type);
@@ -136,5 +140,10 @@ export abstract class RetrievalResponse extends Response
                 this.included.push(models.get(doc.id));
             }
         }
+    }
+
+    protected convertRelationNameToCamelCase(relationName: string): string
+    {
+        return relationName.replace(/-\w/g, (m) => m[1].toUpperCase());
     }
 }
