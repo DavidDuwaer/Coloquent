@@ -72,56 +72,55 @@ export abstract class RetrievalResponse extends Response
         this.resourceIndex.get(type).set(id, doc);
     }
 
-    protected indexAsModel(doc: Resource, modelType, includeTree: any): Model
+    protected indexAsModel(resource: Resource, modelType, includeTree: any): Model
     {
-        let type = doc.type;
-        let id = doc.id;
+        let type = resource.type;
+        let id = resource.id;
         if (!this.modelIndex.get(type)) {
             this.modelIndex.set(type, new Map<Model>());
         }
         let model: Model = new modelType();
-        model.populateFromResource(doc);
+        model.populateFromResource(resource);
         this.modelIndex.get(type).set(id, model);
-        for (let relationName in {...includeTree, ...doc.relationships}) {
-            let docRelationName = relationName;
-            relationName = this.convertRelationNameToCamelCase(relationName);
+        for (let resourceRelationName in {...includeTree, ...resource.relationships}) {
+            const modelRelationName = this.convertRelationNameToCamelCase(resourceRelationName);
 
-            if (model[relationName] === undefined) {
+            if (model[modelRelationName] === undefined) {
                 continue;
             }
 
-            const includeSubtree = includeTree ? includeTree[relationName] : {};
-            let relation: Relation = model[relationName]();
+            const includeSubtree = includeTree ? includeTree[modelRelationName] : {};
+            let relation: Relation = model[modelRelationName]();
             if (relation instanceof ToManyRelation) {
-                let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[docRelationName] !== undefined)
+                let relatedStubs: ResourceStub[] = (resource.relationships !== undefined && resource.relationships[resourceRelationName] !== undefined)
                     ?
-                    doc.relationships[docRelationName].data
+                    resource.relationships[resourceRelationName].data
                     :
                     undefined;
                 let r: Model[] = [];
                 if (relatedStubs) {
                     for (let stub of relatedStubs) {
-                        let relatedDoc: Resource = this.resourceIndex.get(stub.type).get(stub.id);
-                        let relatedModel: Model = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
+                        const relatedResource: Resource = this.resourceIndex.get(stub.type).get(stub.id);
+                        let relatedModel: Model = this.indexAsModel(relatedResource, relation.getType(), includeSubtree);
                         r.push(relatedModel);
                     }
                 }
-                model.setRelation(relationName, r);
+                model.setRelation(modelRelationName, r);
             } else if (relation instanceof ToOneRelation) {
-                let stub: ResourceStub = (doc.relationships !== undefined && doc.relationships[docRelationName] !== undefined)
+                let stub: ResourceStub = (resource.relationships !== undefined && resource.relationships[resourceRelationName] !== undefined)
                     ?
-                    doc.relationships[docRelationName].data
+                    resource.relationships[resourceRelationName].data
                     :
                     undefined;
                 let relatedModel: Model | null = null;
                 if (stub) {
                     let typeMap = this.resourceIndex.get(stub.type);
                     if (typeMap) {
-                        let relatedDoc: Resource = typeMap.get(stub.id);
-                        relatedModel = this.indexAsModel(relatedDoc, relation.getType(), includeSubtree);
+                        const relatedResource: Resource = typeMap.get(stub.id);
+                        relatedModel = this.indexAsModel(relatedResource, relation.getType(), includeSubtree);
                     }
                 }
-                model.setRelation(relationName, relatedModel);
+                model.setRelation(modelRelationName, relatedModel);
             } else {
                 throw new Error('Unknown type of Relation encountered: ' + typeof relation);
             }
