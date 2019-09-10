@@ -3,11 +3,13 @@ import * as chai from 'chai';
 import * as moxios from 'moxios';
 import * as chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
+import {Hero as HeroWithAntiHeroes} from './model3/dummy/Hero';
 import {Builder} from "../dist";
 import {PaginationStrategy} from "../dist";
 import {Response} from "../dist";
 import {PluralResponse} from "../dist";
 import {SortDirection} from "../dist";
+import {AntiHero} from "./model3/dummy/AntiHero";
 
 chai.use(<any> chaip);
 
@@ -137,6 +139,7 @@ describe('RetrievalResponse', () => {
 
 
     it('should not throw an exception but ignore discovered relations that are not implemented in the models', (done) => {
+
         model.foes()
             .with('foes')
             .get()
@@ -217,6 +220,57 @@ describe('RetrievalResponse', () => {
                     ]
                 }
             });
+        });
+    });
+
+    it('should add relations to the model that were included with kebab casing in the url', (done) => {
+    HeroWithAntiHeroes
+        .with('anti-heroes')
+        .get()
+        .then((response: PluralResponse) => {
+            let hero: HeroWithAntiHeroes = <HeroWithAntiHeroes> response.getData()[0];
+            let antiHeroes: Array<AntiHero> = hero.getAntiHeroes();
+
+            assert(antiHeroes.length > 0);
+            assert(antiHeroes[0].getName() === 'BeefMan');
+
+            done();
+        });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: "heroes",
+                            id: "1",
+                            attributes: {
+                                name: "BeefMan"
+                            },
+                            relationships: {
+                                "anti-heroes": {
+                                    data: [
+                                        {
+                                            type: "anti-heroes",
+                                            id: "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    included: [
+                        {
+                            type: "anti-heroes",
+                            id: "1",
+                            attributes: {
+                                name: "BeefMan"
+                            }
+                        }
+                    ]
+                }
+            })
         });
     });
 });
