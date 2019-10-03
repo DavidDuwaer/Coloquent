@@ -89,7 +89,7 @@ export abstract class RetrievalResponse extends Response
                 continue;
             }
 
-            const includeSubtree = includeTree ? includeTree[modelRelationName] : {};
+            const includeSubtree = includeTree ? includeTree[resourceRelationName] : {};
             let relation: Relation = model[modelRelationName]();
             if (relation instanceof ToManyRelation) {
                 let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[resourceRelationName] !== undefined)
