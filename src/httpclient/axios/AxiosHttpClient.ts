@@ -12,6 +12,8 @@ export class AxiosHttpClient implements HttpClient
     constructor(axiosInstance?: AxiosInstance) {
         if (axiosInstance === null || axiosInstance === undefined) {
             axiosInstance = axios.create();
+            axiosInstance.defaults.headers['Accept'] = 'application/vnd.api+json';
+            axiosInstance.defaults.headers['Content-type'] = 'application/vnd.api+json';
         }
         this.axiosInstance = axiosInstance;
     }

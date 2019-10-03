@@ -266,4 +266,20 @@ describe('Model1', () => {
             done();
         });
     });
+
+    it('should have the application/vnd.api+json content-type in the header', (done) => {
+        const hero = new Hero();
+        hero.setName('MeatMan');
+
+        hero.save();
+
+        moxios.wait(() => {
+            const request = moxios.requests.mostRecent();
+            const headers = request.headers;
+
+            expect(headers['Content-Type']).to.equal('application/vnd.api+json');
+
+            done();
+        })
+    })
 });
