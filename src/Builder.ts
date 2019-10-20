@@ -158,6 +158,32 @@ export class Builder implements QueryMethods
         return this;
     }
 
+    public clone(): Builder 
+    {
+        let clone = Object.create(this);
+        let query = new Query(this.query.getJsonApiType(), this.query.getQueriedRelationName(), this.query.getJsonApiId());
+
+        this.query.getFilters().forEach(filter => query.addFilter(filter));
+        this.query.getOptions().forEach(option => query.addOption(option));
+        this.query.getSort().forEach(sort => query.addSort(sort));
+        this.query.getInclude().forEach(include => query.addInclude(include));
+        query.setPaginationSpec(Object.create(this.query.getPaginationSpec()));
+
+        clone.setQuery(query);
+
+        return clone;
+    }
+
+    public getQuery(): Query
+    {
+        return this.query;
+    }
+
+    public setQuery(query: Query): void
+    {
+        this.query = query;
+    }
+
     private initPaginationSpec(): void
     {
         let paginationStrategy = this.modelType.getPaginationStrategy();
