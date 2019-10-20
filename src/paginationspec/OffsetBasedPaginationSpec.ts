@@ -26,6 +26,8 @@ export class OffsetBasedPaginationSpec extends PaginationSpec
 
     public getPaginationParameters(): QueryParam[]
     {
+        this.queryParams = [];
+
         if (this.pageOffset !== undefined) {
             this.queryParams.push(new QueryParam(`${this.pageOffsetParamName}`, this.pageOffset));
             this.queryParams.push(new QueryParam(`${this.pageLimitParamName}`, this.pageLimit));
