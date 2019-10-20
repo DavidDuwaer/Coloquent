@@ -130,6 +130,21 @@ export class Query
         return this.jsonApiType + relationToFind + idToFind + paramString;
     }
 
+    public getJsonApiType()
+    {
+        return this.jsonApiType;
+    }
+
+    public getJsonApiId()
+    {
+        return this.jsonApiId;
+    }
+
+    public getQueriedRelationName()
+    {
+        return this.queriedRelationName;
+    }
+
     public setIdToFind(idToFind: string | number): void
     {
         this.idToFind = idToFind;
@@ -150,9 +165,18 @@ export class Query
         this.include.push(includeSpec);
     }
 
+    getInclude(): string[] {
+        return this.include;
+    }
+
     public addFilter(filter: FilterSpec): void
     {
         this.filters.push(filter);
+    }
+
+    public getFilters(): FilterSpec[]
+    {
+        return this.filters;
     }
 
     public addSort(sort: SortSpec): void
@@ -160,9 +184,19 @@ export class Query
         this.sort.push(sort);
     }
 
+    public getSort(): SortSpec[]
+    {
+        return this.sort;
+    }
+
     public addOption(option: Option): void
     {
         this.options.push(option);
+    }
+
+    public getOptions(): Option[]
+    {
+        return this.options;
     }
 
     /**
