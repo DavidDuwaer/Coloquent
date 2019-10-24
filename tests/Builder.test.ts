@@ -70,7 +70,7 @@ describe('Builder', () => {
         moxios.requests.reset();
 
         builder.where('foo', 'bar');
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .get();
@@ -90,7 +90,7 @@ describe('Builder', () => {
     it('where method applied after clone should generate different url result', (done) => {
         moxios.requests.reset();
 
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .where('name', 'Bob')
@@ -163,7 +163,7 @@ describe('Builder', () => {
         builder
             .with('weapons');
         
-        let builderClone = builder.clone();
+        let builderClone = builder;
         
         builder
             .get();
@@ -184,7 +184,7 @@ describe('Builder', () => {
     it('with method applied after clone should generate different url result', (done) => {
         moxios.requests.reset();
         
-        let builderClone = builder.clone();
+        let builderClone = builder;
         
         builder
             .with('weapons')
@@ -298,7 +298,7 @@ describe('Builder', () => {
         builder
             .orderBy('name');
 
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .get();
@@ -319,7 +319,7 @@ describe('Builder', () => {
     it('orderBy method applied after clone should generate different url result', (done) => {
         moxios.requests.reset();
 
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .orderBy('name')
@@ -364,7 +364,7 @@ describe('Builder', () => {
         builder
             .option('foo', 'bar');
 
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .get();
@@ -385,7 +385,7 @@ describe('Builder', () => {
     it('option method applied after clone should generate different url result', (done) => {
         moxios.requests.reset();
 
-        let builderClone = builder.clone();
+        let builderClone = builder;
 
         builder
             .option('foo', 'bar')
