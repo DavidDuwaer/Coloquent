@@ -66,6 +66,56 @@ describe('Builder', () => {
         });
     });
 
+    it('where method applied before clone should generate same url result', (done) => {
+        moxios.requests.reset();
+
+        builder.where('foo', 'bar');
+        let builderClone = builder;
+
+        builder
+            .get();
+
+        builderClone
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.equal(request.url, requestClone.url);
+            done();
+        });
+    });
+
+    it('where method applied after clone should generate different url result', (done) => {
+        moxios.requests.reset();
+
+        let builderClone = builder;
+
+        builder
+            .where('name', 'Bob')
+            .get();
+
+        builderClone
+            .where('name', 'Josh')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.notEqual(request.url, requestClone.url);
+            
+            assert.notInclude(request.url, 'filter%5Bname%5D=Josh');
+            assert.notInclude(requestClone.url, 'filter%5Bname%5D=Bob');
+
+            assert.include(request.url, 'filter%5Bname%5D=Bob');
+            assert.include(requestClone.url, 'filter%5Bname%5D=Josh');
+
+            done();
+        });
+    });
+
     it('with method should add include parameters to query string', (done) => {
         builder
             .with('weapons')
@@ -105,6 +155,57 @@ describe('Builder', () => {
                 .get();
 
         }).to.throw('The argument for \'with\' must be a string or an array of strings.');
+    });
+
+    it('with method applied before clone should generate same url result', (done) => {
+        moxios.requests.reset();
+        
+        builder
+            .with('weapons');
+        
+        let builderClone = builder;
+        
+        builder
+            .get();
+
+        builderClone
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let cloneRequest = moxios.requests.at(1);
+
+            assert.equal(request.url, cloneRequest.url);
+
+            done();
+        });
+    });
+
+    it('with method applied after clone should generate different url result', (done) => {
+        moxios.requests.reset();
+        
+        let builderClone = builder;
+        
+        builder
+            .with('weapons')
+            .get();
+
+        builderClone
+            .with('costume')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.notInclude(request.url, 'include=costume');
+            assert.notInclude(requestClone.url, 'include=weapons');
+
+            assert.include(request.url, 'include=weapons');
+            assert.include(requestClone.url, 'include=costume');
+
+            done();
+        });
     });
 
     it('orderBy method should add order parameters to query string', (done) => {
@@ -191,6 +292,57 @@ describe('Builder', () => {
         }).to.throw();
     });
 
+    it('orderBy method applied before clone should generate same url result', (done) => {
+        moxios.requests.reset();
+        
+        builder
+            .orderBy('name');
+
+        let builderClone = builder;
+
+        builder
+            .get();
+
+        builderClone
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.equal(request.url, requestClone.url);
+
+            done();
+        });
+    });
+
+    it('orderBy method applied after clone should generate different url result', (done) => {
+        moxios.requests.reset();
+
+        let builderClone = builder;
+
+        builder
+            .orderBy('name')
+            .get();
+
+        builderClone
+            .orderBy('foo')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.notInclude(request.url, 'sort=foo');
+            assert.notInclude(requestClone.url, 'sort=name');
+
+            assert.include(request.url, 'sort=name');
+            assert.include(requestClone.url, 'sort=foo');
+
+            done();
+        });
+    });
+
     it('option method should allow adding parameters to query string', (done) => {
         builder
             .option('foo', 'bar')
@@ -201,6 +353,57 @@ describe('Builder', () => {
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'foo=bar');
+
+            done();
+        });
+    });
+
+    it('option method applied before clone should generate same url result', (done) => {
+        moxios.requests.reset();
+        
+        builder
+            .option('foo', 'bar');
+
+        let builderClone = builder;
+
+        builder
+            .get();
+
+        builderClone
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.equal(request.url, requestClone.url);
+
+            done();
+        });
+    });
+
+    it('option method applied after clone should generate different url result', (done) => {
+        moxios.requests.reset();
+
+        let builderClone = builder;
+
+        builder
+            .option('foo', 'bar')
+            .get();
+
+        builderClone
+            .option('baz', 'qux')
+            .get();
+
+        moxios.wait(() => {
+            let request = moxios.requests.at(0);
+            let requestClone = moxios.requests.at(1);
+
+            assert.notInclude(request.url, 'baz=qux');
+            assert.notInclude(requestClone.url, 'foo=bar');
+
+            assert.include(request.url, 'foo=bar');
+            assert.include(requestClone.url, 'baz=qux');
 
             done();
         });

@@ -49,13 +49,14 @@ export class Builder implements QueryMethods
 
     public get(page: number = 0): Promise<Response>
     {
-        this.query.getPaginationSpec().setPage(page);
+        const clone = this.clone();
+        clone.getQuery().getPaginationSpec().setPage(page);
         if (this.forceSingular) {
             return <Promise<SingularResponse>> this.getHttpClient()
-                .get(this.query.toString())
+                .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new SingularResponse(this.query, response, this.modelType, response.getData());
+                        return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -63,10 +64,10 @@ export class Builder implements QueryMethods
                 );
         } else {
             return <Promise<PluralResponse>> this.getHttpClient()
-                .get(this.query.toString())
+                .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new PluralResponse(this.query, response, this.modelType, response.getData(), page);
+                        return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page);
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -77,7 +78,8 @@ export class Builder implements QueryMethods
 
     public first(): Promise<SingularResponse>
     {
-        this.query.getPaginationSpec().setPageLimit(1);
+        const clone = this.clone();
+        clone.getQuery().getPaginationSpec().setPageLimit(1);
         return <Promise<SingularResponse>> this.getHttpClient()
             .get(this.query.toString())
             .then(
@@ -92,12 +94,13 @@ export class Builder implements QueryMethods
 
     public find(id: string | number): Promise<SingularResponse>
     {
-        this.query.setIdToFind(id);
-        return <Promise<SingularResponse>> this.getHttpClient()
-            .get(this.query.toString())
+        const clone = this.clone();
+        clone.query.setIdToFind(id);
+        return <Promise<SingularResponse>> clone.getHttpClient()
+            .get(clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
-                    return new SingularResponse(this.query, response, this.modelType, response.getData());
+                    return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
                 },
                 function (response: AxiosError) {
                     throw new Error((<Error> response).message);
@@ -107,22 +110,26 @@ export class Builder implements QueryMethods
 
     public where(attribute: string, value: string): Builder
     {
-        this.query.addFilter(new FilterSpec(attribute, value));
-        return this;
+        const clone = this.clone();
+        clone.getQuery().addFilter(new FilterSpec(attribute, value));
+        return clone;
     }
 
     public with(value: any): Builder
     {
+        const clone = this.clone();
+
         if (typeof value === 'string') {
-            this.query.addInclude(value);
+            clone.getQuery().addInclude(value);
         } else if (Array.isArray(value)) {
             for (let v of value) {
-                this.query.addInclude(v);
+                clone.getQuery().addInclude(v);
             }
         } else {
             throw new Error("The argument for 'with' must be a string or an array of strings.");
         }
-        return this;
+
+        return clone;
     }
 
     public orderBy(attribute: string, direction?: SortDirection|string): Builder
@@ -141,21 +148,54 @@ export class Builder implements QueryMethods
                 );
             }
         }
-        this.query.addSort(
+
+        const clone = this.clone();
+
+        clone.getQuery().addSort(
             new SortSpec(
                 attribute,
                 direction === SortDirection.ASC
             )
         );
-        return this;
+        
+        return clone;
     }
 
     public option(queryParameter: string, value: string): Builder
     {
-        this.query.addOption(
+        const clone = this.clone();
+
+        clone.getQuery().addOption(
             new Option(queryParameter, value)
         );
-        return this;
+
+        return clone;
+    }
+
+    private clone(): Builder 
+    {
+        let clone = Object.create(this);
+        let query = new Query(this.query.getJsonApiType(), this.query.getQueriedRelationName(), this.query.getJsonApiId());
+
+        this.query.getFilters().forEach(filter => query.addFilter(filter));
+        this.query.getOptions().forEach(option => query.addOption(option));
+        this.query.getSort().forEach(sort => query.addSort(sort));
+        this.query.getInclude().forEach(include => query.addInclude(include));
+        query.setPaginationSpec(Object.create(this.query.getPaginationSpec()));
+
+        clone.setQuery(query);
+
+        return clone;
+    }
+
+    public getQuery(): Query
+    {
+        return this.query;
+    }
+
+    public setQuery(query: Query): void
+    {
+        this.query = query;
     }
 
     private initPaginationSpec(): void
