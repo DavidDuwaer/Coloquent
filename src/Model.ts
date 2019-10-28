@@ -90,6 +90,16 @@ export abstract class Model
         Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
     }
 
+    /**
+     * Get a {@link Builder} instance from a {@link Model} instance
+     * so you can query without having a static reference to your specific {@link Model}
+     * class.
+     */
+    public query(): Builder
+    {
+        return new Builder(this.constructor);
+    }
+
     public static get(page?: number): Promise<PluralResponse>
     {
         return <Promise<PluralResponse>> new Builder(this)
