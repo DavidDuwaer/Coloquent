@@ -106,20 +106,10 @@ export abstract class Model
             .get(page);
     }
 
-    public get(page?: number)
-    {
-        return this.constructor.get(page);
-    }
-
     public static first(): Promise<SingularResponse>
     {
         return new Builder(this)
             .first();
-    }
-
-    public first(): Promise<SingularResponse>
-    {
-        return this.constructor.first();
     }
 
     public static find(id: string | number): Promise<SingularResponse>
@@ -128,20 +118,10 @@ export abstract class Model
             .find(id);
     }
 
-    public find(id: string | number): Promise<SingularResponse>
-    {
-        return this.constructor.find(id);
-    }
-
     public static with(attribute: any): Builder
     {
         return new Builder(this)
             .with(attribute);
-    }
-
-    public with(attribute: any): Builder
-    {
-        return this.constructor.with(attribute);
     }
 
     public static where(attribute: string, value: string): Builder
@@ -150,31 +130,16 @@ export abstract class Model
             .where(attribute, value);
     }
 
-    public where(attribute: string, value: string): Builder
-    {
-        return this.constructor.where(attribute, value);
-    }
-
     public static orderBy(attribute: string, direction?: string): Builder
     {
         return new Builder(this)
             .orderBy(attribute, direction);
     }
 
-    public orderBy(attribute: string, direction?: string): Builder
-    {
-        return this.constructor.orderBy(attribute, direction);
-    }
-
     public static option(queryParameter: string, value: string): Builder
     {
         return new Builder(this)
             .option(queryParameter, value);
-    }
-
-    public option(queryParameter: string, value: string): Builder
-    {
-        return this.constructor.option(queryParameter, value);
     }
 
     private serialize()
