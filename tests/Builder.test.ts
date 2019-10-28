@@ -571,4 +571,59 @@ describe('Builder', () => {
 
         return expect(builder.get(page).catch(response => Promise.resolve())).to.be.fulfilled;
     });
+
+
+    it('should allow you to get a Builder with the correct modelType from a model instance with .query()', (done) => {
+        const hero = new Hero();
+        hero
+            .query()
+            .with('foes')
+            .get()
+            .then((response: PluralResponse) => {
+                let beefMan: Hero = <Hero> response.getData()[0];
+                let foes = beefMan.getFoes();
+                assert(foes !== undefined);
+                assert(foes !== null);
+                assert(Array.isArray(foes));
+                assert(foes.length === 1);
+
+                done();
+            });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: "heroes",
+                            id: "1",
+                            attributes: {
+                                name: "BeefMan"
+                            },
+                            relationships: {
+                                foes: {
+                                    data: [
+                                        {
+                                            type: "heroes",
+                                            id: "3"
+                                        }
+                                    ]
+                                },
+                            }
+                        },
+                    ],
+                    included: [
+                        {
+                            type: "heroes",
+                            id: "3",
+                            attributes: {
+                                name: "EggplantMan"
+                            }
+                        },
+                    ]
+                }
+            })
+        });
+    });
 });

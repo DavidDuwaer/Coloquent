@@ -14,6 +14,9 @@ import {HttpClient} from "./httpclient/HttpClient";
 import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 
+export interface Model {
+    constructor: typeof Model;
+}
 export abstract class Model
 {
     private type: string;
@@ -85,6 +88,16 @@ export abstract class Model
     private initHttpClient(): void
     {
         Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
+    }
+
+    /**
+     * Get a {@link Builder} instance from a {@link Model} instance
+     * so you can query without having a static reference to your specific {@link Model}
+     * class.
+     */
+    public query(): Builder
+    {
+        return new Builder(this.constructor);
     }
 
     public static get(page?: number): Promise<PluralResponse>
