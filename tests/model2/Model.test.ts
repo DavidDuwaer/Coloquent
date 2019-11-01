@@ -219,23 +219,30 @@ describe('Model2', () => {
         });
     });
     
-    it('should have an fresh method', (done) => {
-        Hero.find('1').then((response: SingularResponse) => {
-            let hero = <Hero> response.getData();
-            let antihero = hero.fresh();
+    it('fresh method should reload the resource data from the backend', (done) => {
+        Hero
+            .first()
+            .then((response: SingularResponse) => {
+                let hero = <Hero> response.getData();
+                hero.setName('Joel');
 
-            assert.equal(hero.getApiId(), '1');
-            assert.equal(antihero.getApiId(), null);
-            assert.isFalse(hero === antihero);
-            assert.instanceOf(antihero, Hero);
+                hero
+                    .fresh()
+                    .then((antihero: Hero) => {
+                        assert.instanceOf(antihero, Hero);
+                        assert.equal(hero.getName(), 'Joel');
+                        assert.equal(antihero.getName(), 'Bob');
+                        assert.equal(hero.getApiId(), antihero.getApiId());
 
-            done();
-        });
+                        done();
+                    })
+                    .catch(error => done(error));
+            })
+            .catch(error => done(error));
 
         moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
-
-            request.respondWith({
+            let heroRequest = moxios.requests.mostRecent();
+            let responseData = {
                 response: {
                     data: [
                         {
@@ -247,7 +254,88 @@ describe('Model2', () => {
                         }
                     ]
                 }
+            };
+
+            heroRequest.respondWith(responseData);
+
+            moxios.wait(() => {
+                let antiheroRequest = moxios.requests.mostRecent();
+                antiheroRequest.respondWith(responseData);
             });
         });
+    });
+
+    it('fresh method should keep the loaded relations', (done) => {
+        Hero
+            .with('friends')
+            .first()
+            .then((response: SingularResponse) => {
+                let hero = <Hero> response.getData();
+
+                hero
+                    .fresh();
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => {
+            let heroRequest = moxios.requests.mostRecent();
+            let responseData = {
+                response: {
+                    data: [
+                        {
+                            type: superHero.getJsonApiType(),
+                            id: 1,
+                            attributes: {
+                                name: 'Bob'
+                            },
+                            relationships: {
+                                friends: {
+                                    data: [
+                                        {
+                                            type: "heroes",
+                                            id: "3"
+                                        }
+                                    ]
+                                },
+                            }
+                        }
+                    ],
+                    included: [
+                        {
+                            type: "heroes",
+                            id: "3",
+                            attributes: {
+                                name: "EggplantMan"
+                            }
+                        },
+                    ]
+                }
+            };
+
+            heroRequest.respondWith(responseData);
+
+            moxios.wait(() => {
+                let antiheroRequest = moxios.requests.mostRecent();
+                assert.include(antiheroRequest.url, 'include=friends');
+                done();
+            });
+        });
+    });
+
+    it('fresh method should create a new and empty instance of model when it does not have an ID', (done) => {
+        let hero = new Hero();
+        
+        hero.setName('Bob');
+
+        hero
+            .fresh()
+            .then((antihero: Hero) => {
+                assert.instanceOf(antihero, Hero);
+                assert.isFalse(hero === antihero);
+                assert.equal(antihero.getName(), null);
+                assert.equal(hero.getName(), 'Bobs');
+                done();
+            })
+            .catch(error => done(error)); 
     });
 });
