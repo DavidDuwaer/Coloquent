@@ -124,6 +124,12 @@ export abstract class Model
             .with(attribute);
     }
 
+    public static limit(limit: number): Builder
+    {
+        return new Builder(this)
+            .limit(limit);
+    }
+
     public static where(attribute: string, value: string): Builder
     {
         return new Builder(this)

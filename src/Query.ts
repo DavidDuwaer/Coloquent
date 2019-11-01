@@ -25,6 +25,8 @@ export class Query
 
     protected sort: SortSpec[];
 
+    protected limit: number;
+
     constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined, jsonApiId: string | undefined = undefined)
     {
         this.jsonApiType = jsonApiType;
@@ -197,6 +199,14 @@ export class Query
     public getOptions(): Option[]
     {
         return this.options;
+    }
+
+    public setLimit(limit: number) {
+        this.limit = limit;
+    }
+
+    public getLimit(): number {
+        return this.limit;
     }
 
     /**
