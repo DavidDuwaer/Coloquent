@@ -1,7 +1,7 @@
 import {assert, expect} from 'chai';
 import {Hero} from './dummy/Hero';
 import * as moxios from 'moxios';
-import {Model} from "../../dist";
+import {Model, SingularResponse} from "../../dist";
 import {SaveResponse} from "../../dist";
 import {AxiosInstance} from "axios";
 
@@ -216,6 +216,38 @@ describe('Model2', () => {
             assert.notEqual(request.headers.authentication, 'asdfasdf');
 
             done();
+        });
+    });
+    
+    it('should have an fresh method', (done) => {
+        Hero.find('1').then((response: SingularResponse) => {
+            let hero = <Hero> response.getData();
+            let antihero = hero.fresh();
+
+            assert.equal(hero.getApiId(), '1');
+            assert.equal(antihero.getApiId(), null);
+            assert.isFalse(hero === antihero);
+            assert.instanceOf(antihero, Hero);
+
+            done();
+        });
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: superHero.getJsonApiType(),
+                            id: 1,
+                            attributes: {
+                                name: 'Bob'
+                            }
+                        }
+                    ]
+                }
+            });
         });
     });
 });
