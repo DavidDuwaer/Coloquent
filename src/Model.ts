@@ -246,6 +246,11 @@ export abstract class Model
             .then(function () {});
     }
 
+    public fresh() :this
+    {
+        return new (<any> this.constructor);
+    }
+
     /**
      * @returns {string} e.g. 'http://www.foo.com/bar/'
      */
