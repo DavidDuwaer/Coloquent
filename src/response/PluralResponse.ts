@@ -12,6 +12,8 @@ export class PluralResponse extends RetrievalResponse
 
     protected pageNumber: number;
 
+    protected limit: number;
+
     constructor(
         query: Query,
         httpClientResponse: HttpClientResponse,
@@ -21,6 +23,7 @@ export class PluralResponse extends RetrievalResponse
     ) {
         super(query, httpClientResponse, modelType, responseBody);
         this.pageNumber = pageNumber;
+        this.limit = query.getLimit();
     }
 
     public getPageNumber(): number
@@ -30,7 +33,11 @@ export class PluralResponse extends RetrievalResponse
 
     public getData(): Model[]
     {
-        return this.data;
+        if (this.limit !== undefined && Array.isArray(this.data)){
+            return this.data.slice(0, this.limit);
+        } else {
+            return this.data;
+        }
     }
 
     protected indexRequestedResources(requestedResources: Resource[] = [])
