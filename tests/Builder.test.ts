@@ -36,7 +36,7 @@ describe('Builder', () => {
         });
     });
 
-    it('get method with limit 3 should restrict response to 3 results', (done) => {
+    it('get method with limit 2 should restrict response to 2 results', (done) => {
         builder
             .limit(2)
             .get()
