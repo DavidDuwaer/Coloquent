@@ -36,6 +36,147 @@ describe('Builder', () => {
         });
     });
 
+    it('get method with limit 3 should restrict response to 3 results', (done) => {
+        builder
+            .limit(2)
+            .get()
+            .then(function(response: PluralResponse) {
+                let heros = response.getData();
+
+                assert.equal(heros.length, 2);
+
+                done();
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            let jsonApiType = (new Hero()).getJsonApiType();
+
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: jsonApiType,
+                            id: 1,
+                            attributes: {
+                                name: 'John'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 2,
+                            attributes: {
+                                name: 'Paul'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 3,
+                            attributes: {
+                                name: 'Ringo'
+                            }
+                        },
+                    ]
+                }
+            })
+        });
+    });
+
+    it('get method with limit bigger than response\'s length should return all results', (done) => {
+        builder
+            .limit(5)
+            .get()
+            .then(function(response: PluralResponse) {
+                let heros = response.getData();
+
+                assert.equal(heros.length, 3);
+
+                done();
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            let jsonApiType = (new Hero()).getJsonApiType();
+
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: jsonApiType,
+                            id: 1,
+                            attributes: {
+                                name: 'John'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 2,
+                            attributes: {
+                                name: 'Paul'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 3,
+                            attributes: {
+                                name: 'Ringo'
+                            }
+                        },
+                    ]
+                }
+            })
+        });
+    });
+
+    it('get method with limit 0 should return no results', (done) => {
+        builder
+            .limit(0)
+            .get()
+            .then(function(response: PluralResponse) {
+                let heros = response.getData();
+
+                assert.equal(heros.length, 0);
+
+                done();
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => {
+            let request = moxios.requests.mostRecent();
+            let jsonApiType = (new Hero()).getJsonApiType();
+
+            request.respondWith({
+                response: {
+                    data: [
+                        {
+                            type: jsonApiType,
+                            id: 1,
+                            attributes: {
+                                name: 'John'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 2,
+                            attributes: {
+                                name: 'Paul'
+                            }
+                        },
+                        {
+                            type: jsonApiType,
+                            id: 3,
+                            attributes: {
+                                name: 'Ringo'
+                            }
+                        },
+                    ]
+                }
+            })
+        });
+    });
+
     // TODO: add first method test here
 
     it('find method should append argument to the resource uri', (done) => {
