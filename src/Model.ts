@@ -246,9 +246,30 @@ export abstract class Model
             .then(function () {});
     }
 
-    public fresh() :this
+    public fresh(): Promise<this>
     {
-        return new (<any> this.constructor);
+        let model = <this> (new (<any> this.constructor));
+        let builder = model.query();
+
+        for (let key in this.relations.toArray()){
+            builder = builder.with(key);
+        }
+
+        if (this.getApiId()) {
+            return builder
+                .find(<string>this.getApiId())
+                .then(
+                    (response: SingularResponse) => {
+                        let model = <this> response.getData();
+                        return model;
+                    },
+                    (response: AxiosError) => {
+                        throw response;
+                    }
+                );
+        } else {
+            return Promise.resolve(model);
+        }
     }
 
     /**
