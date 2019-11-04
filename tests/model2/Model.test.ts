@@ -333,7 +333,7 @@ describe('Model2', () => {
                 assert.instanceOf(antihero, Hero);
                 assert.isFalse(hero === antihero);
                 assert.equal(antihero.getName(), null);
-                assert.equal(hero.getName(), 'Bobs');
+                assert.equal(hero.getName(), 'Bob');
                 done();
             })
             .catch(error => done(error)); 
