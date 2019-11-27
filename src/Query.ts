@@ -25,7 +25,7 @@ export class Query
 
     protected sort: SortSpec[];
 
-    protected limit: number;
+    protected limit: number | undefined;
 
     constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined, jsonApiId: string | undefined = undefined)
     {
