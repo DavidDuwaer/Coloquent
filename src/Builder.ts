@@ -92,6 +92,12 @@ export class Builder implements QueryMethods
             );
     }
 
+    public limit(limit: number) {
+        const clone = this.clone();
+        clone.getQuery().setLimit(limit);
+        return clone;
+    }
+
     public find(id: string | number): Promise<SingularResponse>
     {
         const clone = this.clone();
@@ -181,7 +187,9 @@ export class Builder implements QueryMethods
         this.query.getOptions().forEach(option => query.addOption(option));
         this.query.getSort().forEach(sort => query.addSort(sort));
         this.query.getInclude().forEach(include => query.addInclude(include));
+
         query.setPaginationSpec(Object.create(this.query.getPaginationSpec()));
+        query.setLimit(this.query.getLimit());
 
         clone.setQuery(query);
 
