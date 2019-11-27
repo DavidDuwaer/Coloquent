@@ -51,7 +51,7 @@ export abstract class RetrievalResponse extends Response
         return this.included;
     }
 
-    protected abstract makeModelIndex(requested: any): void;
+    protected abstract makeModelIndex(requested: Resource | Resource[] | null | undefined): void;
 
     private indexIncludedDocs(includedDocs: Resource[] = []): void
     {
@@ -60,7 +60,7 @@ export abstract class RetrievalResponse extends Response
         }
     }
 
-    protected abstract indexRequestedResources(requested: any);
+    protected abstract indexRequestedResources(requested: Resource | Resource[] | null | undefined);
 
     protected indexDoc(doc: Resource)
     {
@@ -128,7 +128,7 @@ export abstract class RetrievalResponse extends Response
         return model;
     }
 
-    protected abstract makeDataArray(requestedDocs: any): void;
+    protected abstract makeDataArray(requestedDocs: Resource | Resource[] | null | undefined): void;
 
     protected makeIncludedArray(includedDocs: Resource[] = [])
     {
@@ -144,5 +144,14 @@ export abstract class RetrievalResponse extends Response
     protected convertRelationNameToCamelCase(relationName: string): string
     {
         return relationName.replace(/-\w/g, (m) => m[1].toUpperCase());
+    }
+
+    protected static coalesceUndefinedIntoNull<T>(value: T | undefined | null): T | null
+    {
+        return value !== undefined
+            ?
+            value
+            :
+            null;
     }
 }

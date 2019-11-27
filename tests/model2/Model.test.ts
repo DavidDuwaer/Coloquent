@@ -1,7 +1,7 @@
 import {assert, expect} from 'chai';
 import {Hero} from './dummy/Hero';
 import * as moxios from 'moxios';
-import {Model} from "../../dist";
+import {Model, SingularResponse} from "../../dist";
 import {SaveResponse} from "../../dist";
 import {AxiosInstance} from "axios";
 
@@ -217,5 +217,143 @@ describe('Model2', () => {
 
             done();
         });
+    });
+    
+    it('fresh method should reload the resource data from the backend', (done) => {
+        const responseData = {
+            response: {
+                data: [
+                    {
+                        type: superHero.getJsonApiType(),
+                        id: 1,
+                        attributes: {
+                            name: 'Bob'
+                        }
+                    }
+                ]
+            }
+        };
+        Hero
+            .first()
+            .then((response: SingularResponse) => {
+                let hero = <Hero> response.getData();
+                hero.setName('Joel');
+
+                hero
+                    .fresh()
+                    .then((antihero: Hero) => {
+                        assert.instanceOf(antihero, Hero);
+                        assert.equal(hero.getName(), 'Joel');
+                        assert.equal(antihero.getName(), 'Bob');
+                        assert.equal(hero.getApiId(), antihero.getApiId());
+
+                        done();
+                    })
+                    .catch(error => done(error));
+
+                moxios.wait(() => moxios.requests.mostRecent().respondWith(responseData));
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => moxios.requests.mostRecent().respondWith(responseData));
+    });
+
+    it('fresh method should return \'null\' when the ID cannot be found in the API (1)', (done) => {
+        Hero
+            .first()
+            .then((response: SingularResponse) => {
+                let hero = response.getData() as Hero;
+                hero.fresh()
+                    .then(singularResponse => {
+                        done();
+                    })
+                    .catch(() => done());
+
+                moxios.wait(() => moxios.requests.mostRecent().respondWith({
+                    response: {
+                        data: null
+                    }
+                }));
+            });
+
+        moxios.wait(() => moxios.requests.mostRecent().respondWith({
+            response: {
+                data: [
+                    {
+                        type: superHero.getJsonApiType(),
+                        id: 1,
+                        attributes: {
+                            name: 'Bob'
+                        }
+                    }
+                ]
+            }
+        }));
+    });
+
+    it('fresh method should keep the loaded relations', (done) => {
+        Hero
+            .with('friends')
+            .first()
+            .then((response: SingularResponse) => {
+                let hero = <Hero> response.getData();
+
+                hero
+                    .fresh();
+
+                moxios.wait(() => {
+                    let refreshRequest = moxios.requests.mostRecent();
+                    assert.include(refreshRequest.url, 'include=friends');
+                    done();
+                });
+            })
+            .catch(error => done(error));
+
+        moxios.wait(() => moxios.requests.mostRecent().respondWith({
+            response: {
+                data: [
+                    {
+                        type: superHero.getJsonApiType(),
+                        id: 1,
+                        attributes: {
+                            name: 'Bob'
+                        },
+                        relationships: {
+                            friends: {
+                                data: [
+                                    {
+                                        type: "heroes",
+                                        id: "3"
+                                    }
+                                ]
+                            },
+                        }
+                    }
+                ],
+                included: [
+                    {
+                        type: "heroes",
+                        id: "3",
+                        attributes: {
+                            name: "EggplantMan"
+                        }
+                    },
+                ]
+            }
+        }));
+    });
+
+    it('fresh method should return \'undefined\' when model does not have an ID', (done) => {
+        let hero = new Hero();
+        
+        hero.setName('Bob');
+
+        hero
+            .fresh()
+            .then((antihero: Hero | undefined | null) => {
+                assert.equal(antihero, undefined);
+                done();
+            })
+            .catch(error => done(error)); 
     });
 });

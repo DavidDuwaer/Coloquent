@@ -2,6 +2,6 @@ import {Resource} from "./Resource";
 
 export class JsonApiResponseBody
 {
-    public data;
+    public data: Resource | Resource[] | null | undefined;
     public included: Resource[];
 }

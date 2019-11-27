@@ -5,7 +5,7 @@ import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 
 export class SaveResponse extends Response
 {
-    protected model: Model;
+    protected readonly model: Model | null;
 
     constructor(
         httpClientResponse: HttpClientResponse,
@@ -13,19 +13,30 @@ export class SaveResponse extends Response
         responseBody: JsonApiResponseBody
     ) {
         super(undefined, httpClientResponse);
-        let modelTypeUntyped: any = modelType; // Do this to shut IDE up about not being able to instantiate
-                                               // abstract classes
-        this.model = new (<any> modelType)();
-        this.model.populateFromResource(responseBody.data);
+        const data = responseBody.data;
+        if (data !== undefined && data !== null)
+        {
+            const model = new (<any> modelType)();
+            model.populateFromResource(responseBody.data);
+            this.model = model;
+        }
+        else
+        {
+            this.model = null;
+        }
     }
 
-    public getModel(): Model
+    public getModel(): Model | null
     {
         return this.model;
     }
 
     public getModelId(): string | undefined
     {
-        return this.model.getApiId();
+        return this.model !== null
+            ?
+            this.model.getApiId()
+            :
+            undefined;
     }
 }

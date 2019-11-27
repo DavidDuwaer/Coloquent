@@ -253,6 +253,40 @@ export abstract class Model
     }
 
     /**
+     * @return A {@link Promise} resolving to:
+     *
+     * * the representation of this {@link Model} instance in the API if this {@link Model} has an ID and this ID can
+     * be found in the API too
+     * * `undefined` if this {@link Model} instance has no ID
+     * * `null` if there _is_ an ID, but a {@link Model} with this ID cannot be found in the backend
+     */
+    public fresh(): Promise<this | null | undefined>
+    {
+        let model = <this> (new (<any> this.constructor));
+        let builder = model.query();
+
+        for (let key in this.relations.toArray()){
+            builder = builder.with(key);
+        }
+
+        if (this.getApiId()) {
+            return builder
+                .find(<string>this.getApiId())
+                .then(
+                    (response: SingularResponse) => {
+                        let model = <this> response.getData();
+                        return model;
+                    },
+                    (response: AxiosError) => {
+                        throw response;
+                    }
+                );
+        } else {
+            return Promise.resolve(undefined);
+        }
+    }
+
+    /**
      * @returns {string} e.g. 'http://www.foo.com/bar/'
      */
     public abstract getJsonApiBaseUrl(): string;
