@@ -12,7 +12,7 @@ export class PluralResponse extends RetrievalResponse
 
     protected pageNumber: number;
 
-    protected limit: number;
+    protected limit: number | undefined;
 
     constructor(
         query: Query,
