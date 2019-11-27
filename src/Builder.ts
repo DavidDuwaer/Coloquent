@@ -189,7 +189,11 @@ export class Builder implements QueryMethods
         this.query.getInclude().forEach(include => query.addInclude(include));
 
         query.setPaginationSpec(Object.create(this.query.getPaginationSpec()));
-        query.setLimit(this.query.getLimit());
+        const limit = this.query.getLimit();
+        if (limit !== undefined)
+        {
+            query.setLimit(limit);
+        }
 
         clone.setQuery(query);
 
