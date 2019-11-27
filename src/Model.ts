@@ -246,7 +246,15 @@ export abstract class Model
             .then(function () {});
     }
 
-    public fresh(): Promise<this>
+    /**
+     * @return A {@link Promise} resolving to:
+     *
+     * * the representation of this {@link Model} instance in the API if this {@link Model} has an ID and this ID can
+     * be found in the API too
+     * * `undefined` if this {@link Model} instance has no ID
+     * * `null` if there _is_ an ID, but a {@link Model} with this ID cannot be found in the backend
+     */
+    public fresh(): Promise<this | null | undefined>
     {
         let model = <this> (new (<any> this.constructor));
         let builder = model.query();
@@ -268,7 +276,7 @@ export abstract class Model
                     }
                 );
         } else {
-            return Promise.resolve(model);
+            return Promise.resolve(undefined);
         }
     }
 

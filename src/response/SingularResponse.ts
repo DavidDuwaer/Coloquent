@@ -7,7 +7,7 @@ import {Query} from "../Query";
 
 export class SingularResponse extends RetrievalResponse
 {
-    protected data: Model;
+    protected data: Model | null;
 
     constructor(
         query: Query,
@@ -18,44 +18,49 @@ export class SingularResponse extends RetrievalResponse
         super(query, httpClientResponse, modelType, responseBody);
     }
 
-    public getData(): Model
+    public getData(): Model | null
     {
         return this.data;
     }
 
-    protected makeModelIndex(data: Resource|Resource[]): void
+    protected makeModelIndex(data: Resource | Resource[] | null | undefined): void
     {
-        const doc: Resource = Array.isArray(data)
+        const doc: Resource | null = Array.isArray(data)
             ?
-            data[0]
+            SingularResponse.coalesceUndefinedIntoNull(data[0])
             :
-            data;
+            SingularResponse.coalesceUndefinedIntoNull(data);
         if (doc) {
             this.indexAsModel(doc, this.modelType, this.includeTree);
         }
     }
 
-    protected indexRequestedResources(data: Resource|Resource[])
+    protected indexRequestedResources(data: Resource | Resource[] | null | undefined)
     {
-        const doc: Resource = Array.isArray(data)
+        const doc: Resource | null = Array.isArray(data)
             ?
-            data[0]
+            SingularResponse.coalesceUndefinedIntoNull(data[0])
             :
-            data;
+            SingularResponse.coalesceUndefinedIntoNull(data);
         if (doc) {
             this.indexDoc(doc);
         }
     }
 
-    protected makeDataArray(data: Resource|Resource[]): void
+    protected makeDataArray(data: Resource | Resource[] | null | undefined): void
     {
-        let doc: Resource = Array.isArray(data)
+        const doc: Resource | null = Array.isArray(data)
             ?
-            data[0]
+            SingularResponse.coalesceUndefinedIntoNull(data[0])
             :
-            data;
-        if (doc) {
+            SingularResponse.coalesceUndefinedIntoNull(data);
+        if (doc !== null)
+        {
             this.data = this.modelIndex.get(doc.type).get(doc.id);
+        }
+        else
+        {
+            this.data = null;
         }
     }
 }
