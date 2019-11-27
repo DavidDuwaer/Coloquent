@@ -201,11 +201,13 @@ export class Query
         return this.options;
     }
 
-    public setLimit(limit: number) {
+    public setLimit(limit: number)
+    {
         this.limit = limit;
     }
 
-    public getLimit(): number {
+    public getLimit(): number | undefined
+    {
         return this.limit;
     }
 
