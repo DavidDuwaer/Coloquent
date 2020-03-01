@@ -263,11 +263,9 @@ export abstract class Model
     public fresh(): Promise<this | null | undefined>
     {
         let model = <this> (new (<any> this.constructor));
-        let builder = model.query();
-
-        for (let key in this.relations.toArray()){
-            builder = builder.with(key);
-        }
+        let builder = model
+                        .query()
+                        .with(this.getRelationsKeys());
 
         if (this.getApiId()) {
             return builder
@@ -284,6 +282,36 @@ export abstract class Model
         } else {
             return Promise.resolve(undefined);
         }
+    }
+
+    public getRelations()
+    {
+        return this.relations.toArray();
+    }
+
+    public getRelationsKeys(parentRelationName?: string): Array<string> 
+    {
+        let relationNames: Array<string> = [];
+
+        for (let key in this.relations.toArray()){
+            let relation = this.getRelation(key);
+
+            if (parentRelationName) {
+                relationNames.push(parentRelationName + '.' +key);
+            } else {
+                relationNames.push(key);
+            }
+
+            if (Array.isArray(relation)) {
+                relation.forEach((model: Model) => {
+                    relationNames = [...relationNames, ...model.getRelationsKeys(key)]
+                });
+            } else if (relation) {
+                relationNames = [...relationNames, ...relation.getRelationsKeys(key)]
+            }
+        }
+
+        return relationNames;
     }
 
     /**

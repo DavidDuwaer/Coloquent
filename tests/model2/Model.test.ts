@@ -293,7 +293,7 @@ describe('Model2', () => {
 
     it('fresh method should keep the loaded relations', (done) => {
         Hero
-            .with('friends')
+            .with(['friends.foes', 'bestFriend.foes'])
             .first()
             .then((response: SingularResponse) => {
                 let hero = <Hero> response.getData();
@@ -303,7 +303,8 @@ describe('Model2', () => {
 
                 moxios.wait(() => {
                     let refreshRequest = moxios.requests.mostRecent();
-                    assert.include(refreshRequest.url, 'include=friends');
+                    assert.include(refreshRequest.url, 'friends.foes');
+                    assert.include(refreshRequest.url, 'bestFriend.foes');
                     done();
                 });
             })
@@ -319,11 +320,17 @@ describe('Model2', () => {
                             name: 'Bob'
                         },
                         relationships: {
+                            bestFriend: {
+                                data: {
+                                    type: "heroes",
+                                    id: "3"
+                                }
+                            },
                             friends: {
                                 data: [
                                     {
                                         type: "heroes",
-                                        id: "3"
+                                        id: "4"
                                     }
                                 ]
                             },
@@ -336,8 +343,49 @@ describe('Model2', () => {
                         id: "3",
                         attributes: {
                             name: "EggplantMan"
+                        },
+                        relationships: {
+                            foes: [
+                                {
+                                    data: {
+                                        type: "heroes",
+                                        id: 5
+                                    }
+                                }
+                            ]
                         }
                     },
+                    {
+                        type: "heroes",
+                        id: "4",
+                        attributes: {
+                            name: "Larry"
+                        },
+                        relationships: {
+                            foes: [
+                                {
+                                    data: {
+                                        type: "heroes",
+                                        id: 6
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        type: "heroes",
+                        id: "5",
+                        attributes: {
+                            name: "John"
+                        },
+                    },
+                    {
+                        type: "heroes",
+                        id: "6",
+                        attributes: {
+                            name: "Max"
+                        },
+                    }
                 ]
             }
         }));
