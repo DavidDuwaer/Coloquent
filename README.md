@@ -202,12 +202,12 @@ class Album extends AppModel
 
     artist(): ToOneRelation
     {
-        return this.hasOne(Artist);
+        return this.hasOne(Artist, 'artist');
     }
 
     songs(): ToManyRelation
     {
-        return this.hasMany(Song);
+        return this.hasMany(Song, 'songs');
     }
 
     getArtist(): Artist
@@ -227,7 +227,7 @@ class Song extends AppModel
 
     album(): ToOneRelation
     {
-        return this.hasOne(Album);
+        return this.hasOne(Album, 'album');
     }
 
     getAlbum(): Album
