@@ -1,5 +1,4 @@
 import {Model} from "../Model";
-import {Reflection} from "../util/Reflection";
 export class Relation
 {
     private relatedType;
@@ -8,22 +7,11 @@ export class Relation
 
     private name: string;
 
-    constructor(relatedType, referringObject: Model | undefined = undefined, name: string | undefined = undefined)
+    constructor(relatedType, referringObject: Model | undefined = undefined, name: string)
     {
         this.relatedType = relatedType;
         this.referringObject = referringObject;
-        if (name !== undefined) {
-            this.name = name;
-        } else {
-            const calculatedName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
-            if (calculatedName === undefined) {
-                throw new Error(
-                    'Relationship name could not be automatically determined. '
-                    + 'It is recommended to provide the relationship name explicitly in the relationship definition.'
-                );
-            }
-            this.name = calculatedName;
-        }
+        this.name = name;
     }
 
     public getType(): any
