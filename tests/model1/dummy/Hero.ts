@@ -7,7 +7,7 @@ export class Hero extends BaseModel
 
     public friends(): ToManyRelation
     {
-        return this.hasMany(Hero);
+        return this.hasMany(Hero, 'friends');
     }
 
     public foes(): ToManyRelation
@@ -17,7 +17,7 @@ export class Hero extends BaseModel
 
     public rival(): ToOneRelation
     {
-        return this.hasOne(Hero);
+        return this.hasOne(Hero, 'rival');
     }
 
     public getName(): string
