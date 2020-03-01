@@ -1,5 +1,5 @@
 import {BaseModel} from './BaseModel';
-import {ToManyRelation} from "../../../dist";
+import {ToManyRelation, ToOneRelation} from "../../../dist";
 
 export class Hero extends BaseModel {
     protected jsonApiType = 'heros';
@@ -11,6 +11,11 @@ export class Hero extends BaseModel {
 
     public getName() {
         return this.getAttribute('name');
+    }
+
+    public bestFriend(): ToOneRelation
+    {
+        return this.hasOne(Hero);
     }
 
     public friends(): ToManyRelation
