@@ -9,7 +9,6 @@ import DateFormatter from "php-date-formatter";
 import {SaveResponse} from "./response/SaveResponse";
 import {ToManyRelation} from "./relation/ToManyRelation";
 import {ToOneRelation} from "./relation/ToOneRelation";
-import {Reflection} from "./util/Reflection";
 import {HttpClient} from "./httpclient/HttpClient";
 import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
@@ -428,23 +427,13 @@ export abstract class Model
         this.id = id;
     }
 
-    protected hasMany(relatedType: typeof Model): ToManyRelation;
-    protected hasMany(relatedType: typeof Model, relationName: string): ToManyRelation;
-    protected hasMany(relatedType: typeof Model, relationName?: string): ToManyRelation
+    protected hasMany(relatedType: typeof Model, relationName: string): ToManyRelation
     {
-        if (typeof relationName === 'undefined') {
-            relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
-        }
         return new ToManyRelation(relatedType, this, relationName);
     }
 
-    protected hasOne(relatedType: typeof Model): ToOneRelation;
-    protected hasOne(relatedType: typeof Model, relationName: string): ToOneRelation;
-    protected hasOne(relatedType: typeof Model, relationName?: string): ToOneRelation
+    protected hasOne(relatedType: typeof Model, relationName: string): ToOneRelation
     {
-        if (typeof relationName === 'undefined') {
-            relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
-        }
         return new ToOneRelation(relatedType, this, relationName);
     }
 
