@@ -97,7 +97,16 @@ export abstract class Model
      */
     public query(): Builder
     {
-        return new Builder(this.constructor);
+        return this.constructor.query();
+    }
+
+    /**
+     * Get a {@link Builder} instance from a static {@link Model}
+     * so you can start querying
+     */
+    public static query(): Builder
+    {
+        return new Builder(this);
     }
 
     public static get(page?: number): Promise<PluralResponse>
