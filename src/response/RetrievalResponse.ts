@@ -19,7 +19,7 @@ export abstract class RetrievalResponse extends Response
 
     protected modelIndex: Map<Map<Model>>;
 
-    protected included: Model[];
+    protected included: Resource[];
 
     constructor(
         query: Query,
@@ -46,7 +46,7 @@ export abstract class RetrievalResponse extends Response
 
     public abstract getData(): any;
 
-    public getIncluded(): Model[]
+    public getIncluded(): Resource[]
     {
         return this.included;
     }
@@ -134,7 +134,7 @@ export abstract class RetrievalResponse extends Response
     {
         this.included = [];
         for (let doc of includedDocs) {
-            const models = this.modelIndex.get(doc.type);
+            const models = this.resourceIndex.get(doc.type);
             if (models !== undefined) {
                 this.included.push(models.get(doc.id));
             }
