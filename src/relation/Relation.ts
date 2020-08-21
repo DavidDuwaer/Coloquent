@@ -1,14 +1,14 @@
 import {Model} from "../Model";
 import {Reflection} from "../util/Reflection";
-export class Relation
+export class Relation<R extends Model = Model>
 {
     private relatedType;
 
-    private referringObject: Model | undefined;
+    private referringObject: R | undefined;
 
     private name: string;
 
-    constructor(relatedType, referringObject: Model | undefined = undefined, name: string | undefined = undefined)
+    constructor(relatedType, referringObject: R | undefined = undefined, name: string | undefined = undefined)
     {
         this.relatedType = relatedType;
         this.referringObject = referringObject;

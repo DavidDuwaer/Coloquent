@@ -95,7 +95,7 @@ export abstract class Model
      * so you can query without having a static reference to your specific {@link Model}
      * class.
      */
-    public query(): Builder
+    public query(): Builder<this>
     {
         return this.constructor.query();
     }
@@ -104,56 +104,56 @@ export abstract class Model
      * Get a {@link Builder} instance from a static {@link Model}
      * so you can start querying
      */
-    public static query(): Builder
+    public static query<M extends Model>(): Builder<M>
     {
         return new Builder(this);
     }
 
-    public static get(page?: number): Promise<PluralResponse>
+    public static get<M extends Model>(page?: number): Promise<PluralResponse<M>>
     {
-        return <Promise<PluralResponse>> new Builder(this)
+        return <Promise<PluralResponse<M>>> new Builder(this)
             .get(page);
     }
 
-    public static first(): Promise<SingularResponse>
+    public static first<M extends Model>(): Promise<SingularResponse<M>>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .first();
     }
 
-    public static find(id: string | number): Promise<SingularResponse>
+    public static find<M extends Model>(id: string | number): Promise<SingularResponse<M>>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .find(id);
     }
 
-    public static with(attribute: any): Builder
+    public static with<M extends Model>(attribute: any): Builder<M>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .with(attribute);
     }
 
-    public static limit(limit: number): Builder
+    public static limit<M extends Model>(limit: number): Builder<M>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .limit(limit);
     }
 
-    public static where(attribute: string, value: string): Builder
+    public static where<M extends Model>(attribute: string, value: string): Builder<M>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .where(attribute, value);
     }
 
-    public static orderBy(attribute: string, direction?: string): Builder
+    public static orderBy<M extends Model>(attribute: string, direction?: string): Builder<M>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .orderBy(attribute, direction);
     }
 
-    public static option(queryParameter: string, value: string): Builder
+    public static option<M extends Model>(queryParameter: string, value: string): Builder<M>
     {
-        return new Builder(this)
+        return new Builder<M>(this)
             .option(queryParameter, value);
     }
 
@@ -207,7 +207,7 @@ export abstract class Model
         };
     }
 
-    public save(): Promise<SaveResponse>
+    public save(): Promise<SaveResponse<this>>
     {
         if (!this.hasId) {
             return this.create();
@@ -231,7 +231,7 @@ export abstract class Model
             );
     }
 
-    public create(): Promise<SaveResponse>
+    public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
         return Model.httpClient
@@ -280,8 +280,8 @@ export abstract class Model
             return builder
                 .find(<string>this.getApiId())
                 .then(
-                    (response: SingularResponse) => {
-                        let model = <this> response.getData();
+                    (response: SingularResponse<this>) => {
+                        let model = response.getData();
                         return model;
                     },
                     (response: AxiosError) => {
@@ -465,9 +465,9 @@ export abstract class Model
         this.id = id;
     }
 
-    protected hasMany(relatedType: typeof Model): ToManyRelation;
-    protected hasMany(relatedType: typeof Model, relationName: string): ToManyRelation;
-    protected hasMany(relatedType: typeof Model, relationName?: string): ToManyRelation
+    protected hasMany<R extends Model>(relatedType: typeof Model): ToManyRelation<R, this>;
+    protected hasMany<R extends Model>(relatedType: typeof Model, relationName: string): ToManyRelation<R, this>;
+    protected hasMany<R extends Model>(relatedType: typeof Model, relationName?: string): ToManyRelation<R, this>
     {
         if (typeof relationName === 'undefined') {
             relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);
@@ -475,9 +475,9 @@ export abstract class Model
         return new ToManyRelation(relatedType, this, relationName);
     }
 
-    protected hasOne(relatedType: typeof Model): ToOneRelation;
-    protected hasOne(relatedType: typeof Model, relationName: string): ToOneRelation;
-    protected hasOne(relatedType: typeof Model, relationName?: string): ToOneRelation
+    protected hasOne<R extends Model>(relatedType: typeof Model): ToOneRelation<R, this>;
+    protected hasOne<R extends Model>(relatedType: typeof Model, relationName: string): ToOneRelation<R, this>;
+    protected hasOne<R extends Model>(relatedType: typeof Model, relationName?: string): ToOneRelation<R, this>
     {
         if (typeof relationName === 'undefined') {
             relationName = Reflection.getNameOfNthMethodOffStackTrace(new Error(), 2);

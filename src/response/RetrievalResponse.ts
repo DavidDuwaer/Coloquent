@@ -11,15 +11,15 @@ import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 
-export abstract class RetrievalResponse extends Response
+export abstract class RetrievalResponse<M extends Model = Model> extends Response
 {
     protected modelType: any;
 
     protected resourceIndex: Map<Map<Resource>>;
 
-    protected modelIndex: Map<Map<Model>>;
+    protected modelIndex: Map<Map<M>>;
 
-    protected included: Model[];
+    protected included: M[];
 
     constructor(
         query: Query,
@@ -30,7 +30,7 @@ export abstract class RetrievalResponse extends Response
         super(query, httpClientResponse);
         this.modelType = modelType;
         this.resourceIndex = new Map<Map<Resource>>();
-        this.modelIndex = new Map<Map<Model>>();
+        this.modelIndex = new Map<Map<M>>();
 
         // Index the JsonApiDocs
         this.indexIncludedDocs(responseBody.included);
@@ -77,9 +77,9 @@ export abstract class RetrievalResponse extends Response
         let type = doc.type;
         let id = doc.id;
         if (!this.modelIndex.get(type)) {
-            this.modelIndex.set(type, new Map<Model>());
+            this.modelIndex.set(type, new Map<M>());
         }
-        let model: Model = new modelType();
+        let model: M = new modelType();
         model.populateFromResource(doc);
         this.modelIndex.get(type).set(id, model);
         for (let resourceRelationName in {...includeTree, ...doc.relationships}) {
@@ -90,7 +90,7 @@ export abstract class RetrievalResponse extends Response
             }
 
             const includeSubtree = includeTree ? includeTree[resourceRelationName] : {};
-            let relation: Relation = model[modelRelationName]();
+            let relation: Relation<Model> = model[modelRelationName]();
             if (relation instanceof ToManyRelation) {
                 let relatedStubs: ResourceStub[] = (doc.relationships !== undefined && doc.relationships[resourceRelationName] !== undefined)
                     ?

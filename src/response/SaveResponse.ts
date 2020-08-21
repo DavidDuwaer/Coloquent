@@ -3,9 +3,9 @@ import {Response} from "./Response";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 
-export class SaveResponse extends Response
+export class SaveResponse<M extends Model = Model> extends Response
 {
-    protected readonly model: Model | null;
+    protected readonly model: M | null;
 
     constructor(
         httpClientResponse: HttpClientResponse,
