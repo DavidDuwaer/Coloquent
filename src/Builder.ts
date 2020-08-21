@@ -10,7 +10,6 @@ import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationS
 import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
 import {Query} from "./Query";
 import {QueryMethods} from "./QueryMethods";
-import {Response} from "./response/Response";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 import {HttpClient} from "./httpclient/HttpClient";
 import {SortDirection} from "./SortDirection";
@@ -47,7 +46,7 @@ export class Builder implements QueryMethods
         this.forceSingular = forceSingular;
     }
 
-    public get(page: number = 0): Promise<Response>
+    public get(page: number = 0): Promise<SingularResponse | PluralResponse>
     {
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPage(page);

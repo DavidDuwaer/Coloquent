@@ -1,6 +1,6 @@
 import {Builder} from "./Builder";
 import {SingularResponse} from "./response/SingularResponse";
-import {Response} from "./response/Response";
+import {PluralResponse} from "./response/PluralResponse";
 import {SortDirection} from "./SortDirection";
 
 export interface QueryMethods
@@ -9,7 +9,7 @@ export interface QueryMethods
      * Fetches a single page
      * @param page
      */
-    get(page: number): Promise<Response>;
+    get(page: number): Promise<SingularResponse | PluralResponse>;
 
     /**
      * Fetches the first result available in the backend
