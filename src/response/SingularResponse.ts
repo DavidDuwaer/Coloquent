@@ -5,9 +5,9 @@ import {JsonApiResponseBody} from "../JsonApiResponseBody";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 
-export class SingularResponse extends RetrievalResponse
+export class SingularResponse<M extends Model = Model> extends RetrievalResponse<M>
 {
-    protected data: Model | null;
+    protected data: M | null;
 
     constructor(
         query: Query,
@@ -18,7 +18,7 @@ export class SingularResponse extends RetrievalResponse
         super(query, httpClientResponse, modelType, responseBody);
     }
 
-    public getData(): Model | null
+    public getData(): M | null
     {
         return this.data;
     }

@@ -10,16 +10,16 @@ import {OffsetBasedPaginationSpec} from "./paginationspec/OffsetBasedPaginationS
 import {PageBasedPaginationSpec} from "./paginationspec/PageBasedPaginationSpec";
 import {Query} from "./Query";
 import {QueryMethods} from "./QueryMethods";
-import {Response} from "./response/Response";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 import {HttpClient} from "./httpclient/HttpClient";
 import {SortDirection} from "./SortDirection";
+import {RetrievalResponse} from "./response/RetrievalResponse";
 
-export class Builder implements QueryMethods
+export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResponse<M> = PluralResponse<M>> implements QueryMethods<M, GET_RESPONSE>
 {
-    protected modelType: any;
+    protected readonly modelType: any;
 
-    private httpClient: HttpClient;
+    private readonly httpClient: HttpClient;
 
     private query: Query;
 
@@ -27,7 +27,7 @@ export class Builder implements QueryMethods
      * If true, then this function will in all cases return a SingularResponse. This is used by ToOneRelations, which
      * when queried spawn a Builder with this property set to true.
      */
-    private forceSingular: boolean;
+    private readonly forceSingular: boolean;
 
     constructor(
         modelType: typeof Model,
@@ -37,7 +37,7 @@ export class Builder implements QueryMethods
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
-        let modelInstance: Model = (new (<any> modelType)());
+        let modelInstance: M = (new (<any> modelType)());
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
             : modelInstance.getJsonApiType();
@@ -47,27 +47,27 @@ export class Builder implements QueryMethods
         this.forceSingular = forceSingular;
     }
 
-    public get(page: number = 0): Promise<Response>
+    public get(page: number = 0): Promise<GET_RESPONSE>
     {
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPage(page);
         if (this.forceSingular) {
-            return <Promise<SingularResponse>> this.getHttpClient()
+            return this.getHttpClient()
                 .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
+                        return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData()) as unknown as GET_RESPONSE;
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
                     }
                 );
         } else {
-            return <Promise<PluralResponse>> this.getHttpClient()
+            return this.getHttpClient()
                 .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page);
+                        return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page) as unknown as GET_RESPONSE;
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -76,11 +76,11 @@ export class Builder implements QueryMethods
         }
     }
 
-    public first(): Promise<SingularResponse>
+    public first(): Promise<SingularResponse<M>>
     {
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPageLimit(1);
-        return <Promise<SingularResponse>> this.getHttpClient()
+        return <Promise<SingularResponse<M>>> this.getHttpClient()
             .get(this.query.toString())
             .then(
                 (response: HttpClientResponse) => {
@@ -98,11 +98,11 @@ export class Builder implements QueryMethods
         return clone;
     }
 
-    public find(id: string | number): Promise<SingularResponse>
+    public find(id: string | number): Promise<SingularResponse<M>>
     {
         const clone = this.clone();
         clone.query.setIdToFind(id);
-        return <Promise<SingularResponse>> clone.getHttpClient()
+        return <Promise<SingularResponse<M>>> clone.getHttpClient()
             .get(clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
@@ -114,14 +114,14 @@ export class Builder implements QueryMethods
             );
     }
 
-    public where(attribute: string, value: string): Builder
+    public where(attribute: string, value: string): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
         clone.getQuery().addFilter(new FilterSpec(attribute, value));
         return clone;
     }
 
-    public with(value: any): Builder
+    public with(value: any): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
 
@@ -138,7 +138,7 @@ export class Builder implements QueryMethods
         return clone;
     }
 
-    public orderBy(attribute: string, direction?: SortDirection|string): Builder
+    public orderBy(attribute: string, direction?: SortDirection|string): Builder<M, GET_RESPONSE>
     {
         if (typeof direction === 'undefined' || direction === null) {
             direction = SortDirection.ASC;
@@ -167,7 +167,7 @@ export class Builder implements QueryMethods
         return clone;
     }
 
-    public option(queryParameter: string, value: string): Builder
+    public option(queryParameter: string, value: string): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
 
@@ -178,7 +178,7 @@ export class Builder implements QueryMethods
         return clone;
     }
 
-    private clone(): Builder 
+    private clone(): Builder<M, GET_RESPONSE>
     {
         let clone = Object.create(this);
         let query = new Query(this.query.getJsonApiType(), this.query.getQueriedRelationName(), this.query.getJsonApiId());

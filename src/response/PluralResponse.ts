@@ -2,13 +2,12 @@ import {RetrievalResponse} from "./RetrievalResponse";
 import {Model} from "../Model";
 import {Resource} from "../Resource";
 import {JsonApiResponseBody} from "../JsonApiResponseBody";
-import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 
-export class PluralResponse extends RetrievalResponse
+export class PluralResponse<M extends Model = Model> extends RetrievalResponse<M>
 {
-    protected data: Model[];
+    protected data: M[];
 
     protected pageNumber: number;
 
@@ -31,7 +30,7 @@ export class PluralResponse extends RetrievalResponse
         return Math.max(this.pageNumber, 1);
     }
 
-    public getData(): Model[]
+    public getData(): M[]
     {
         if (this.limit !== undefined && Array.isArray(this.data)){
             return this.data.slice(0, this.limit);

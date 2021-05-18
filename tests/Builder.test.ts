@@ -720,7 +720,7 @@ describe('Builder', () => {
             .query()
             .with('foes')
             .get()
-            .then((response: PluralResponse) => {
+            .then(response => {
                 let beefMan: Hero = <Hero> response.getData()[0];
                 let foes = beefMan.getFoes();
                 assert(foes !== undefined);
