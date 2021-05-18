@@ -15,15 +15,15 @@ describe('Relation', () => {
     });
 
     it('successufly stores its referring object', () => {
-        assert.equal(model, model.friends().getReferringObject());
+        assert.equal(model.friends().getReferringObject(), model);
     });
 
     it('knows its own name', () => {
-        assert.equal('friends', model.friends().getName());
+        assert.equal(model.friends().getName(), 'friends');
     });
 
     it('knows its own name when overridden', () => {
-        assert.equal('enemies', model.foes().getName());
+        assert.equal(model.foes().getName(), 'enemies');
     });
 
     it('yields a query with "\<base class\>/\<relation class\>" at the start of the URL', (done) => {
