@@ -6,7 +6,7 @@ import {SingularResponse} from "../response/SingularResponse";
 import {SortDirection} from "../SortDirection";
 import {Model} from "../Model";
 
-export class ToManyRelation<M extends Model = Model, R extends Model = Model> extends Relation<R> implements QueryMethods<M>
+export class ToManyRelation<M extends Model = Model, R extends Model = Model> extends Relation<R> implements QueryMethods<M, PluralResponse<M>>
 {
     get(page?: number): Promise<PluralResponse<M>> {
         return <Promise<PluralResponse<M>>> new Builder(this.getType(), this.getName(), this.getReferringObject().getJsonApiType(), this.getReferringObject().getApiId())

@@ -95,7 +95,7 @@ export abstract class Model
      * so you can query without having a static reference to your specific {@link Model}
      * class.
      */
-    public query(): Builder<this>
+    public query(): Builder<this, PluralResponse<this>>
     {
         return this.constructor.query();
     }
@@ -104,7 +104,7 @@ export abstract class Model
      * Get a {@link Builder} instance from a static {@link Model}
      * so you can start querying
      */
-    public static query<M extends Model>(): Builder<M>
+    public static query<M extends Model>(): Builder<M, PluralResponse<M>>
     {
         return new Builder(this);
     }
@@ -127,31 +127,31 @@ export abstract class Model
             .find(id);
     }
 
-    public static with<M extends Model>(attribute: any): Builder<M>
+    public static with<M extends Model>(attribute: any): Builder<M, PluralResponse<M>>
     {
         return new Builder<M>(this)
             .with(attribute);
     }
 
-    public static limit<M extends Model>(limit: number): Builder<M>
+    public static limit<M extends Model>(limit: number): Builder<M, PluralResponse<M>>
     {
         return new Builder<M>(this)
             .limit(limit);
     }
 
-    public static where<M extends Model>(attribute: string, value: string): Builder<M>
+    public static where<M extends Model>(attribute: string, value: string): Builder<M, PluralResponse<M>>
     {
         return new Builder<M>(this)
             .where(attribute, value);
     }
 
-    public static orderBy<M extends Model>(attribute: string, direction?: string): Builder<M>
+    public static orderBy<M extends Model>(attribute: string, direction?: string): Builder<M, PluralResponse<M>>
     {
         return new Builder<M>(this)
             .orderBy(attribute, direction);
     }
 
-    public static option<M extends Model>(queryParameter: string, value: string): Builder<M>
+    public static option<M extends Model>(queryParameter: string, value: string): Builder<M, PluralResponse<M>>
     {
         return new Builder<M>(this)
             .option(queryParameter, value);

@@ -13,8 +13,9 @@ import {QueryMethods} from "./QueryMethods";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 import {HttpClient} from "./httpclient/HttpClient";
 import {SortDirection} from "./SortDirection";
+import {RetrievalResponse} from "./response/RetrievalResponse";
 
-export class Builder<M extends Model = Model> implements QueryMethods<M>
+export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResponse<M> = PluralResponse<M>> implements QueryMethods<M, GET_RESPONSE>
 {
     protected readonly modelType: any;
 
@@ -46,27 +47,27 @@ export class Builder<M extends Model = Model> implements QueryMethods<M>
         this.forceSingular = forceSingular;
     }
 
-    public get(page: number = 0): Promise<SingularResponse<M> | PluralResponse<M>>
+    public get(page: number = 0): Promise<GET_RESPONSE>
     {
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPage(page);
         if (this.forceSingular) {
-            return <Promise<SingularResponse<M>>> this.getHttpClient()
+            return this.getHttpClient()
                 .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
+                        return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData()) as unknown as GET_RESPONSE;
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
                     }
                 );
         } else {
-            return <Promise<PluralResponse<M>>> this.getHttpClient()
+            return this.getHttpClient()
                 .get(clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
-                        return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page);
+                        return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page) as unknown as GET_RESPONSE;
                     },
                     function (response: AxiosError) {
                         throw new Error((<Error> response).message);
@@ -113,14 +114,14 @@ export class Builder<M extends Model = Model> implements QueryMethods<M>
             );
     }
 
-    public where(attribute: string, value: string): Builder<M>
+    public where(attribute: string, value: string): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
         clone.getQuery().addFilter(new FilterSpec(attribute, value));
         return clone;
     }
 
-    public with(value: any): Builder<M>
+    public with(value: any): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
 
@@ -137,7 +138,7 @@ export class Builder<M extends Model = Model> implements QueryMethods<M>
         return clone;
     }
 
-    public orderBy(attribute: string, direction?: SortDirection|string): Builder<M>
+    public orderBy(attribute: string, direction?: SortDirection|string): Builder<M, GET_RESPONSE>
     {
         if (typeof direction === 'undefined' || direction === null) {
             direction = SortDirection.ASC;
@@ -166,7 +167,7 @@ export class Builder<M extends Model = Model> implements QueryMethods<M>
         return clone;
     }
 
-    public option(queryParameter: string, value: string): Builder<M>
+    public option(queryParameter: string, value: string): Builder<M, GET_RESPONSE>
     {
         const clone = this.clone();
 
@@ -177,7 +178,7 @@ export class Builder<M extends Model = Model> implements QueryMethods<M>
         return clone;
     }
 
-    private clone(): Builder<M>
+    private clone(): Builder<M, GET_RESPONSE>
     {
         let clone = Object.create(this);
         let query = new Query(this.query.getJsonApiType(), this.query.getQueriedRelationName(), this.query.getJsonApiId());
