@@ -1,7 +1,7 @@
 import {assert, expect} from 'chai';
 import * as chai from 'chai';
 import * as moxios from 'moxios';
-import * as chaip from 'chai-as-promised';
+import chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
 import {Builder} from "../dist";
 import {PaginationStrategy} from "../dist";
