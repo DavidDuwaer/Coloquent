@@ -16,9 +16,9 @@ import {SortDirection} from "./SortDirection";
 
 export class Builder<M extends Model = Model> implements QueryMethods<M>
 {
-    protected modelType: any;
+    protected readonly modelType: any;
 
-    private httpClient: HttpClient;
+    private readonly httpClient: HttpClient;
 
     private query: Query;
 
