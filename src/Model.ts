@@ -106,54 +106,54 @@ export abstract class Model
      */
     public static query<M extends Model>(): Builder<M, PluralResponse<M>>
     {
-        return new Builder(this);
+        return new Builder<M>(this);
     }
 
-    public static get<M extends Model>(page?: number): Promise<PluralResponse<M>>
+    public static get<M extends typeof Model & {new(): Model}>(this: M, page?: number): Promise<PluralResponse<InstanceType<M>>>
     {
-        return <Promise<PluralResponse<M>>> new Builder(this)
+        return <Promise<PluralResponse<InstanceType<M>>>> new Builder(this)
             .get(page);
     }
 
-    public static first<M extends Model>(): Promise<SingularResponse<M>>
+    public static first<M extends typeof Model & {new(): Model}>(this: M): Promise<SingularResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .first();
     }
 
-    public static find<M extends Model>(id: string | number): Promise<SingularResponse<M>>
+    public static find<M extends typeof Model & {new(): Model}>(this: M, id: string | number): Promise<SingularResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .find(id);
     }
 
-    public static with<M extends Model>(attribute: any): Builder<M, PluralResponse<M>>
+    public static with<M extends typeof Model & {new(): Model}>(this: M, attribute: any): Builder<InstanceType<M>, PluralResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .with(attribute);
     }
 
-    public static limit<M extends Model>(limit: number): Builder<M, PluralResponse<M>>
+    public static limit<M extends typeof Model & {new(): Model}>(this: M, limit: number): Builder<InstanceType<M>, PluralResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .limit(limit);
     }
 
-    public static where<M extends Model>(attribute: string, value: string): Builder<M, PluralResponse<M>>
+    public static where<M extends typeof Model & {new(): Model}>(this: M, attribute: string, value: string): Builder<InstanceType<M>, PluralResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .where(attribute, value);
     }
 
-    public static orderBy<M extends Model>(attribute: string, direction?: string): Builder<M, PluralResponse<M>>
+    public static orderBy<M extends typeof Model & {new(): Model}>(this: M, attribute: string, direction?: string): Builder<InstanceType<M>, PluralResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .orderBy(attribute, direction);
     }
 
-    public static option<M extends Model>(queryParameter: string, value: string): Builder<M, PluralResponse<M>>
+    public static option<M extends typeof Model & {new(): Model}>(this: M, queryParameter: string, value: string): Builder<InstanceType<M>, PluralResponse<InstanceType<M>>>
     {
-        return new Builder<M>(this)
+        return new Builder<InstanceType<M>>(this)
             .option(queryParameter, value);
     }
 
