@@ -28,7 +28,7 @@ $ npm install coloquent
 # Requirements
 
 * Use in a project of which the runtime code is **Javascript ES6 or higher**. If your compile target is ES5 or lower, you will run into [this issue](https://github.com/DavidDuwaer/Coloquent/issues/54).
-* The attribute `jsonApiBaseUrl` explained in the Setup section of this readme must point to an API implementing the [JSON API](http://jsonapi.org) standard.
+* The attribute `jsonApiBaseUrl` explained in the Setup section of this readme must point to an API implementing the [JSON API](http://jsonapi.org) specification.
 
 # Usage
 
