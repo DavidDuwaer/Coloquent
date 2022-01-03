@@ -223,7 +223,7 @@ export abstract class Model
                 (response: HttpClientResponse) => {
                     const idFromJson: string | undefined = response.getData().data.id;
                     this.setApiId(idFromJson);
-                    return new SaveResponse(response, this.constructor, response.getData());
+                    return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
                 },
                 (response: AxiosError) => {
                     throw response;
@@ -243,7 +243,7 @@ export abstract class Model
                 (response: HttpClientResponse) => {
                     const idFromJson: string | undefined = response.getData().data.id;
                     this.setApiId(idFromJson);
-                    return new SaveResponse(response, this.constructor, response.getData());
+                    return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
                 },
                 function (response: AxiosError) {
                     throw response;
