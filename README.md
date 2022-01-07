@@ -159,9 +159,9 @@ If there are settings that you want the same for all your models, it is useful t
 We are configuring 3 models: `Artist`, `Album` and `Song`. In the following example, Typescript type assertions (e.g. `: Artists[]`) are included in the syntax, but if you don't use Typescript, remember that Coloquent also works in Javascript without these type assertions.
 
 ```typescript
-import {Model} from 'coloquent';
+import {Model, ToManyRelation, ToOneRelation} from 'coloquent';
 
-class AppModel extends Model
+abstract class AppModel extends Model
 {
     getJsonApiBaseUrl(): string
     {
