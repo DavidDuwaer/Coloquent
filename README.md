@@ -103,18 +103,6 @@ var student = teacher.getStudents()[0];
 
 The variables `teacher`, `schoolAddress` and `student` now all contain full-fledged model objects.
 
-#### Note for TypeScript users
-
-You should specify model class as generic type of any static method invocation.
-
-```typescript
-Artist.get<Artist>().then((response) => {
-    const data = response.getData();
-    // data is now properly inferred as Artist[] instead of Model[]
-    // You don't have to cast anything thanks to provided generic type.
-})
-```
-
 ### Creating / updating
 
 To save an instance of `Artist` to the server:
