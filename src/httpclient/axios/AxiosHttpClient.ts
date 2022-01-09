@@ -9,7 +9,6 @@ export class AxiosHttpClient implements HttpClient
     private axiosInstance: AxiosInstance;
     private withCredentials: boolean;
 
-    constructor()
     constructor(axiosInstance?: AxiosInstance) {
         if (axiosInstance === null || axiosInstance === undefined) {
             axiosInstance = axios.create();
