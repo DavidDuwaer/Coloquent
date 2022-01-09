@@ -218,7 +218,7 @@ describe('Model2', () => {
             done();
         });
     });
-    
+
     it('fresh method should reload the resource data from the backend', (done) => {
         const responseData = {
             response: {
@@ -393,7 +393,7 @@ describe('Model2', () => {
 
     it('fresh method should return \'undefined\' when model does not have an ID', (done) => {
         let hero = new Hero();
-        
+
         hero.setName('Bob');
 
         hero
@@ -402,6 +402,6 @@ describe('Model2', () => {
                 assert.equal(antihero, undefined);
                 done();
             })
-            .catch(error => done(error)); 
+            .catch(error => done(error));
     });
 });

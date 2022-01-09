@@ -17,6 +17,8 @@ import {RetrievalResponse} from "./response/RetrievalResponse";
 
 export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResponse<M> = PluralResponse<M>> implements QueryMethods<M, GET_RESPONSE>
 {
+    protected readonly baseUrl: string;
+
     protected readonly modelType: any;
 
     private readonly httpClient: HttpClient;
@@ -37,6 +39,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
+        this.baseUrl = modelType.getJsonApiBaseUrl();
         let modelInstance: M = (new (<any> modelType)());
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
@@ -53,7 +56,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         clone.getQuery().getPaginationSpec().setPage(page);
         if (this.forceSingular) {
             return this.getHttpClient()
-                .get(clone.getQuery().toString())
+                .get(this.baseUrl + clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
                         return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData()) as unknown as GET_RESPONSE;
@@ -64,7 +67,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 );
         } else {
             return this.getHttpClient()
-                .get(clone.getQuery().toString())
+                .get(this.baseUrl + clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
                         return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page) as unknown as GET_RESPONSE;
@@ -81,7 +84,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPageLimit(1);
         return <Promise<SingularResponse<M>>> this.getHttpClient()
-            .get(this.query.toString())
+            .get(this.baseUrl + clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
                     return new SingularResponse(this.query, response, this.modelType, response.getData());
@@ -103,7 +106,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         const clone = this.clone();
         clone.query.setIdToFind(id);
         return <Promise<SingularResponse<M>>> clone.getHttpClient()
-            .get(clone.getQuery().toString())
+            .get(this.baseUrl + clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
                     return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
@@ -163,7 +166,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 direction === SortDirection.ASC
             )
         );
-        
+
         return clone;
     }
 

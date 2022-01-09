@@ -22,11 +22,6 @@ export abstract class Model
     private type: string;
 
     /**
-     * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
-     */
-    protected abstract jsonApiType: string;
-
-    /**
      * @type {number} the page size
      */
     protected static pageSize: number = 50;
@@ -62,7 +57,21 @@ export abstract class Model
 
     private attributes: Map<any>;
 
-    private static httpClient: HttpClient;
+    /**
+     * @type {string} The model endpoint base URL, e.g 'http://localhost:3000/api/v1'
+     */
+    protected static jsonApiBaseUrl: string;
+
+    /**
+     * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
+     */
+     protected static jsonApiType: string;
+
+    /**
+     * @type {HttpClient} The HTTP client used to perform request for this model.
+     * By default: {@link AxiosHttpClient}
+     */
+    protected static httpClient: HttpClient;
 
     protected readOnlyAttributes: string[];
 
@@ -77,17 +86,6 @@ export abstract class Model
         this.attributes = new Map();
         this.readOnlyAttributes = [];
         this.dates = {};
-
-        if (!Model.httpClient) {
-            Model.httpClient = new AxiosHttpClient();
-        }
-
-        this.initHttpClient();
-    }
-
-    private initHttpClient(): void
-    {
-        Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
     }
 
     /**
@@ -214,9 +212,9 @@ export abstract class Model
         }
 
         let payload = this.serialize();
-        return Model.httpClient
+        return this.getHttpClient()
             .patch(
-                this.getJsonApiType()+'/'+this.id,
+                this.constructor.getJsonApiUrl()+'/'+this.id,
                 payload
             )
             .then(
@@ -234,9 +232,9 @@ export abstract class Model
     public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
-        return Model.httpClient
+        return this.getHttpClient()
             .post(
-                this.getJsonApiType(),
+                this.constructor.getJsonApiUrl(),
                 payload
             )
             .then(
@@ -256,8 +254,8 @@ export abstract class Model
         if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return Model.httpClient
-            .delete(this.getJsonApiType()+'/'+this.id)
+        return this.getHttpClient()
+            .delete(this.constructor.getJsonApiUrl()+'/'+this.id)
             .then(function () {});
     }
 
@@ -298,7 +296,7 @@ export abstract class Model
         return this.relations.toArray();
     }
 
-    public getRelationsKeys(parentRelationName?: string): Array<string> 
+    public getRelationsKeys(parentRelationName?: string): Array<string>
     {
         let relationNames: Array<string> = [];
 
@@ -323,33 +321,47 @@ export abstract class Model
         return relationNames;
     }
 
-    /**
-     * @returns {string} e.g. 'http://www.foo.com/bar/'
-     */
-    public abstract getJsonApiBaseUrl(): string;
+    public static getJsonApiBaseUrl(): string {
+      if (!this.jsonApiBaseUrl) {
+        throw new Error(`Expect ${this.name} to have property expect jsonApiBaseUrl defined`)
+      }
+      return this.jsonApiBaseUrl
+    }
 
-    /**
-     * Allows you to get the current HTTP client (AxiosHttpClient by default), e.g. to alter its configuration.
-     * @returns {HttpClient}
-     */
+    public static getJsonApiType(): string {
+      if (!this.jsonApiType) {
+        throw new Error(`Expect ${this.name} to have property expect jsonApiType defined`)
+      }
+      return this.jsonApiType
+    }
+
+    public static getJsonApiUrl(): string {
+      // TODO: Allow to explicitly set the endpoint.
+      // E.g: const path = this.endpoint || `/${this.getJsonApiType()}`
+      const path = `/${this.getJsonApiType()}`
+      return `${this.getJsonApiBaseUrl()}${path}`
+    }
+
     public static getHttpClient(): HttpClient
     {
-        return this.httpClient;
+      if (!this.httpClient) {
+        this.httpClient = new AxiosHttpClient();
+      }
+      return this.httpClient
     }
 
-    /**
-     * Allows you to use any HTTP client library, as long as you write a wrapper for it that implements the interfaces
-     * HttpClient, HttpClientPromise and HttpClientResponse.
-     * @param httpClient
-     */
-    public static setHttpClient(httpClient: HttpClient)
-    {
-        this.httpClient = httpClient;
+    // Backward compatibility.
+    public getJsonApiType(): string {
+      return this.constructor.getJsonApiType()
     }
 
-    public getJsonApiType(): string
-    {
-        return this.jsonApiType;
+    // Backward compatibility.
+    public getJsonApiBaseUrl(): string {
+      return this.constructor.getJsonApiBaseUrl()
+    }
+
+    public getHttpClient(): HttpClient {
+      return this.constructor.getHttpClient()
     }
 
     public populateFromResource(resource: Resource): void
@@ -449,10 +461,10 @@ export abstract class Model
      */
     private static getDateFormatter(): DateFormatter
     {
-        if (!Model.dateFormatter) {
-            Model.dateFormatter = new DateFormatter();
+        if (!this.dateFormatter) {
+            this.dateFormatter = new DateFormatter();
         }
-        return Model.dateFormatter;
+        return this.dateFormatter;
     }
 
     public getApiId(): string | undefined
