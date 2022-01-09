@@ -12,6 +12,9 @@ export { SortDirection } from "./SortDirection";
 export { HttpClient } from "./httpclient/HttpClient";
 export { HttpClientPromise } from "./httpclient/HttpClientPromise";
 export { HttpClientResponse } from "./httpclient/HttpClientResponse";
+export { AxiosHttpClient } from "./httpclient/axios/AxiosHttpClient";
+export { AxiosHttpClientPromise } from "./httpclient/axios/AxiosHttpClientPromise";
+export { AxiosHttpClientResponse } from "./httpclient/axios/AxiosHttpClientResponse";
 
 /**
  * relation
