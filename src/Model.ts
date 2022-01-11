@@ -350,12 +350,16 @@ export abstract class Model
       return this.httpClient
     }
 
-    // Backward compatibility.
+    /**
+     * @deprecated Use the static method with the same name instead
+     */
     public getJsonApiType(): string {
       return this.constructor.getJsonApiType()
     }
 
-    // Backward compatibility.
+    /**
+     * @deprecated Use the static method with the same name instead
+     */
     public getJsonApiBaseUrl(): string {
       return this.constructor.getJsonApiBaseUrl()
     }
