@@ -60,18 +60,18 @@ export abstract class Model
     /**
      * @type {string} The model endpoint base URL, e.g 'http://localhost:3000/api/v1'
      */
-    protected static jsonApiBaseUrl: string;
+    protected static jsonApiBaseUrl: string | undefined;
 
     /**
      * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
      */
-    protected static jsonApiType: string;
+    protected static jsonApiType: string | undefined;
 
     /**
      * @type {string} The endpoint. If this is not set on a type, the endpoint is constructed from
      * {@link Model.jsonApiType} by prepending it with a slash (i.e. "/jsonApiType").
      */
-    protected static endpoint?: string;
+    protected static endpoint: string | undefined;
 
     /**
      * @type {HttpClient} The HTTP client used to perform request for this model.
@@ -331,19 +331,22 @@ export abstract class Model
       if (this.jsonApiBaseUrl === undefined) {
         throw new Error(`Expected ${this.name} to have property expect jsonApiBaseUrl defined`)
       }
-      return this.jsonApiBaseUrl
+      return this.jsonApiBaseUrl;
     }
 
     public static getJsonApiType(): string {
       if (this.jsonApiType === undefined) {
         throw new Error(`Expected ${this.name} to have property expect jsonApiType defined`)
       }
-      return this.jsonApiType
+      return this.jsonApiType;
+    }
+
+    private static getEndpoint(): string {
+        return this.endpoint ?? `/${this.getJsonApiType()}`;
     }
 
     public static getJsonApiUrl(): string {
-      const path = this.endpoint ?? `/${this.getJsonApiType()}`;
-      return `${this.getJsonApiBaseUrl()}${path}`
+      return `${this.getJsonApiBaseUrl()}${this.getEndpoint()}`
     }
 
     public static getHttpClient(): HttpClient
