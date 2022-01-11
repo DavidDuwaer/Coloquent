@@ -322,15 +322,15 @@ export abstract class Model
     }
 
     public static getJsonApiBaseUrl(): string {
-      if (!this.jsonApiBaseUrl) {
-        throw new Error(`Expect ${this.name} to have property expect jsonApiBaseUrl defined`)
+      if (this.jsonApiBaseUrl === undefined) {
+        throw new Error(`Expected ${this.name} to have property expect jsonApiBaseUrl defined`)
       }
       return this.jsonApiBaseUrl
     }
 
     public static getJsonApiType(): string {
-      if (!this.jsonApiType) {
-        throw new Error(`Expect ${this.name} to have property expect jsonApiType defined`)
+      if (this.jsonApiType === undefined) {
+        throw new Error(`Expected ${this.name} to have property expect jsonApiType defined`)
       }
       return this.jsonApiType
     }
