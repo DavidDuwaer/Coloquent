@@ -68,6 +68,12 @@ export abstract class Model
     protected static jsonApiType: string;
 
     /**
+     * @type {string} The endpoint. If this is not set on a type, the endpoint is constructed from
+     * {@link Model.jsonApiType} by prepending it with a slash (i.e. "/jsonApiType").
+     */
+    protected static endpoint?: string;
+
+    /**
      * @type {HttpClient} The HTTP client used to perform request for this model.
      * By default: {@link AxiosHttpClient}
      */
@@ -336,9 +342,7 @@ export abstract class Model
     }
 
     public static getJsonApiUrl(): string {
-      // TODO: Allow to explicitly set the endpoint.
-      // E.g: const path = this.endpoint || `/${this.getJsonApiType()}`
-      const path = `/${this.getJsonApiType()}`
+      const path = this.endpoint ?? `/${this.getJsonApiType()}`;
       return `${this.getJsonApiBaseUrl()}${path}`
     }
 
