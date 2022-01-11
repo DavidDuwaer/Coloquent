@@ -40,10 +40,9 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
     ) {
         this.modelType = modelType;
         this.baseUrl = modelType.getJsonApiBaseUrl();
-        let modelInstance: M = (new (<any> modelType)());
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
-            : modelInstance.getJsonApiType();
+            : modelType.getJsonApiType();
         this.query = new Query(baseModelJsonApiType, queriedRelationName, baseModelJsonApiId);
         this.initPaginationSpec();
         this.httpClient = modelType.getHttpClient();

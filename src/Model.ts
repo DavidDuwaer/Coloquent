@@ -181,7 +181,7 @@ export abstract class Model
 
         let payload = {
             data: {
-                type: this.getJsonApiType(),
+                type: (this as Model).constructor.getJsonApiType(),
                 attributes,
                 relationships
             }
@@ -194,7 +194,7 @@ export abstract class Model
 
     private serializeRelatedModel(model: Model): any {
         return {
-            type: model.getJsonApiType(),
+            type: model.constructor.getJsonApiType(),
             id: model.id
         };
     }
@@ -218,9 +218,9 @@ export abstract class Model
         }
 
         let payload = this.serialize();
-        return this.getHttpClient()
+        return (this as Model).constructor.getHttpClient()
             .patch(
-                this.constructor.getJsonApiUrl()+'/'+this.id,
+                (this as Model).constructor.getJsonApiUrl()+'/'+this.id,
                 payload
             )
             .then(
@@ -238,9 +238,9 @@ export abstract class Model
     public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
-        return this.getHttpClient()
+        return (this as Model).constructor.getHttpClient()
             .post(
-                this.constructor.getJsonApiUrl(),
+                (this as Model).constructor.getJsonApiUrl(),
                 payload
             )
             .then(
@@ -260,8 +260,8 @@ export abstract class Model
         if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return this.getHttpClient()
-            .delete(this.constructor.getJsonApiUrl()+'/'+this.id)
+        return (this as Model).constructor.getHttpClient()
+            .delete((this as Model).constructor.getJsonApiUrl()+'/'+this.id)
             .then(function () {});
     }
 
@@ -358,21 +358,21 @@ export abstract class Model
      * @deprecated Use the static method with the same name instead
      */
     public getJsonApiType(): string {
-      return this.constructor.getJsonApiType()
+      return (this as Model).constructor.getJsonApiType()
     }
 
     /**
      * @deprecated Use the static method with the same name instead
      */
     public getJsonApiBaseUrl(): string {
-      return this.constructor.getJsonApiBaseUrl()
+      return (this as Model).constructor.getJsonApiBaseUrl()
     }
 
     /**
      * @deprecated Use the static method with the same name instead
      */
     public getHttpClient(): HttpClient {
-      return this.constructor.getHttpClient()
+      return (this as Model).constructor.getHttpClient()
     }
 
     public populateFromResource(resource: Resource): void
