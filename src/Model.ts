@@ -65,7 +65,7 @@ export abstract class Model
     /**
      * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
      */
-     protected static jsonApiType: string;
+    protected static jsonApiType: string;
 
     /**
      * @type {HttpClient} The HTTP client used to perform request for this model.
