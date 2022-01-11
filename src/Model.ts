@@ -364,6 +364,9 @@ export abstract class Model
       return this.constructor.getJsonApiBaseUrl()
     }
 
+    /**
+     * @deprecated Use the static method with the same name instead
+     */
     public getHttpClient(): HttpClient {
       return this.constructor.getHttpClient()
     }
