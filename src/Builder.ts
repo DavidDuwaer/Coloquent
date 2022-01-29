@@ -55,7 +55,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         clone.getQuery().getPaginationSpec().setPage(page);
         if (this.forceSingular) {
             return this.getHttpClient()
-                .get(this.baseUrl + clone.getQuery().toString())
+                .get(this.baseUrl + '/' + clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
                         return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData()) as unknown as GET_RESPONSE;
@@ -66,7 +66,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 );
         } else {
             return this.getHttpClient()
-                .get(this.baseUrl + clone.getQuery().toString())
+                .get(this.baseUrl + '/' + clone.getQuery().toString())
                 .then(
                     (response: HttpClientResponse) => {
                         return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page) as unknown as GET_RESPONSE;
@@ -83,7 +83,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         const clone = this.clone();
         clone.getQuery().getPaginationSpec().setPageLimit(1);
         return <Promise<SingularResponse<M>>> this.getHttpClient()
-            .get(this.baseUrl + clone.getQuery().toString())
+            .get(this.baseUrl + '/' + clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
                     return new SingularResponse(this.query, response, this.modelType, response.getData());
@@ -105,7 +105,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         const clone = this.clone();
         clone.query.setIdToFind(id);
         return <Promise<SingularResponse<M>>> clone.getHttpClient()
-            .get(this.baseUrl + clone.getQuery().toString())
+            .get(this.baseUrl + '/' + clone.getQuery().toString())
             .then(
                 (response: HttpClientResponse) => {
                     return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());

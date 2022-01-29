@@ -26,7 +26,7 @@ describe('Model2', () => {
         expect(superHero.getJsonApiType()).to.equal('heros');
 
         /** @see BaseModel */
-        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api/');
+        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api');
     });
 
     it('should have an orderBy method', (done) => {

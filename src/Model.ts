@@ -331,7 +331,8 @@ export abstract class Model
       if (this.jsonApiBaseUrl === undefined) {
         throw new Error(`Expected ${this.name} to have property expect jsonApiBaseUrl defined`)
       }
-      return this.jsonApiBaseUrl;
+
+      return this.jsonApiBaseUrl.replace(/\/+$/, '');
     }
 
     public static getJsonApiType(): string {
@@ -342,11 +343,11 @@ export abstract class Model
     }
 
     private static getEndpoint(): string {
-        return this.endpoint ?? `/${this.getJsonApiType()}`;
+        return (this.endpoint ?? this.getJsonApiType()).replace(/^\/+/, '');
     }
 
     public static getJsonApiUrl(): string {
-      return `${this.getJsonApiBaseUrl()}${this.getEndpoint()}`
+      return `${this.getJsonApiBaseUrl()}/${this.getEndpoint()}`
     }
 
     public static getHttpClient(): HttpClient

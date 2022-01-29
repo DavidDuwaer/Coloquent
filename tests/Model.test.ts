@@ -72,14 +72,6 @@ describe('Model', () => {
     });
 
     describe('getJsonApiUrl', () => {
-      describe('without static jsonApiBaseUrl', () => {
-        class Foo extends Model {}
-
-        it('throws an Error', () => {
-          expect(() => { Foo.getJsonApiUrl() }).to.throw();
-        });
-      });
-
       describe('with static jsonApiBaseUrl and jsonApiType', () => {
         class Foo extends Model {
           static jsonApiBaseUrl = 'http://coloquent.app/api';

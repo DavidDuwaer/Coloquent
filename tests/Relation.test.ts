@@ -33,7 +33,7 @@ describe('Relation', () => {
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
-            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/friends');
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/friends');
             done();
         });
     });
@@ -47,7 +47,7 @@ describe('Relation', () => {
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
-            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/friends');
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/superman/friends');
             done();
         });
     });
@@ -61,7 +61,7 @@ describe('Relation', () => {
 
         moxios.wait(() => {
             let request = moxios.requests.mostRecent();
-            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'heros/superman/rival');
+            assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/superman/rival');
             done();
         });
     });
