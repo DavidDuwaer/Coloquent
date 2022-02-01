@@ -77,9 +77,9 @@ export abstract class Model
      */
     protected static httpClient: HttpClient;
 
-    protected readOnlyAttributes: string[] = [];
+    protected static readOnlyAttributes: string[] = [];
 
-    protected dates: {[key: string]: string} = {};
+    protected static dates: {[key: string]: string} = {};
 
     private static dateFormatter: DateFormatter | undefined;
 
@@ -154,7 +154,7 @@ export abstract class Model
     {
         let attributes = {};
         for (let key in this.attributes.toArray()) {
-            if (this.readOnlyAttributes.indexOf(key) == -1) {
+            if ((this as Model).constructor.readOnlyAttributes.indexOf(key) == -1) {
                 attributes[key] = this.attributes.get(key);
             }
         }
@@ -441,7 +441,7 @@ export abstract class Model
 
     private isDateAttribute(attributeName: string): boolean
     {
-        return this.dates.hasOwnProperty(attributeName);
+        return (this as Model).constructor.dates.hasOwnProperty(attributeName);
     }
 
     protected setAttribute(attributeName: string, value: any): void
@@ -450,7 +450,7 @@ export abstract class Model
             if (!Date.parse(value)) {
                 throw new Error(`${value} cannot be cast to type Date`);
             }
-            value = (<any> Model.getDateFormatter()).parseDate(value, this.dates[attributeName]);
+            value = (<any> Model.getDateFormatter()).parseDate(value, (this as Model).constructor.dates[attributeName]);
         }
 
         this.attributes.set(attributeName, value);
