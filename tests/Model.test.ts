@@ -3,7 +3,7 @@ import {AxiosHttpClient, Model} from "../dist";
 
 describe('Model', () => {
   describe('static', () => {
-    describe('getHttpClient', () => {
+    describe('effectiveHttpClient', () => {
       describe('without static httpClient', () => {
         class Foo extends Model {}
 
@@ -31,7 +31,7 @@ describe('Model', () => {
       });
     });
 
-    describe('getJsonApiType', () => {
+    describe('effectiveJsonApiType', () => {
       describe('without static jsonApiType', () => {
         class Foo extends Model {}
 
@@ -51,7 +51,7 @@ describe('Model', () => {
       });
     });
 
-    describe('getJsonApiBaseUrl', () => {
+    describe('effectiveJsonApiBaseUrl', () => {
       describe('without static jsonApiType', () => {
         class Foo extends Model {}
 
