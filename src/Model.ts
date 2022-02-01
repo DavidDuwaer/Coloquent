@@ -81,7 +81,7 @@ export abstract class Model
 
     protected dates: {[key: string]: string} = {};
 
-    private static dateFormatter;
+    private static dateFormatter: DateFormatter | undefined;
 
     /**
      * Get a {@link Builder} instance from a {@link Model} instance
