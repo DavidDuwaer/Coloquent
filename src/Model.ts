@@ -60,6 +60,8 @@ export abstract class Model
      */
     protected static jsonApiBaseUrl: string | undefined;
 
+    private static _effectiveJsonApiBaseUrl: string | undefined;
+
     /**
      * The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
      */
@@ -316,12 +318,17 @@ export abstract class Model
         return relationNames;
     }
 
-    public static getJsonApiBaseUrl(): string {
-      if (this.jsonApiBaseUrl === undefined) {
-        throw new Error(`Expected ${this.name} to have property expect jsonApiBaseUrl defined`)
+    /**
+     * The base URL that is used to call the API
+     */
+    public static get effectiveJsonApiBaseUrl(): string {
+      if (this._effectiveJsonApiBaseUrl === undefined) {
+          if (this.jsonApiBaseUrl === undefined) {
+              throw new Error(`Expected ${this.name} to have static property 'jsonApiBaseUrl' defined`)
+          }
+          this._effectiveJsonApiBaseUrl = this.jsonApiBaseUrl.replace(/\/+$/, '');
       }
-
-      return this.jsonApiBaseUrl.replace(/\/+$/, '');
+      return this._effectiveJsonApiBaseUrl;
     }
 
     public static getJsonApiType(): string {
@@ -336,7 +343,7 @@ export abstract class Model
     }
 
     public static getJsonApiUrl(): string {
-      return `${this.getJsonApiBaseUrl()}/${this.getEndpoint()}`
+      return `${this.effectiveJsonApiBaseUrl}/${this.getEndpoint()}`
     }
 
     public static getHttpClient(): HttpClient
@@ -355,10 +362,11 @@ export abstract class Model
     }
 
     /**
-     * @deprecated Use the static method with the same name instead
+     * @deprecated Use the static property {@link jsonApiBaseUrl} or
+     * {@link effectiveJsonApiBaseUrl}
      */
     public getJsonApiBaseUrl(): string {
-      return (this as Model).constructor.getJsonApiBaseUrl()
+      return (this as Model).constructor.effectiveJsonApiBaseUrl;
     }
 
     /**

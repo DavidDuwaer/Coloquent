@@ -39,7 +39,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
-        this.baseUrl = modelType.getJsonApiBaseUrl();
+        this.baseUrl = modelType.effectiveJsonApiBaseUrl;
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
             : modelType.getJsonApiType();

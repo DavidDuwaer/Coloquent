@@ -56,7 +56,7 @@ describe('Model', () => {
         class Foo extends Model {}
 
         it('throws an Error', () => {
-          expect(() => { Foo.getJsonApiBaseUrl() }).to.throw();
+          expect(() => { Foo.effectiveJsonApiBaseUrl }).to.throw();
         });
       });
 
@@ -66,7 +66,7 @@ describe('Model', () => {
         }
 
         it('returns jsonApiBaseUrl', () => {
-          expect(Foo.getJsonApiBaseUrl()).to.eq('http://coloquent.app/api');
+          expect(Foo.effectiveJsonApiBaseUrl).to.eq('http://coloquent.app/api');
         });
       });
     });
