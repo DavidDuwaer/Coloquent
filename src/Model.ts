@@ -19,8 +19,6 @@ export interface Model {
 }
 export abstract class Model
 {
-    private type: string;
-
     /**
      * @type {number} the page size
      */
@@ -87,7 +85,6 @@ export abstract class Model
 
     constructor()
     {
-        this.type = typeof this;
         this.relations = new Map();
         this.attributes = new Map();
         this.readOnlyAttributes = [];
