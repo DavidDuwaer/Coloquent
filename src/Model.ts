@@ -20,32 +20,32 @@ export interface Model {
 export abstract class Model
 {
     /**
-     * @type {number} the page size
+     * The page size
      */
     protected static pageSize: number = 50;
 
     /**
-     * @type {PaginationStrategy} the pagination strategy
+     * The pagination strategy
      */
     protected static paginationStrategy: PaginationStrategy = PaginationStrategy.OffsetBased;
 
     /**
-     * @type {string} The number query parameter name. By default: 'page[number]'
+     * The number query parameter name. By default: 'page[number]'
      */
     protected static paginationPageNumberParamName: string = 'page[number]';
 
     /**
-     * @type {string} The size query parameter name. By default: 'page[size]'
+     * The size query parameter name. By default: 'page[size]'
      */
     protected static paginationPageSizeParamName: string = 'page[size]';
 
     /**
-     * @type {string} The offset query parameter name. By default: 'page[offset]'
+     * The offset query parameter name. By default: 'page[offset]'
      */
     protected static paginationOffsetParamName: string = 'page[offset]';
 
     /**
-     * @type {string} The limit query parameter name. By default: 'page[limit]'
+     * The limit query parameter name. By default: 'page[limit]'
      */
     protected static paginationLimitParName: string = 'page[limit]';
 
@@ -56,17 +56,17 @@ export abstract class Model
     private attributes: Map<any>;
 
     /**
-     * @type {string} The model endpoint base URL, e.g 'http://localhost:3000/api/v1'
+     * The model endpoint base URL, e.g 'http://localhost:3000/api/v1'.
      */
     protected static jsonApiBaseUrl: string | undefined;
 
     /**
-     * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
+     * The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
      */
     protected static jsonApiType: string | undefined;
 
     /**
-     * @type {string} The endpoint. If this is not set on a type, the endpoint is constructed from
+     * The endpoint. If this is not set on a type, the endpoint is constructed from
      * {@link Model.jsonApiType} by prepending it with a slash (i.e. "/jsonApiType").
      */
     protected static endpoint: string | undefined;
