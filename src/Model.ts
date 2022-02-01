@@ -400,6 +400,9 @@ export abstract class Model
         }
     }
 
+    /**
+     * @deprecated Access the static {@link pageSize} property directly
+     */
     public static getPageSize(): number
     {
         return this.pageSize;

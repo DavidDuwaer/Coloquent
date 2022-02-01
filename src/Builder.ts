@@ -220,7 +220,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 new OffsetBasedPaginationSpec(
                     this.modelType.getPaginationOffsetParamName(),
                     this.modelType.getPaginationLimitParamName(),
-                    this.modelType.getPageSize()
+                    this.modelType.pageSize
                 )
             );
         } else if (paginationStrategy === PaginationStrategy.PageBased) {
@@ -228,7 +228,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 new PageBasedPaginationSpec(
                     this.modelType.getPaginationPageNumberParamName(),
                     this.modelType.getPaginationPageSizeParamName(),
-                    this.modelType.getPageSize()
+                    this.modelType.pageSize
                 )
             );
         } else {
