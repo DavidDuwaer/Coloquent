@@ -36,7 +36,7 @@ describe('Model', () => {
         class Foo extends Model {}
 
         it('throws an Error', () => {
-          expect(() => { Foo.getJsonApiType() }).to.throw();
+          expect(() => { Foo.effectiveJsonApiType }).to.throw();
         });
       });
 
@@ -46,7 +46,7 @@ describe('Model', () => {
         }
 
         it('returns jsonApiType', () => {
-          expect(Foo.getJsonApiType()).to.eq('foos');
+          expect(Foo.effectiveJsonApiType).to.eq('foos');
         });
       });
     });

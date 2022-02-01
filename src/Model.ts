@@ -63,9 +63,12 @@ export abstract class Model
     private static _effectiveJsonApiBaseUrl: string | undefined;
 
     /**
-     * The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
+     * The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'.
+     * Required property. If not set, Colu
      */
     protected static jsonApiType: string | undefined;
+
+    private static _effectiveJsonApiType: string | undefined;
 
     /**
      * The endpoint. If this is not set on a type, the endpoint is constructed from
@@ -172,7 +175,7 @@ export abstract class Model
 
         let payload = {
             data: {
-                type: (this as Model).constructor.getJsonApiType(),
+                type: (this as Model).constructor.effectiveJsonApiType,
                 attributes,
                 relationships
             }
@@ -185,7 +188,7 @@ export abstract class Model
 
     private serializeRelatedModel(model: Model): any {
         return {
-            type: model.constructor.getJsonApiType(),
+            type: model.constructor.effectiveJsonApiType,
             id: model.id
         };
     }
@@ -331,15 +334,20 @@ export abstract class Model
       return this._effectiveJsonApiBaseUrl;
     }
 
-    public static getJsonApiType(): string {
-      if (this.jsonApiType === undefined) {
-        throw new Error(`Expected ${this.name} to have property expect jsonApiType defined`)
-      }
-      return this.jsonApiType;
+    public static get effectiveJsonApiType(): string {
+        if (this._effectiveJsonApiType === undefined) {
+            if (this.jsonApiType === undefined) {
+                throw new Error(
+                    `Expected ${this.name} to have property expect jsonApiType defined`
+                );
+            }
+            this._effectiveJsonApiType = this.jsonApiType;
+        }
+        return this._effectiveJsonApiType;
     }
 
     private static getEndpoint(): string {
-        return (this.endpoint ?? this.getJsonApiType()).replace(/^\/+/, '');
+        return (this.endpoint ?? this.effectiveJsonApiType).replace(/^\/+/, '');
     }
 
     public static getJsonApiUrl(): string {
@@ -358,7 +366,7 @@ export abstract class Model
      * @deprecated Use the static method with the same name instead
      */
     public getJsonApiType(): string {
-      return (this as Model).constructor.getJsonApiType()
+      return (this as Model).constructor.effectiveJsonApiType;
     }
 
     /**

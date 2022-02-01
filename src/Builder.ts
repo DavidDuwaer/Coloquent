@@ -42,7 +42,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
         this.baseUrl = modelType.effectiveJsonApiBaseUrl;
         baseModelJsonApiType = baseModelJsonApiType
             ? baseModelJsonApiType
-            : modelType.getJsonApiType();
+            : modelType.effectiveJsonApiType;
         this.query = new Query(baseModelJsonApiType, queriedRelationName, baseModelJsonApiId);
         this.initPaginationSpec();
         this.httpClient = modelType.getHttpClient();
