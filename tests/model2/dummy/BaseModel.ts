@@ -7,6 +7,6 @@ export abstract class BaseModel extends Model {
 
     constructor() {
         super();
-        moxios.install((<AxiosInstance> BaseModel.getHttpClient().getImplementingClient()));
+        moxios.install((<AxiosInstance> BaseModel.effectiveHttpClient.getImplementingClient()));
     }
 }

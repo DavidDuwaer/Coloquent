@@ -8,13 +8,13 @@ describe('Model', () => {
         class Foo extends Model {}
 
         it('returns a new AxiosHttpClient', () => {
-          expect(Foo.getHttpClient()).to.be.an.instanceof(AxiosHttpClient);
+          expect(Foo.effectiveHttpClient).to.be.an.instanceof(AxiosHttpClient);
         });
 
         it('memoizes the HttpClient', () => {
-          const httpClient = Foo.getHttpClient()
+          const httpClient = Foo.effectiveHttpClient
 
-          expect(Foo.getHttpClient()).to.eql(httpClient);
+          expect(Foo.effectiveHttpClient).to.eql(httpClient);
         });
       });
 
@@ -26,7 +26,7 @@ describe('Model', () => {
         }
 
         it('returns the httpClient', () => {
-          expect(Foo.getHttpClient()).to.eql(httpClient)
+          expect(Foo.effectiveHttpClient).to.eql(httpClient)
         });
       });
     });

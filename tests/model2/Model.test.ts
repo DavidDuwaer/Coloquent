@@ -204,7 +204,7 @@ describe('Model2', () => {
     });
 
     it('should allow a header to be set', (done) => {
-        let httpClient: AxiosInstance = Hero.getHttpClient().getImplementingClient();
+        let httpClient: AxiosInstance = Hero.effectiveHttpClient.getImplementingClient();
         httpClient.defaults.headers.authentication = 'someAuthenticationHeader5636rt3';
         Hero.find('1');
 

@@ -45,7 +45,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
             : modelType.effectiveJsonApiType;
         this.query = new Query(baseModelJsonApiType, queriedRelationName, baseModelJsonApiId);
         this.initPaginationSpec();
-        this.httpClient = modelType.getHttpClient();
+        this.httpClient = modelType.effectiveHttpClient;
         this.forceSingular = forceSingular;
     }
 

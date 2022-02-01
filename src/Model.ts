@@ -78,9 +78,11 @@ export abstract class Model
 
     /**
      * @type {HttpClient} The HTTP client used to perform request for this model.
-     * By default: {@link AxiosHttpClient}
+     * If not set, {@link AxiosHttpClient} will be used.
      */
-    protected static httpClient: HttpClient;
+    protected static httpClient: HttpClient | undefined;
+
+    private static _effectiveHttpClient: HttpClient | undefined;
 
     protected static readOnlyAttributes: string[] = [];
 
@@ -212,7 +214,7 @@ export abstract class Model
         }
 
         let payload = this.serialize();
-        return (this as Model).constructor.getHttpClient()
+        return (this as Model).constructor.effectiveHttpClient
             .patch(
                 (this as Model).constructor.getJsonApiUrl()+'/'+this.id,
                 payload
@@ -232,7 +234,7 @@ export abstract class Model
     public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
-        return (this as Model).constructor.getHttpClient()
+        return (this as Model).constructor.effectiveHttpClient
             .post(
                 (this as Model).constructor.getJsonApiUrl(),
                 payload
@@ -254,7 +256,7 @@ export abstract class Model
         if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return (this as Model).constructor.getHttpClient()
+        return (this as Model).constructor.effectiveHttpClient
             .delete((this as Model).constructor.getJsonApiUrl()+'/'+this.id)
             .then(function () {});
     }
@@ -354,12 +356,17 @@ export abstract class Model
       return `${this.effectiveJsonApiBaseUrl}/${this.getEndpoint()}`
     }
 
-    public static getHttpClient(): HttpClient
+    /**
+     * The {@link HttpClient} that is used by Coloquent. Is equal to {@link httpClient}
+     * property unless that one was left undefined, in which case it is an instance
+     * of {@link AxiosHttpClient}. This is a read-only property.
+     */
+    public static get effectiveHttpClient(): HttpClient
     {
-      if (!this.httpClient) {
-        this.httpClient = new AxiosHttpClient();
+      if (this._effectiveHttpClient === undefined) {
+        this._effectiveHttpClient = this.httpClient ?? new AxiosHttpClient();
       }
-      return this.httpClient
+      return this._effectiveHttpClient;
     }
 
     /**
@@ -378,10 +385,11 @@ export abstract class Model
     }
 
     /**
-     * @deprecated Use the static method with the same name instead
+     * @deprecated Use the static {@link httpClient} to get the one that is
+     * configured, and {@link effectiveHttpClient} to get the one that is
      */
     public getHttpClient(): HttpClient {
-      return (this as Model).constructor.getHttpClient()
+      return (this as Model).constructor.effectiveHttpClient
     }
 
     public populateFromResource(resource: Resource): void
