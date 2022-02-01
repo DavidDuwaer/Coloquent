@@ -130,9 +130,9 @@ import {Model} from 'coloquent';
 
 class Artist extends Model
 {
-    protected static jsonApiBaseUrl = 'http://www.app.com/api';
-    protected static jsonApiType = 'artists';   
-    protected pageSize = 30;
+    static jsonApiBaseUrl = 'http://www.app.com/api'
+    static jsonApiType = 'artists'
+    static pageSize = 30
 }
 ```
 
@@ -146,12 +146,12 @@ import {Model, ToManyRelation, ToOneRelation} from 'coloquent';
 
 abstract class AppModel extends Model
 {
-    protected static jsonApiBaseUrl = 'http://www.app.com/api';
+    static jsonApiBaseUrl = 'http://www.app.com/api'
 }
 
 class Artist extends AppModel
 {
-    protected static jsonApiType = 'artists';
+    static jsonApiType = 'artists'
     
     readOnlyAttributes = [
         'age'
@@ -190,7 +190,7 @@ class Artist extends AppModel
 
 class Album extends AppModel
 {
-    protected static jsonApiType = 'albums';
+    static jsonApiType = 'albums'
 
     artist(): ToOneRelation<Artist, this>
     {
@@ -215,7 +215,7 @@ class Album extends AppModel
 
 class Song extends AppModel
 {
-    protected static jsonApiType = 'songs';
+    static jsonApiType = 'songs'
 
     album(): ToOneRelation<Album, this>
     {
