@@ -51,9 +51,9 @@ export abstract class Model
 
     private id: string | undefined;
 
-    private relations: Map<any>;
+    private readonly relations = new Map<any>();
 
-    private attributes: Map<any>;
+    private readonly attributes = new Map<any>();
 
     /**
      * The model endpoint base URL, e.g 'http://localhost:3000/api/v1'.
@@ -77,19 +77,11 @@ export abstract class Model
      */
     protected static httpClient: HttpClient;
 
-    protected readOnlyAttributes: string[];
+    protected readOnlyAttributes: string[] = [];
 
-    protected dates: {[key: string]: string};
+    protected dates: {[key: string]: string} = {};
 
     private static dateFormatter;
-
-    constructor()
-    {
-        this.relations = new Map();
-        this.attributes = new Map();
-        this.readOnlyAttributes = [];
-        this.dates = {};
-    }
 
     /**
      * Get a {@link Builder} instance from a {@link Model} instance
