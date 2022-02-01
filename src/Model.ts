@@ -71,8 +71,8 @@ export abstract class Model
     private static _effectiveJsonApiType: string | undefined;
 
     /**
-     * The endpoint. If this is not set on a type, the endpoint is constructed from
-     * {@link Model.jsonApiType} by prepending it with a slash (i.e. "/jsonApiType").
+     * The endpoint. Optional. If not set, the {@link Model.jsonApiType}
+     * prepended with a slash (e.g. "/cars") will be used.
      */
     protected static endpoint: string | undefined;
 
@@ -348,12 +348,12 @@ export abstract class Model
         return this._effectiveJsonApiType;
     }
 
-    private static getEndpoint(): string {
+    private static get effectiveEndpoint(): string {
         return (this.endpoint ?? this.effectiveJsonApiType).replace(/^\/+/, '');
     }
 
     public static getJsonApiUrl(): string {
-      return `${this.effectiveJsonApiBaseUrl}/${this.getEndpoint()}`
+      return `${this.effectiveJsonApiBaseUrl}/${this.effectiveEndpoint}`
     }
 
     /**
