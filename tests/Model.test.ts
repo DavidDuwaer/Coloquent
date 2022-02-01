@@ -68,6 +68,16 @@ describe('Model', () => {
         it('returns jsonApiBaseUrl', () => {
           expect(Foo.effectiveJsonApiBaseUrl).to.eq('http://coloquent.app/api');
         });
+
+        describe('when jsonApiBaseUrl having trailing "/"', () => {
+          class Foo extends Model {
+            static jsonApiBaseUrl = 'http://coloquent.app/api/';
+          }
+
+          it('returns jsonApiBaseUrl without trailing "/"', () => {
+            expect(Foo.effectiveJsonApiBaseUrl).to.eq('http://coloquent.app/api');
+          });
+        });
       });
     });
 
@@ -92,6 +102,18 @@ describe('Model', () => {
 
         it('returns URL with endpoint', () => {
           expect(Foo.getJsonApiUrl()).to.eq('http://coloquent.app/api/custom-endpoint-foo')
+        });
+
+        describe('when endpoint having no heading "/"', () => {
+          class Foo extends Model {
+            static jsonApiBaseUrl = 'http://coloquent.app/api';
+            static jsonApiType = 'foos';
+            static endpoint = 'custom-endpoint-foo';
+          }
+
+          it('returns URL with endpoint', () => {
+            expect(Foo.getJsonApiUrl()).to.eq('http://coloquent.app/api/custom-endpoint-foo')
+          });
         });
       });
     });
