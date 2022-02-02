@@ -4,7 +4,7 @@ import {Hero} from "./Hero";
 
 export class AntiHero extends BaseModel
 {
-    protected jsonApiType = 'anti-heroes';
+    protected static jsonApiType = 'anti-heroes';
 
     public heroes(): ToManyRelation
     {

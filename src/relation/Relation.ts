@@ -31,6 +31,11 @@ export class Relation<R extends Model = Model>
         return this.relatedType;
     }
 
+    public getReferringType(): typeof Model
+    {
+        return this.getReferringObject().constructor;
+    }
+
     public getReferringObject(): Model
     {
         if (!this.referringObject) {

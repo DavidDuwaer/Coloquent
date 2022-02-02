@@ -2,9 +2,9 @@ import {BaseModel} from './BaseModel';
 import {ToManyRelation, ToOneRelation} from "../../../dist";
 
 export class Hero extends BaseModel {
-    protected jsonApiType = 'heros';
+    protected static jsonApiType = 'heros';
 
-    public setName(name: string) 
+    public setName(name: string)
     {
         this.setAttribute('name', name);
     }

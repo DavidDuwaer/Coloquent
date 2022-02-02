@@ -26,7 +26,7 @@ describe('Model2', () => {
         expect(superHero.getJsonApiType()).to.equal('heros');
 
         /** @see BaseModel */
-        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api/');
+        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api');
     });
 
     it('should have an orderBy method', (done) => {
@@ -204,7 +204,7 @@ describe('Model2', () => {
     });
 
     it('should allow a header to be set', (done) => {
-        let httpClient: AxiosInstance = Hero.getHttpClient().getImplementingClient();
+        let httpClient: AxiosInstance = Hero.effectiveHttpClient.getImplementingClient();
         httpClient.defaults.headers.authentication = 'someAuthenticationHeader5636rt3';
         Hero.find('1');
 
@@ -218,7 +218,7 @@ describe('Model2', () => {
             done();
         });
     });
-    
+
     it('fresh method should reload the resource data from the backend', (done) => {
         const responseData = {
             response: {
@@ -393,7 +393,7 @@ describe('Model2', () => {
 
     it('fresh method should return \'undefined\' when model does not have an ID', (done) => {
         let hero = new Hero();
-        
+
         hero.setName('Bob');
 
         hero
@@ -402,6 +402,6 @@ describe('Model2', () => {
                 assert.equal(antihero, undefined);
                 done();
             })
-            .catch(error => done(error)); 
+            .catch(error => done(error));
     });
 });

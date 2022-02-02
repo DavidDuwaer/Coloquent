@@ -26,7 +26,7 @@ describe('Model1', () => {
         expect(superHero.getJsonApiType()).to.equal('heros');
 
         /** @see BaseModel */
-        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api/');
+        expect(superHero.getJsonApiBaseUrl()).to.equal('http://coloquent.app/api');
     });
 
     it('should have an orderBy method', (done) => {
@@ -204,7 +204,7 @@ describe('Model1', () => {
     });
 
     it('should allow a header to be set', (done) => {
-        let httpClient: AxiosInstance = Hero.getHttpClient().getImplementingClient();
+        let httpClient: AxiosInstance = Hero.effectiveHttpClient.getImplementingClient();
         httpClient.defaults.headers.authentication = 'someAuthenticationHeader5636rt3';
         Hero.find('1');
 

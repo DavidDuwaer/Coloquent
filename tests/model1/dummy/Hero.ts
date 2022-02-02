@@ -3,7 +3,7 @@ import {ToManyRelation, ToOneRelation} from "../../../dist";
 
 export class Hero extends BaseModel
 {
-    protected jsonApiType = 'heros';
+    protected static jsonApiType = 'heros';
 
     public friends(): ToManyRelation
     {

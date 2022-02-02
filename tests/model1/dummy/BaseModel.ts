@@ -5,13 +5,11 @@ import {Model} from "../../../dist";
 import {PaginationStrategy} from "../../../dist";
 
 export abstract class BaseModel extends Model {
+    protected static jsonApiBaseUrl = 'http://coloquent.app/api/';
+
     constructor() {
         super();
-        moxios.install((<AxiosInstance> BaseModel.getHttpClient().getImplementingClient()));
-    }
-
-    getJsonApiBaseUrl(): string {
-        return 'http://coloquent.app/api/';
+        moxios.install((<AxiosInstance> BaseModel.effectiveHttpClient.getImplementingClient()));
     }
 
     public static setPaginationStrategy(paginationStrategy: PaginationStrategy): void

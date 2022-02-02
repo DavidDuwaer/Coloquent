@@ -19,76 +19,76 @@ export interface Model {
 }
 export abstract class Model
 {
-    private type: string;
-
     /**
-     * @type {string} The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'
-     */
-    protected abstract jsonApiType: string;
-
-    /**
-     * @type {number} the page size
+     * The page size
      */
     protected static pageSize: number = 50;
 
     /**
-     * @type {PaginationStrategy} the pagination strategy
+     * The pagination strategy
      */
     protected static paginationStrategy: PaginationStrategy = PaginationStrategy.OffsetBased;
 
     /**
-     * @type {string} The number query parameter name. By default: 'page[number]'
+     * The number query parameter name. By default: 'page[number]'
      */
     protected static paginationPageNumberParamName: string = 'page[number]';
 
     /**
-     * @type {string} The size query parameter name. By default: 'page[size]'
+     * The size query parameter name. By default: 'page[size]'
      */
     protected static paginationPageSizeParamName: string = 'page[size]';
 
     /**
-     * @type {string} The offset query parameter name. By default: 'page[offset]'
+     * The offset query parameter name. By default: 'page[offset]'
      */
     protected static paginationOffsetParamName: string = 'page[offset]';
 
     /**
-     * @type {string} The limit query parameter name. By default: 'page[limit]'
+     * The limit query parameter name. By default: 'page[limit]'
      */
     protected static paginationLimitParName: string = 'page[limit]';
 
     private id: string | undefined;
 
-    private relations: Map<any>;
+    private readonly relations = new Map<any>();
 
-    private attributes: Map<any>;
+    private readonly attributes = new Map<any>();
 
-    private static httpClient: HttpClient;
+    /**
+     * The model endpoint base URL, e.g 'http://localhost:3000/api/v1'.
+     */
+    protected static jsonApiBaseUrl: string | undefined;
 
-    protected readOnlyAttributes: string[];
+    private static _effectiveJsonApiBaseUrl: string | undefined;
 
-    protected dates: {[key: string]: string};
+    /**
+     * The JSON-API type, choose plural, lowercase alphabetic only, e.g. 'artists'.
+     * Required property. If not set, Colu
+     */
+    protected static jsonApiType: string | undefined;
 
-    private static dateFormatter;
+    private static _effectiveJsonApiType: string | undefined;
 
-    constructor()
-    {
-        this.type = typeof this;
-        this.relations = new Map();
-        this.attributes = new Map();
-        this.readOnlyAttributes = [];
-        this.dates = {};
+    /**
+     * The endpoint. Optional. If not set, the {@link Model.jsonApiType}
+     * prepended with a slash (e.g. "/cars") will be used.
+     */
+    protected static endpoint: string | undefined;
 
-        if (!Model.httpClient) {
-            Model.httpClient = new AxiosHttpClient();
-        }
+    /**
+     * @type {HttpClient} The HTTP client used to perform request for this model.
+     * If not set, {@link AxiosHttpClient} will be used.
+     */
+    protected static httpClient: HttpClient | undefined;
 
-        this.initHttpClient();
-    }
+    private static _effectiveHttpClient: HttpClient | undefined;
 
-    private initHttpClient(): void
-    {
-        Model.httpClient.setBaseUrl(this.getJsonApiBaseUrl());
-    }
+    protected static readOnlyAttributes: string[] = [];
+
+    protected static dates: {[key: string]: string} = {};
+
+    private static dateFormatter: DateFormatter | undefined;
 
     /**
      * Get a {@link Builder} instance from a {@link Model} instance
@@ -161,7 +161,7 @@ export abstract class Model
     {
         let attributes = {};
         for (let key in this.attributes.toArray()) {
-            if (this.readOnlyAttributes.indexOf(key) == -1) {
+            if ((this as Model).constructor.readOnlyAttributes.indexOf(key) == -1) {
                 attributes[key] = this.attributes.get(key);
             }
         }
@@ -177,7 +177,7 @@ export abstract class Model
 
         let payload = {
             data: {
-                type: this.getJsonApiType(),
+                type: (this as Model).constructor.effectiveJsonApiType,
                 attributes,
                 relationships
             }
@@ -190,7 +190,7 @@ export abstract class Model
 
     private serializeRelatedModel(model: Model): any {
         return {
-            type: model.getJsonApiType(),
+            type: model.constructor.effectiveJsonApiType,
             id: model.id
         };
     }
@@ -214,9 +214,9 @@ export abstract class Model
         }
 
         let payload = this.serialize();
-        return Model.httpClient
+        return (this as Model).constructor.effectiveHttpClient
             .patch(
-                this.getJsonApiType()+'/'+this.id,
+                (this as Model).constructor.getJsonApiUrl()+'/'+this.id,
                 payload
             )
             .then(
@@ -234,9 +234,9 @@ export abstract class Model
     public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
-        return Model.httpClient
+        return (this as Model).constructor.effectiveHttpClient
             .post(
-                this.getJsonApiType(),
+                (this as Model).constructor.getJsonApiUrl(),
                 payload
             )
             .then(
@@ -256,8 +256,8 @@ export abstract class Model
         if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return Model.httpClient
-            .delete(this.getJsonApiType()+'/'+this.id)
+        return (this as Model).constructor.effectiveHttpClient
+            .delete((this as Model).constructor.getJsonApiUrl()+'/'+this.id)
             .then(function () {});
     }
 
@@ -298,7 +298,7 @@ export abstract class Model
         return this.relations.toArray();
     }
 
-    public getRelationsKeys(parentRelationName?: string): Array<string> 
+    public getRelationsKeys(parentRelationName?: string): Array<string>
     {
         let relationNames: Array<string> = [];
 
@@ -324,32 +324,72 @@ export abstract class Model
     }
 
     /**
-     * @returns {string} e.g. 'http://www.foo.com/bar/'
+     * The base URL that is used to call the API
      */
-    public abstract getJsonApiBaseUrl(): string;
+    public static get effectiveJsonApiBaseUrl(): string {
+      if (this._effectiveJsonApiBaseUrl === undefined) {
+          if (this.jsonApiBaseUrl === undefined) {
+              throw new Error(`Expected ${this.name} to have static property 'jsonApiBaseUrl' defined`)
+          }
+          this._effectiveJsonApiBaseUrl = this.jsonApiBaseUrl.replace(/\/+$/, '');
+      }
+      return this._effectiveJsonApiBaseUrl;
+    }
 
-    /**
-     * Allows you to get the current HTTP client (AxiosHttpClient by default), e.g. to alter its configuration.
-     * @returns {HttpClient}
-     */
-    public static getHttpClient(): HttpClient
-    {
-        return this.httpClient;
+    public static get effectiveJsonApiType(): string {
+        if (this._effectiveJsonApiType === undefined) {
+            if (this.jsonApiType === undefined) {
+                throw new Error(
+                    `Expected ${this.name} to have property expect jsonApiType defined`
+                );
+            }
+            this._effectiveJsonApiType = this.jsonApiType;
+        }
+        return this._effectiveJsonApiType;
+    }
+
+    private static get effectiveEndpoint(): string {
+        return (this.endpoint ?? this.effectiveJsonApiType).replace(/^\/+/, '');
+    }
+
+    public static getJsonApiUrl(): string {
+      return `${this.effectiveJsonApiBaseUrl}/${this.effectiveEndpoint}`
     }
 
     /**
-     * Allows you to use any HTTP client library, as long as you write a wrapper for it that implements the interfaces
-     * HttpClient, HttpClientPromise and HttpClientResponse.
-     * @param httpClient
+     * The {@link HttpClient} that is used by Coloquent. Is equal to {@link httpClient}
+     * property unless that one was left undefined, in which case it is an instance
+     * of {@link AxiosHttpClient}. This is a read-only property.
      */
-    public static setHttpClient(httpClient: HttpClient)
+    public static get effectiveHttpClient(): HttpClient
     {
-        this.httpClient = httpClient;
+      if (this._effectiveHttpClient === undefined) {
+        this._effectiveHttpClient = this.httpClient ?? new AxiosHttpClient();
+      }
+      return this._effectiveHttpClient;
     }
 
-    public getJsonApiType(): string
-    {
-        return this.jsonApiType;
+    /**
+     * @deprecated Use the static method with the same name instead
+     */
+    public getJsonApiType(): string {
+      return (this as Model).constructor.effectiveJsonApiType;
+    }
+
+    /**
+     * @deprecated Use the static property {@link jsonApiBaseUrl} or
+     * {@link effectiveJsonApiBaseUrl}
+     */
+    public getJsonApiBaseUrl(): string {
+      return (this as Model).constructor.effectiveJsonApiBaseUrl;
+    }
+
+    /**
+     * @deprecated Use the static {@link httpClient} to get the one that is
+     * configured, and {@link effectiveHttpClient} to get the one that is
+     */
+    public getHttpClient(): HttpClient {
+      return (this as Model).constructor.effectiveHttpClient
     }
 
     public populateFromResource(resource: Resource): void
@@ -360,6 +400,9 @@ export abstract class Model
         }
     }
 
+    /**
+     * @deprecated Access the static {@link pageSize} property directly
+     */
     public static getPageSize(): number
     {
         return this.pageSize;
@@ -425,7 +468,7 @@ export abstract class Model
 
     private isDateAttribute(attributeName: string): boolean
     {
-        return this.dates.hasOwnProperty(attributeName);
+        return (this as Model).constructor.dates.hasOwnProperty(attributeName);
     }
 
     protected setAttribute(attributeName: string, value: any): void
@@ -434,7 +477,7 @@ export abstract class Model
             if (!Date.parse(value)) {
                 throw new Error(`${value} cannot be cast to type Date`);
             }
-            value = (<any> Model.getDateFormatter()).parseDate(value, this.dates[attributeName]);
+            value = (<any> Model.getDateFormatter()).parseDate(value, (this as Model).constructor.dates[attributeName]);
         }
 
         this.attributes.set(attributeName, value);
@@ -449,10 +492,10 @@ export abstract class Model
      */
     private static getDateFormatter(): DateFormatter
     {
-        if (!Model.dateFormatter) {
-            Model.dateFormatter = new DateFormatter();
+        if (!this.dateFormatter) {
+            this.dateFormatter = new DateFormatter();
         }
-        return Model.dateFormatter;
+        return this.dateFormatter;
     }
 
     public getApiId(): string | undefined
