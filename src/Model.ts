@@ -540,6 +540,6 @@ export abstract class Model
     }
 
     private getConstructorOf(model: Model): typeof Model {
-        return Object.getPrototypeOf(this).constructor;
+        return Object.getPrototypeOf(model).constructor;
     }
 }
