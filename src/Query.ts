@@ -7,7 +7,7 @@ import {QueryParam} from "./QueryParam";
 
 export class Query
 {
-    protected jsonApiType: string;
+    public readonly rootEndpoint: string;
 
     protected jsonApiId: string | undefined;
 
@@ -27,9 +27,9 @@ export class Query
 
     protected limit: number | undefined;
 
-    constructor(jsonApiType: string, queriedRelationName: string | undefined = undefined, jsonApiId: string | undefined = undefined)
+    constructor(rootEndpoint: string, queriedRelationName: string | undefined = undefined, jsonApiId: string | undefined = undefined)
     {
-        this.jsonApiType = jsonApiType;
+        this.rootEndpoint = rootEndpoint;
         this.jsonApiId = jsonApiId;
         this.queriedRelationName = queriedRelationName;
         this.include = [];
@@ -97,23 +97,21 @@ export class Query
 
     public toString(): string
     {
-        let relationToFind = '';
+        const relationToFind = this.queriedRelationName
+            ?
+            (
+                !this.jsonApiId
+                    ? '/' + this.queriedRelationName
+                    : '/' + this.jsonApiId + '/' + this.queriedRelationName
+            )
+            :
+            '';
 
-        if (!this.jsonApiId) {
-            relationToFind = this.queriedRelationName
-                ? '/' + this.queriedRelationName
-                : '';
-        } else {
-            relationToFind = this.queriedRelationName
-                ? '/' + this.jsonApiId + '/' + this.queriedRelationName
-                : '';
-        }
-
-        let idToFind: string = this.idToFind
+        const idToFind: string = this.idToFind
             ? '/' + this.idToFind
             : '';
 
-        let searchParams: QueryParam[] = [];
+        const searchParams: QueryParam[] = [];
         this.addFilterParameters(searchParams);
         this.addIncludeParameters(searchParams);
         this.addOptionsParameters(searchParams);
@@ -129,12 +127,7 @@ export class Query
             paramString += encodeURIComponent(searchParam.name) + '=' + encodeURIComponent(searchParam.value);
         }
 
-        return this.jsonApiType + relationToFind + idToFind + paramString;
-    }
-
-    public getJsonApiType()
-    {
-        return this.jsonApiType;
+        return this.rootEndpoint + relationToFind + idToFind + paramString;
     }
 
     public getJsonApiId()

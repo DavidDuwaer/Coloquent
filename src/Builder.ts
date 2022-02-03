@@ -34,16 +34,19 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
     constructor(
         modelType: typeof Model,
         queriedRelationName: string | undefined = undefined,
-        baseModelJsonApiType: string | undefined = undefined,
+        rootEndpoint: string | undefined = undefined,
         baseModelJsonApiId: string | undefined = undefined,
         forceSingular: boolean = false
     ) {
         this.modelType = modelType;
         this.baseUrl = modelType.effectiveJsonApiBaseUrl;
-        baseModelJsonApiType = baseModelJsonApiType
-            ? baseModelJsonApiType
-            : modelType.effectiveJsonApiType;
-        this.query = new Query(baseModelJsonApiType, queriedRelationName, baseModelJsonApiId);
+        this.query = new Query(
+            rootEndpoint
+                ? rootEndpoint
+                : modelType.effectiveEndpoint,
+            queriedRelationName,
+            baseModelJsonApiId
+        );
         this.initPaginationSpec();
         this.httpClient = modelType.effectiveHttpClient;
         this.forceSingular = forceSingular;
@@ -183,7 +186,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
     private clone(): Builder<M, GET_RESPONSE>
     {
         let clone = Object.create(this);
-        let query = new Query(this.query.getJsonApiType(), this.query.getQueriedRelationName(), this.query.getJsonApiId());
+        let query = new Query(this.query.rootEndpoint, this.query.getQueriedRelationName(), this.query.getJsonApiId());
 
         this.query.getFilters().forEach(filter => query.addFilter(filter));
         this.query.getOptions().forEach(option => query.addOption(option));
