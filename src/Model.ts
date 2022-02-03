@@ -348,7 +348,7 @@ export abstract class Model
         return this._effectiveJsonApiType;
     }
 
-    private static get effectiveEndpoint(): string {
+    public static get effectiveEndpoint(): string {
         return (this.endpoint ?? this.effectiveJsonApiType).replace(/^\/+/, '');
     }
 

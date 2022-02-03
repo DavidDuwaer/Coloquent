@@ -8,37 +8,41 @@ import {Model} from "../Model";
 export class ToOneRelation<M extends Model = Model, R extends Model = Model> extends Relation<R> implements QueryMethods<M, SingularResponse<M>>
 {
     get(page?: number): Promise<SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .get(page);
+        return this.builder.get(page);
     }
 
     first(): Promise<SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .first();
+        return this.builder.first();
     }
 
     find(id: string | number): Promise<SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .find(id);
+        return this.builder.find(id);
     }
 
     where(attribute: string, value: string): Builder<M, SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .where(attribute, value);
+        return this.builder.where(attribute, value);
     }
 
     with(value: any): Builder<M, SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .with(value);
+        return this.builder.with(value);
     }
 
     orderBy(attribute: string, direction?: SortDirection|string): Builder<M, SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .orderBy(attribute, direction);
+        return this.builder.orderBy(attribute, direction);
     }
 
     option(queryParameter: string, value: string): Builder<M, SingularResponse<M>> {
-        return new Builder<M, SingularResponse<M>>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId(), true)
-            .option(queryParameter, value);
+        return this.builder.option(queryParameter, value);
+    }
+
+    private get builder()
+    {
+        return new Builder<M, SingularResponse<M>>(
+            this.relatedType,
+            this.name,
+            this.getReferringType().effectiveEndpoint,
+            this.referringObject.getApiId(),
+            true
+        );
     }
 }

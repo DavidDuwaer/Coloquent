@@ -9,37 +9,40 @@ import {Model} from "../Model";
 export class ToManyRelation<M extends Model = Model, R extends Model = Model> extends Relation<R> implements QueryMethods<M, PluralResponse<M>>
 {
     get(page?: number): Promise<PluralResponse<M>> {
-        return <Promise<PluralResponse<M>>> new Builder(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .get(page);
+        return this.builder.get(page);
     }
 
     first(): Promise<SingularResponse<M>> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .first();
+        return this.builder.first();
     }
 
     find(id: string | number): Promise<SingularResponse<M>> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .find(id);
+        return this.builder.find(id);
     }
 
     where(attribute: string, value: string): Builder<M> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .where(attribute, value);
+        return this.builder.where(attribute, value);
     }
 
     with(value: any): Builder<M> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .with(value);
+        return this.builder.with(value);
     }
 
     public orderBy(attribute: string, direction?: SortDirection|string): Builder<M> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .orderBy(attribute, direction);
+        return this.builder.orderBy(attribute, direction);
     }
 
     option(queryParameter: string, value: string): Builder<M> {
-        return new Builder<M>(this.getType(), this.getName(), this.getReferringType().effectiveJsonApiType, this.getReferringObject().getApiId())
-            .option(queryParameter, value);
+        return this.builder.option(queryParameter, value);
+    }
+
+    private get builder()
+    {
+        return new Builder<M>(
+            this.relatedType,
+            this.name,
+            this.getReferringType().effectiveEndpoint,
+            this.referringObject.getApiId()
+        );
     }
 }
