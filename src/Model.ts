@@ -97,7 +97,7 @@ export abstract class Model
      */
     public query(): Builder<this, PluralResponse<this>>
     {
-        return this.constructor.query();
+        return this.getConstructor().query();
     }
 
     /**
@@ -161,7 +161,7 @@ export abstract class Model
     {
         let attributes = {};
         for (let key in this.attributes.toArray()) {
-            if ((this as Model).constructor.readOnlyAttributes.indexOf(key) == -1) {
+            if (this.getConstructor().readOnlyAttributes.indexOf(key) == -1) {
                 attributes[key] = this.attributes.get(key);
             }
         }
@@ -177,7 +177,7 @@ export abstract class Model
 
         let payload = {
             data: {
-                type: (this as Model).constructor.effectiveJsonApiType,
+                type: this.getConstructor().effectiveJsonApiType,
                 attributes,
                 relationships
             }
@@ -190,7 +190,7 @@ export abstract class Model
 
     private serializeRelatedModel(model: Model): any {
         return {
-            type: model.constructor.effectiveJsonApiType,
+            type: this.getConstructorOf(model).effectiveJsonApiType,
             id: model.id
         };
     }
@@ -214,16 +214,16 @@ export abstract class Model
         }
 
         let payload = this.serialize();
-        return (this as Model).constructor.effectiveHttpClient
+        return this.getConstructor().effectiveHttpClient
             .patch(
-                (this as Model).constructor.getJsonApiUrl()+'/'+this.id,
+                this.getConstructor().getJsonApiUrl()+'/'+this.id,
                 payload
             )
             .then(
                 (response: HttpClientResponse) => {
                     const idFromJson: string | undefined = response.getData().data.id;
                     this.setApiId(idFromJson);
-                    return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
+                    return new SaveResponse(response, this.getConstructor(), response.getData());
                 },
                 (response: AxiosError) => {
                     throw response;
@@ -234,16 +234,16 @@ export abstract class Model
     public create(): Promise<SaveResponse<this>>
     {
         let payload = this.serialize();
-        return (this as Model).constructor.effectiveHttpClient
+        return this.getConstructor().effectiveHttpClient
             .post(
-                (this as Model).constructor.getJsonApiUrl(),
+                this.getConstructor().getJsonApiUrl(),
                 payload
             )
             .then(
                 (response: HttpClientResponse) => {
                     const idFromJson: string | undefined = response.getData().data.id;
                     this.setApiId(idFromJson);
-                    return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
+                    return new SaveResponse(response, this.getConstructor(), response.getData());
                 },
                 function (response: AxiosError) {
                     throw response;
@@ -256,8 +256,8 @@ export abstract class Model
         if (!this.hasId) {
             throw new Error('Cannot delete a model with no ID.');
         }
-        return (this as Model).constructor.effectiveHttpClient
-            .delete((this as Model).constructor.getJsonApiUrl()+'/'+this.id)
+        return this.getConstructor().effectiveHttpClient
+            .delete(this.getConstructor().getJsonApiUrl()+'/'+this.id)
             .then(function () {});
     }
 
@@ -271,7 +271,7 @@ export abstract class Model
      */
     public fresh(): Promise<this | null | undefined>
     {
-        let model = <this> (new (<any> this.constructor));
+        let model = <this> (new (<any> this.getConstructor()));
         let builder = model
                         .query()
                         .with(this.getRelationsKeys());
@@ -373,7 +373,7 @@ export abstract class Model
      * @deprecated Use the static method with the same name instead
      */
     public getJsonApiType(): string {
-      return (this as Model).constructor.effectiveJsonApiType;
+      return this.getConstructor().effectiveJsonApiType;
     }
 
     /**
@@ -381,7 +381,7 @@ export abstract class Model
      * {@link effectiveJsonApiBaseUrl}
      */
     public getJsonApiBaseUrl(): string {
-      return (this as Model).constructor.effectiveJsonApiBaseUrl;
+      return this.getConstructor().effectiveJsonApiBaseUrl;
     }
 
     /**
@@ -389,7 +389,7 @@ export abstract class Model
      * configured, and {@link effectiveHttpClient} to get the one that is
      */
     public getHttpClient(): HttpClient {
-      return (this as Model).constructor.effectiveHttpClient
+      return this.getConstructor().effectiveHttpClient
     }
 
     public populateFromResource(resource: Resource): void
@@ -468,7 +468,7 @@ export abstract class Model
 
     private isDateAttribute(attributeName: string): boolean
     {
-        return (this as Model).constructor.dates.hasOwnProperty(attributeName);
+        return this.getConstructor().dates.hasOwnProperty(attributeName);
     }
 
     protected setAttribute(attributeName: string, value: any): void
@@ -477,7 +477,7 @@ export abstract class Model
             if (!Date.parse(value)) {
                 throw new Error(`${value} cannot be cast to type Date`);
             }
-            value = (<any> Model.getDateFormatter()).parseDate(value, (this as Model).constructor.dates[attributeName]);
+            value = (<any> Model.getDateFormatter()).parseDate(value, this.getConstructor().dates[attributeName]);
         }
 
         this.attributes.set(attributeName, value);
@@ -533,5 +533,13 @@ export abstract class Model
         return this.id !== undefined
             && this.id !== null
             && this.id !== '';
+    }
+
+    private getConstructor() {
+        return this.getConstructorOf(this);
+    }
+
+    private getConstructorOf(model: Model): typeof Model {
+        return Object.getPrototypeOf(this).constructor;
     }
 }
