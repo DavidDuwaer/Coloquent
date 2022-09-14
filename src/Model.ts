@@ -85,6 +85,8 @@ export abstract class Model
     private static _effectiveHttpClient: HttpClient | undefined;
 
     protected static readOnlyAttributes: string[] = [];
+    
+    protected static readOnlyRelationships: string[] = [];
 
     protected static dates: {[key: string]: string} = {};
 
@@ -167,11 +169,13 @@ export abstract class Model
         }
         let relationships = {};
         for (let key in this.relations.toArray()) {
-            let relation = this.relations.get(key);
-            if (relation instanceof Model) {
-                relationships[key] = this.serializeToOneRelation(relation);
-            } else if (relation instanceof Array && relation.length > 0) {
-                relationships[key] = this.serializeToManyRelation(relation);
+            if ((this as Model).constructor.readOnlyRelationships.indexOf(key) == -1) {
+                let relation = this.relations.get(key);
+                if (relation instanceof Model) {
+                    relationships[key] = this.serializeToOneRelation(relation);
+                } else if (relation instanceof Array && relation.length > 0) {
+                    relationships[key] = this.serializeToManyRelation(relation);
+                }
             }
         }
 
