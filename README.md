@@ -243,6 +243,9 @@ Finally, note that the `Artist` class overrides an array called `readOnlyAttribu
 This array is for attributes that should be excluded from the payload sent to the server
 when saving an instance of `Artist` (using the `save()` method).
 
+You can also override an array called `readOnlyRelationships`. to exclude relationships from payload
+sent to the server when saving an instance of `Artist` (using the `save()` method).
+
 # Feedback
 
 If something is missing from this library that makes it not fit your use case today, or if you find a bug that spoils
