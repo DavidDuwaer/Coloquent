@@ -1,4 +1,3 @@
-import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 

@@ -7,7 +7,6 @@ import {Relation} from "../relation/Relation";
 import {ToOneRelation} from "../relation/ToOneRelation";
 import {Map} from "../util/Map";
 import {Response} from "./Response";
-import {AxiosResponse} from "axios";
 import {HttpClientResponse} from "../httpclient/HttpClientResponse";
 import {Query} from "../Query";
 

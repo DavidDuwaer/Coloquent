@@ -1,17 +1,17 @@
 import {assert, expect} from 'chai';
-import * as moxios from 'moxios';
+import {fetchMock} from './support/fetchMock';
 import {Hero} from './model1/dummy/Hero';
 
 describe('Relation', () => {
     let model: Hero;
 
     beforeEach(() => {
-        moxios.install();
+        fetchMock.install();
         model = new Hero();
     });
 
     afterEach(() => {
-        moxios.uninstall();
+        fetchMock.uninstall();
     });
 
     it('successufly stores its referring object', () => {
@@ -31,8 +31,8 @@ describe('Relation', () => {
             .friends()
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/friends');
             done();
         });
@@ -45,8 +45,8 @@ describe('Relation', () => {
             .friends()
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/superman/friends');
             done();
         });
@@ -59,8 +59,8 @@ describe('Relation', () => {
             .rival()
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.equal(request.url.split('?')[0], model.getJsonApiBaseUrl()+'/heros/superman/rival');
             done();
         });
