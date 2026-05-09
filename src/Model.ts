@@ -1,7 +1,6 @@
 import {Builder} from "./Builder";
 import {Resource} from "./Resource";
 import {Map} from "./util/Map";
-import {AxiosError} from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {PaginationStrategy} from "./PaginationStrategy";
@@ -11,7 +10,7 @@ import {ToManyRelation} from "./relation/ToManyRelation";
 import {ToOneRelation} from "./relation/ToOneRelation";
 import {Reflection} from "./util/Reflection";
 import {HttpClient} from "./httpclient/HttpClient";
-import {AxiosHttpClient} from "./httpclient/axios/AxiosHttpClient";
+import {FetchHttpClient} from "./httpclient/fetch/FetchHttpClient";
 import {HttpClientResponse} from "./httpclient/HttpClientResponse";
 
 export interface Model {
@@ -225,7 +224,7 @@ export abstract class Model
                     this.setApiId(idFromJson);
                     return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
                 },
-                (response: AxiosError) => {
+                (response: any) => {
                     throw response;
                 }
             );
@@ -245,7 +244,7 @@ export abstract class Model
                     this.setApiId(idFromJson);
                     return new SaveResponse(response, Object.getPrototypeOf(this).constructor, response.getData());
                 },
-                function (response: AxiosError) {
+                function (response: any) {
                     throw response;
                 }
             );
@@ -284,7 +283,7 @@ export abstract class Model
                         let model = response.getData();
                         return model;
                     },
-                    (response: AxiosError) => {
+                    (response: any) => {
                         throw response;
                     }
                 );
@@ -364,7 +363,7 @@ export abstract class Model
     public static get effectiveHttpClient(): HttpClient
     {
       if (this._effectiveHttpClient === undefined) {
-        this._effectiveHttpClient = this.httpClient ?? new AxiosHttpClient();
+        this._effectiveHttpClient = this.httpClient ?? new FetchHttpClient();
       }
       return this._effectiveHttpClient;
     }

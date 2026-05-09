@@ -1,6 +1,6 @@
 import {assert, expect} from 'chai';
 import * as chai from 'chai';
-import * as moxios from 'moxios';
+import {fetchMock} from './support/fetchMock';
 import chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
 import {Builder} from "../dist";
@@ -15,19 +15,19 @@ describe('Builder', () => {
     let builder: Builder;
 
     beforeEach(() => {
-        moxios.install();
+        fetchMock.install();
         builder = new Builder(Hero);
     });
 
     afterEach(() => {
-       moxios.uninstall();
+       fetchMock.uninstall();
     });
 
     it('get method should add pagination parameters to the resource uri query string', (done) => {
         builder.get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.equal(request.url, 'http://coloquent.app/api/heros?page%5Boffset%5D=0&page%5Blimit%5D=50');
@@ -49,8 +49,8 @@ describe('Builder', () => {
             })
             .catch(error => done(error));
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             let jsonApiType = (new Hero()).getJsonApiType();
 
             request.respondWith({
@@ -96,8 +96,8 @@ describe('Builder', () => {
             })
             .catch(error => done(error));
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             let jsonApiType = (new Hero()).getJsonApiType();
 
             request.respondWith({
@@ -143,8 +143,8 @@ describe('Builder', () => {
             })
             .catch(error => done(error));
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             let jsonApiType = (new Hero()).getJsonApiType();
 
             request.respondWith({
@@ -182,8 +182,8 @@ describe('Builder', () => {
     it('find method should append argument to the resource uri', (done) => {
         builder.find(7);
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.equal(request.url, 'http://coloquent.app/api/heros/7');
@@ -197,8 +197,8 @@ describe('Builder', () => {
             .where('name', 'Bob')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'filter%5Bname%5D=Bob');
@@ -208,7 +208,7 @@ describe('Builder', () => {
     });
 
     it('where method applied before clone should generate same url result', (done) => {
-        moxios.requests.reset();
+        fetchMock.requests.reset();
 
         builder.where('foo', 'bar');
         let builderClone = builder;
@@ -219,9 +219,9 @@ describe('Builder', () => {
         builderClone
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.equal(request.url, requestClone.url);
             done();
@@ -229,7 +229,7 @@ describe('Builder', () => {
     });
 
     it('where method applied after clone should generate different url result', (done) => {
-        moxios.requests.reset();
+        fetchMock.requests.reset();
 
         let builderClone = builder;
 
@@ -241,12 +241,12 @@ describe('Builder', () => {
             .where('name', 'Josh')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.notEqual(request.url, requestClone.url);
-            
+
             assert.notInclude(request.url, 'filter%5Bname%5D=Josh');
             assert.notInclude(requestClone.url, 'filter%5Bname%5D=Bob');
 
@@ -262,8 +262,8 @@ describe('Builder', () => {
             .with('weapons')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'include=weapons');
@@ -277,8 +277,8 @@ describe('Builder', () => {
             .with(['weapons', 'costume'])
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'include=weapons%2Ccostume');
@@ -299,22 +299,22 @@ describe('Builder', () => {
     });
 
     it('with method applied before clone should generate same url result', (done) => {
-        moxios.requests.reset();
-        
+        fetchMock.requests.reset();
+
         builder
             .with('weapons');
-        
+
         let builderClone = builder;
-        
+
         builder
             .get();
 
         builderClone
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let cloneRequest = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let cloneRequest = fetchMock.requests.at(1);
 
             assert.equal(request.url, cloneRequest.url);
 
@@ -323,10 +323,10 @@ describe('Builder', () => {
     });
 
     it('with method applied after clone should generate different url result', (done) => {
-        moxios.requests.reset();
-        
+        fetchMock.requests.reset();
+
         let builderClone = builder;
-        
+
         builder
             .with('weapons')
             .get();
@@ -335,9 +335,9 @@ describe('Builder', () => {
             .with('costume')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.notInclude(request.url, 'include=costume');
             assert.notInclude(requestClone.url, 'include=weapons');
@@ -354,8 +354,8 @@ describe('Builder', () => {
             .orderBy('name')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=name');
@@ -369,8 +369,8 @@ describe('Builder', () => {
             .orderBy('name', 'asc')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=name');
@@ -384,8 +384,8 @@ describe('Builder', () => {
             .orderBy('name', 'desc')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=-name');
@@ -399,8 +399,8 @@ describe('Builder', () => {
             .orderBy('name', SortDirection.ASC)
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=name');
@@ -414,8 +414,8 @@ describe('Builder', () => {
             .orderBy('name', SortDirection.DESC)
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=-name');
@@ -434,8 +434,8 @@ describe('Builder', () => {
     });
 
     it('orderBy method applied before clone should generate same url result', (done) => {
-        moxios.requests.reset();
-        
+        fetchMock.requests.reset();
+
         builder
             .orderBy('name');
 
@@ -447,9 +447,9 @@ describe('Builder', () => {
         builderClone
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.equal(request.url, requestClone.url);
 
@@ -458,7 +458,7 @@ describe('Builder', () => {
     });
 
     it('orderBy method applied after clone should generate different url result', (done) => {
-        moxios.requests.reset();
+        fetchMock.requests.reset();
 
         let builderClone = builder;
 
@@ -470,9 +470,9 @@ describe('Builder', () => {
             .orderBy('foo')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.notInclude(request.url, 'sort=foo');
             assert.notInclude(requestClone.url, 'sort=name');
@@ -489,8 +489,8 @@ describe('Builder', () => {
             .option('foo', 'bar')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'foo=bar');
@@ -500,8 +500,8 @@ describe('Builder', () => {
     });
 
     it('option method applied before clone should generate same url result', (done) => {
-        moxios.requests.reset();
-        
+        fetchMock.requests.reset();
+
         builder
             .option('foo', 'bar');
 
@@ -513,9 +513,9 @@ describe('Builder', () => {
         builderClone
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.equal(request.url, requestClone.url);
 
@@ -524,7 +524,7 @@ describe('Builder', () => {
     });
 
     it('option method applied after clone should generate different url result', (done) => {
-        moxios.requests.reset();
+        fetchMock.requests.reset();
 
         let builderClone = builder;
 
@@ -536,9 +536,9 @@ describe('Builder', () => {
             .option('baz', 'qux')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.at(0);
-            let requestClone = moxios.requests.at(1);
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.at(0);
+            let requestClone = fetchMock.requests.at(1);
 
             assert.notInclude(request.url, 'baz=qux');
             assert.notInclude(requestClone.url, 'foo=bar');
@@ -554,8 +554,8 @@ describe('Builder', () => {
         builder
             .get(2);
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.include(request.url, 'page%5Blimit%5D');
             assert.include(request.url, 'page%5Boffset%5D');
@@ -570,8 +570,8 @@ describe('Builder', () => {
         builder
             .get(page);
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.include(request.url, 'page%5Blimit%5D='+limit);
             assert.include(request.url, 'page%5Boffset%5D='+(page-1)*limit);
@@ -588,8 +588,8 @@ describe('Builder', () => {
         builder
             .get(page);
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.include(request.url, 'page%5Bsize%5D='+limit);
             assert.include(request.url, 'page%5Bnumber%5D='+page);
@@ -611,8 +611,8 @@ describe('Builder', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [{
@@ -638,8 +638,8 @@ describe('Builder', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [{
@@ -673,8 +673,8 @@ describe('Builder', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            moxios.requests.mostRecent()
+        fetchMock.wait(() => {
+            fetchMock.requests.mostRecent()
                 .respondWith({
                     status: 401
                 })
@@ -687,8 +687,8 @@ describe('Builder', () => {
         builder = new Builder(Hero);
         let page: number = Math.round(Math.random() * 100) + 2;
 
-        moxios.wait(() => {
-            moxios.requests.mostRecent()
+        fetchMock.wait(() => {
+            fetchMock.requests.mostRecent()
                 .respondWith({
                     status: 501
                 });
@@ -703,8 +703,8 @@ describe('Builder', () => {
         builder = new Builder(Hero);
         let page: number = Math.round(Math.random() * 100) + 2;
 
-        moxios.wait(() => {
-            moxios.requests.mostRecent()
+        fetchMock.wait(() => {
+            fetchMock.requests.mostRecent()
                 .respondWith({
                     status: 504
                 });
@@ -731,8 +731,8 @@ describe('Builder', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [

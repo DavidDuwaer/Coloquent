@@ -1,7 +1,6 @@
 import {Model} from "./Model";
 import {FilterSpec} from "./FilterSpec";
 import {SortSpec} from "./SortSpec";
-import {AxiosError} from "axios";
 import {PluralResponse} from "./response/PluralResponse";
 import {SingularResponse} from "./response/SingularResponse";
 import {Option} from "./Option";
@@ -60,7 +59,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                     (response: HttpClientResponse) => {
                         return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData()) as unknown as GET_RESPONSE;
                     },
-                    function (response: AxiosError) {
+                    function (response: any) {
                         throw new Error((<Error> response).message);
                     }
                 );
@@ -71,7 +70,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                     (response: HttpClientResponse) => {
                         return new PluralResponse(clone.getQuery(), response, this.modelType, response.getData(), page) as unknown as GET_RESPONSE;
                     },
-                    function (response: AxiosError) {
+                    function (response: any) {
                         throw new Error((<Error> response).message);
                     }
                 );
@@ -88,7 +87,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 (response: HttpClientResponse) => {
                     return new SingularResponse(this.query, response, this.modelType, response.getData());
                 },
-                function (response: AxiosError) {
+                function (response: any) {
                     throw new Error((<Error> response).message);
                 }
             );
@@ -110,7 +109,7 @@ export class Builder<M extends Model = Model, GET_RESPONSE extends RetrievalResp
                 (response: HttpClientResponse) => {
                     return new SingularResponse(clone.getQuery(), response, this.modelType, response.getData());
                 },
-                function (response: AxiosError) {
+                function (response: any) {
                     throw new Error((<Error> response).message);
                 }
             );

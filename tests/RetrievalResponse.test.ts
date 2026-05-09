@@ -1,6 +1,6 @@
 import {assert, expect} from 'chai';
 import * as chai from 'chai';
-import * as moxios from 'moxios';
+import {fetchMock} from './support/fetchMock';
 import chaip from 'chai-as-promised';
 import {Hero} from './model1/dummy/Hero';
 import {Hero as HeroWithAntiHeroes} from './model3/dummy/Hero';
@@ -18,13 +18,13 @@ describe('RetrievalResponse', () => {
     let model: Hero;
 
     beforeEach(() => {
-        moxios.install();
+        fetchMock.install();
         builder = new Builder(Hero);
         model = new Hero();
     });
 
     afterEach(() => {
-        moxios.uninstall();
+        fetchMock.uninstall();
     });
 
     it('should add models that are included more than once to all references', (done) => {
@@ -50,8 +50,8 @@ describe('RetrievalResponse', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [
@@ -119,8 +119,8 @@ describe('RetrievalResponse', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [
@@ -154,8 +154,8 @@ describe('RetrievalResponse', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [
@@ -237,8 +237,8 @@ describe('RetrievalResponse', () => {
             done();
         });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             request.respondWith({
                 response: {
                     data: [

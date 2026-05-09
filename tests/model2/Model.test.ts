@@ -1,20 +1,19 @@
 import {assert, expect} from 'chai';
 import {Hero} from './dummy/Hero';
-import * as moxios from 'moxios';
+import {fetchMock} from '../support/fetchMock';
 import {Model, SingularResponse} from "../../dist";
 import {SaveResponse} from "../../dist";
-import {AxiosInstance} from "axios";
 
 describe('Model2', () => {
     let superHero: Hero;
 
     beforeEach(() => {
-        moxios.install();
+        fetchMock.install();
         superHero = new Hero();
     });
 
     afterEach(() => {
-        moxios.uninstall();
+        fetchMock.uninstall();
     });
 
     it('should be able to initiate', () => {
@@ -34,8 +33,8 @@ describe('Model2', () => {
             .orderBy('name')
             .get();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.config.method, 'get');
             assert.include(request.url, 'sort=name');
@@ -58,8 +57,8 @@ describe('Model2', () => {
         superHero.setApiId(id);
         superHero.save();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.equal(JSON.parse(request.config.data).data.id, id);
 
             done();
@@ -69,8 +68,8 @@ describe('Model2', () => {
     it('should NOT include the ID in the payload for save() when it has no ID', (done) => {
         superHero.save();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.isUndefined(JSON.parse(request.config.data).data['id'])
 
             done();
@@ -86,8 +85,8 @@ describe('Model2', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             request.respondWith({
                 response: {
@@ -110,8 +109,8 @@ describe('Model2', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             request.respondWith({
                 response: {
@@ -135,8 +134,8 @@ describe('Model2', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             request.respondWith({
                 response: {
@@ -160,8 +159,8 @@ describe('Model2', () => {
         superHero.setApiId(id);
         superHero.create();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.equal(JSON.parse(request.config.data).data.id, id);
 
             done();
@@ -171,8 +170,8 @@ describe('Model2', () => {
     it('should NOT include the ID in the payload for create() when it has no ID', (done) => {
         superHero.create();
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
             assert.isUndefined(JSON.parse(request.config.data).data['id'])
 
             done();
@@ -188,8 +187,8 @@ describe('Model2', () => {
                 done();
             });
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             request.respondWith({
                 response: {
@@ -204,12 +203,12 @@ describe('Model2', () => {
     });
 
     it('should allow a header to be set', (done) => {
-        let httpClient: AxiosInstance = Hero.effectiveHttpClient.getImplementingClient();
+        let httpClient = Hero.effectiveHttpClient.getImplementingClient();
         httpClient.defaults.headers.authentication = 'someAuthenticationHeader5636rt3';
         Hero.find('1');
 
-        moxios.wait(() => {
-            let request = moxios.requests.mostRecent();
+        fetchMock.wait(() => {
+            let request = fetchMock.requests.mostRecent();
 
             assert.equal(request.headers.authentication, 'someAuthenticationHeader5636rt3');
 
@@ -251,11 +250,11 @@ describe('Model2', () => {
                     })
                     .catch(error => done(error));
 
-                moxios.wait(() => moxios.requests.mostRecent().respondWith(responseData));
+                fetchMock.wait(() => fetchMock.requests.mostRecent().respondWith(responseData));
             })
             .catch(error => done(error));
 
-        moxios.wait(() => moxios.requests.mostRecent().respondWith(responseData));
+        fetchMock.wait(() => fetchMock.requests.mostRecent().respondWith(responseData));
     });
 
     it('fresh method should return \'null\' when the ID cannot be found in the API (1)', (done) => {
@@ -269,14 +268,14 @@ describe('Model2', () => {
                     })
                     .catch(() => done());
 
-                moxios.wait(() => moxios.requests.mostRecent().respondWith({
+                fetchMock.wait(() => fetchMock.requests.mostRecent().respondWith({
                     response: {
                         data: null
                     }
                 }));
             });
 
-        moxios.wait(() => moxios.requests.mostRecent().respondWith({
+        fetchMock.wait(() => fetchMock.requests.mostRecent().respondWith({
             response: {
                 data: [
                     {
@@ -301,8 +300,8 @@ describe('Model2', () => {
                 hero
                     .fresh();
 
-                moxios.wait(() => {
-                    let refreshRequest = moxios.requests.mostRecent();
+                fetchMock.wait(() => {
+                    let refreshRequest = fetchMock.requests.mostRecent();
                     assert.include(refreshRequest.url, 'friends.foes');
                     assert.include(refreshRequest.url, 'bestFriend.foes');
                     done();
@@ -310,7 +309,7 @@ describe('Model2', () => {
             })
             .catch(error => done(error));
 
-        moxios.wait(() => moxios.requests.mostRecent().respondWith({
+        fetchMock.wait(() => fetchMock.requests.mostRecent().respondWith({
             response: {
                 data: [
                     {
